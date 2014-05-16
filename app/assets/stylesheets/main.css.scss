@@ -1,9 +1,19 @@
-$darkBlue: #19193A !default;
+$darkPurple: #19193A !default;
+$lightPurple: #3E3E4E !default;
+$lighterPurple: #69697E !default;
 
 #top_navbar{
-	background-color:$darkBlue;
+	background-color:$darkPurple;
 }
 
 #top_navbar ul li a{
 	color:white;
+}
+
+#top_navbar ul li a:hover{
+	background-color:$lightPurple;
+}
+
+#top_navbar ul li a.active{
+	background-color:$lighterPurple;
 }

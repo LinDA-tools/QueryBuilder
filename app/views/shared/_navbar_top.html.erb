@@ -1,16 +1,30 @@
+<%
+	active = ""
+	if controller_name == "query"
+		if action_name == "sparql"
+			active = "sparql"
+		elsif action_name == "builder"
+			active = "builder"
+		end
+	elsif controller_name == "developer"
+		if action_name == "docs"
+			active = "developer"
+		end
+	end
+%>
 <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation" id="top_navbar">
   <ul class="nav navbar-nav">
     <li>
       <a href="#">Getting started</a>
     </li>
     <li>
-      <a href="<%=query_sparql_path%>">SPARQL</a>
+      <a class="<%="active" if active == "sparql"%>" href="<%=query_sparql_path%>">SPARQL</a>
     </li>
     <li >
-      <a href="../components">Query Builder</a>
+      <a class="<%="active" if active == "builder"%>" href="<%=query_builder_path%>">Query Builder</a>
     </li>
     <li>
-      <a href="<%=developer_docs_path%>">Developer</a>
+      <a class="<%="active" if active == "developer"%>" href="<%=developer_docs_path%>">Developer</a>
     </li>
   </ul>
   <ul class="nav navbar-nav navbar-right">
