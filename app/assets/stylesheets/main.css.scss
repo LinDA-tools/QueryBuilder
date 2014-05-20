@@ -2,6 +2,12 @@ $darkPurple: #19193A !default;
 $lightPurple: #3E3E4E !default;
 $lighterPurple: #69697E !default;
 
+
+body {
+  position: relative; 
+  background: url(sos.png);
+}
+
 #top_navbar{
 	background-color:$darkPurple;
 }
