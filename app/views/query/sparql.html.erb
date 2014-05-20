@@ -3,5 +3,15 @@
 		<div class="col-md-8">
 			<textarea rows="5" id="txt_sparql_query" style="width:100%;" placeholder="Type your SPARQL query here ..."></textarea>
 		</div>
+		<div class="col-md-4">
+			<button onclick="generate_sample_query('1')" type="button" class="btn btn-large btn-info">Sample Query</button>
+		</div>
 	</div>
+</div>
+<div class="hide">
+	<textarea rows="5" id="txt_sample_query_1" >PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?subject ?label 
+WHERE { ?subject rdfs:label ?label. 
+FILTER(langMatches(lang(?label), "EN"))} LIMIT 200
+	</textarea>
 </div>
