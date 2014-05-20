@@ -3,6 +3,7 @@ class QueryController < ApplicationController
   	
   end
 
+
   def builder
   end
 end

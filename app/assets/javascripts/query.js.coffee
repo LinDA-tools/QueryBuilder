@@ -4,3 +4,17 @@
 
 @generate_sample_query = (template_id)->
 	$("#txt_sparql_query").html($("#txt_sample_query_"+template_id).html())
+
+@execute_sparql_query =->
+	$.getJSON get_rdf2any_server()+"v1.0/convert/json?query="+$("#txt_sparql_query").html(), (data) ->
+		items = []
+		$.each data, (key, val) ->
+			items.push "<li id='" + key + "'>" + val + "</li>"
+			return
+
+		$("<ul/>",
+			class: "my-new-list"
+			html: items.join("")
+		).appendTo "body"
+		return
+
