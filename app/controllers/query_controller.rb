@@ -1,4 +1,4 @@
-
+include QueryHelper
 class QueryController < ApplicationController
   def sparql
   	
@@ -12,9 +12,7 @@ class QueryController < ApplicationController
   	response = {:result=>"error"}
   	query = params[:query]
    	unless query.blank?
-   		#response = HTTParty.post("http://localhost:8080/rdf2any/v1.0/convert/json",:body => query, :headers => { 'Content-Type' => 'application/json' })
-   		url = "http://localhost:8080/rdf2any/v1.0/convert/json?query="+query
-   		uri = URI.encode(url)
+   		uri = get_uri("http://localhost:8080/rdf2any/v1.0/convert/json?query="+query)
    		response = HTTParty.get(uri)
    	end
    	render :json => response.to_json
