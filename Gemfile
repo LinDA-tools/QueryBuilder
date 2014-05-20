@@ -40,3 +40,6 @@ gem 'debugger', group: [:development, :test]
 
 #codemirror is used for syntax highlighting
 gem 'codemirror-rails'
+
+#to consume HTTP REST Requests
+gem 'httparty'
