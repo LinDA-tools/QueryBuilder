@@ -1,6 +1,4 @@
-$darkPurple: #19193A !default;
-$lightPurple: #3E3E4E !default;
-$lighterPurple: #69697E !default;
+@import "variables";
 
 
 body {
@@ -22,4 +20,16 @@ body {
 
 #top_navbar ul li a.active{
 	background-color:$lighterPurple;
+}
+
+.main-container{
+	position:relative;
+	margin-top:30px;
+	padding:15px;
+	border-style:solid;
+	border-width:1px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border-color: $darkPurple;
+	background-color: $white;
 }
