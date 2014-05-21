@@ -17,4 +17,5 @@ class QueryController < ApplicationController
    	end
    	render :json => response.to_json
   end
+
 end
