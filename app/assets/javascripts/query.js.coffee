@@ -12,7 +12,10 @@
     return data.results.bindings
 
 @display_sparql_literal = (data) ->
-    return "<td class='result-col-uri' style=\"word-wrap: break;\">"+break_words(html_safe(data.value))+"</td>"
+    display_text = break_words(html_safe(data.value))
+    unless data["xml:lang"] is undefined
+        display_text += "&nbsp;<span class='badge'>"+data["xml:lang"]+"</span>"
+    return "<td class='result-col-uri' style=\"word-wrap: break;\">"+display_text+"</td>"
 
 @display_sparql_uri = (data) ->
     uri_display = data.value
