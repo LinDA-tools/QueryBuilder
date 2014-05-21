@@ -57,3 +57,6 @@
         
     return
 
+@show_sparql_download_modal =->
+    $("#sparql_download_modal").modal("show")
+
