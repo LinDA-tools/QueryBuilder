@@ -6,7 +6,7 @@
 	$("#txt_sparql_query").html($("#txt_sample_query_"+template_id).html())
 
 @execute_sparql_query =->
-	$.getJSON "http://localhost:3000/query/execute_sparql",
+	$.getJSON get_server_address()+"/query/execute_sparql",
   	query: $("#txt_sparql_query").html()
 	, (data) ->
   		items = []

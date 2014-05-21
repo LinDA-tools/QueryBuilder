@@ -1,3 +1,3 @@
 
-@get_rdf2any_server = ->
-	return "http://localhost:8080/rdf2any/"
+@get_server_address =->
+	return window.location.protocol + "//" + window.location.host
