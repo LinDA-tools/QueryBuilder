@@ -43,3 +43,5 @@ gem 'codemirror-rails'
 
 #to consume HTTP REST Requests
 gem 'httparty'
+
+gem 'prawn'
