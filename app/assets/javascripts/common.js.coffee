@@ -9,7 +9,10 @@
 	$("#loading").hide()
 
 @html_safe = (str)->
-	return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+	unless str is undefined
+		return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+	else
+		return ""
 
 @break_words = (str)->
 	words = str.split(" ")
