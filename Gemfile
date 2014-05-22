@@ -45,3 +45,7 @@ gem 'codemirror-rails'
 gem 'httparty'
 
 gem 'prawn'
+
+gem 'pdfkit'
+
+gem 'wkhtmltopdf-binary'
