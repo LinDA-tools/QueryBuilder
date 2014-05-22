@@ -33,6 +33,7 @@ Now the setup is complete.
 Start server
 ------------
 ```sh
+rvm use 2.0.0@qbuilder
 rails s
 ```
 
