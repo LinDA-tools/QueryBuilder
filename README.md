@@ -3,7 +3,7 @@ Installation
 
 Install ruby version manager. 
 ```sh
-rvm http://rvm.io/rvm/install
+\curl -sSL https://get.rvm.io | bash -s stable --ruby
 ```
 Install ruby version 2.0.0 using rvm . 
 ```sh
