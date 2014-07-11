@@ -8,6 +8,7 @@ QueryBuilder = {
         $("#dd_select_dataset").hide("fast");
         $("#div_step_info_dataset").hide("fast");
         QueryBuilder.select_body($("#div_select_dataset"),dataset);
+        $("#hdn_qb_dataset").attr("value",dataset);
     },
     select_body : function(element,body){
         element.find(".select-body").first().html(body);
@@ -18,6 +19,11 @@ QueryBuilder = {
         $(".done-dataset").hide("fast");
         $("#div_qb_select_class").hide("fast");
         $(".clear-dataset").show("fast");
+    },
+    search_classes : function(){
+        var search_string = $("#txt_search_classes").val();
+        var dataset = $("#hdn_qb_dataset").val();
+        $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
     }
 };
     

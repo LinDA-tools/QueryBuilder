@@ -24,9 +24,10 @@
                         <%end%>
                       </ul>
                     </div>
+                    <input type="hidden" id="hdn_qb_dataset" value="">
                     <div id="div_select_dataset" style="display:none" class="done-dataset">
                         <div class="row">
-                            <div class="col-md-8 select-body">
+                            <div class="col-md-8 select-body" >
 
                             </div>
                             <div class="col-md-4">
@@ -48,9 +49,9 @@
                     <div class="row">
                       <div class="col-lg-12">
                         <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Type the class name...">
+                          <input type="text" class="form-control" placeholder="Type the class name..." id="txt_search_classes">
                           <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">Go!</button>
+                            <button class="btn btn-default" type="button" onclick="QueryBuilder.search_classes()">Go!</button>
                           </span>
                         </div><!-- /input-group -->
                       </div><!-- /.col-lg-6 -->

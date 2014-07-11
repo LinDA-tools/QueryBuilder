@@ -1,12 +1,16 @@
 include QueryHelper
 class QueryController < ApplicationController
   def sparql
-  	
+  	respond_to do |format|
+      format.html
+    end
   end
 
 
   def builder
-
+    respond_to do |format|
+      format.html
+    end
 
   end
 
@@ -22,6 +26,13 @@ class QueryController < ApplicationController
       else
         send_data(generate_pdf(response), :filename => "output.pdf", :type => "application/pdf") 
       end
+    end
+  end
+
+  def builder_classes
+    @classes = search_classes(params[:dataset],params[:search])
+    respond_to do |format|
+      format.js
     end
   end
 

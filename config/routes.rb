@@ -5,7 +5,12 @@ Rails.application.routes.draw do
 
   get 'query/builder'
 
+
   get 'query/execute_sparql'
+
+  get 'query/builder_classes'
+
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
