@@ -49,3 +49,7 @@ gem 'prawn'
 gem 'pdfkit'
 
 gem 'wkhtmltopdf-binary'
+
+gem 'sparql'
+
+gem 'linkeddata'

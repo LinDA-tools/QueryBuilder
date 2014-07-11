@@ -1,3 +1,5 @@
+require 'rubygems'
+require 'sparql'
 module QueryHelper
 	def get_uri(url)
 		URI.encode(url.gsub("&lt;","<").gsub("&gt;",">"))
@@ -18,6 +20,13 @@ module QueryHelper
 		classes["Actor"] = {}
 		classes["Country"] = {}
 		classes["Boxer"] = {}
+
+		queryable = RDF::Repository.load(dataset)
+		sse = SPARQL.parse("SELECT * WHERE { ?s ?p ?o } LIMIT 10")
+		queryable.query(sse) do |result|
+		  result.inspect
+		  debugger
+		end
 		classes
 	end
 end
