@@ -1,1 +1,5 @@
-alert("Searching '<%=params[:search]%>' in the dataset : <%=params[:dataset]%>");
+$("#tbl_classes_search_result").find("tbody").first().html("");
+
+<%@searched_classes.each do |c|%>
+	$("#tbl_classes_search_result").find("tbody").first().append("<tr><td uri=\"<%=c[:uri].html_safe%>\"><%=c[:name].html_safe%></td></tr>");
+<%end%>
