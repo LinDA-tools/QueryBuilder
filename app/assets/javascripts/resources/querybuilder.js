@@ -4,6 +4,6 @@ if (typeof QueryBuilder == 'undefined') {
 
 QueryBuilder = {
 	selected_dataset : function(dataset){
-		alert(dataset);
+		$("#div_qb_select_class").show("fast");
 	}
 };
