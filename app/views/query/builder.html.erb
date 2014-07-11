@@ -6,14 +6,14 @@
     </div>
     <div class="row">
         <div class="col-md-3">
-            <div class="row" id="div_step_info_dataset">
+            <div class="row clear-dataset" id="div_step_info_dataset">
                 <div class="col-md-12">
                     STEP 1 : Select Dataset
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="dropdown">
+                    <div class="dropdown clear-dataset">
                       <button class="btn btn-default dropdown-toggle" type="button" id="dd_select_dataset" data-toggle="dropdown">
                         Select
                         <span class="caret"></span>
@@ -24,12 +24,13 @@
                         <%end%>
                       </ul>
                     </div>
-                    <div id="div_select_dataset" style="display:none">
+                    <div id="div_select_dataset" style="display:none" class="done-dataset">
                         <div class="row">
                             <div class="col-md-8 select-body">
 
                             </div>
                             <div class="col-md-4">
+                                <span class="glyphicon glyphicon-remove" onclick="QueryBuilder.reset_dataset()"></span>
                             </div>
                         </div>
                     </div>
