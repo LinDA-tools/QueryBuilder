@@ -1,11 +1,11 @@
-<input type="hidden" id="hdn_qb_dataset" value="">
-<div id="div_select_dataset" style="display:none" class="done-dataset">
+<input type="hidden" id="<%=hidden_value_id%>" value="<%=hidden_value_value%>">
+<div id="<%=div_id%>" style="display:none" class="<%=div_classes%>">
     <div class="row">
         <div class="col-md-8 select-body" >
 
         </div>
         <div class="col-md-4">
-            <span class="glyphicon glyphicon-remove" onclick="QueryBuilder.reset_dataset()"></span>
+            <span class="glyphicon glyphicon-remove" onclick="<%=remove_function%>"></span>
         </div>
     </div>
 </div>
