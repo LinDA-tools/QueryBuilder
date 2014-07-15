@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
   get 'query/builder_classes'
 
+  root :to => 'query#sparql'
+
 
 
   # The priority is based upon order of creation: first created -> highest priority.
