@@ -24,17 +24,7 @@
                         <%end%>
                       </ul>
                     </div>
-                    <input type="hidden" id="hdn_qb_dataset" value="">
-                    <div id="div_select_dataset" style="display:none" class="done-dataset">
-                        <div class="row">
-                            <div class="col-md-8 select-body" >
-
-                            </div>
-                            <div class="col-md-4">
-                                <span class="glyphicon glyphicon-remove" onclick="QueryBuilder.reset_dataset()"></span>
-                            </div>
-                        </div>
-                    </div>
+                    <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_dataset", :div_classes=>"done-dataset", :div_id=>"div_select_dataset", :remove_function=>"QueryBuilder.reset_dataset()"}%>
                 </div>
             </div>
         </div>
@@ -58,7 +48,7 @@
                     </div><!-- /.row -->
                 </div>
             </div>
-            <div class="row">
+            <div class="row" id="div_classes_search_result">
                 <div class="col-md-12">
                     <table class="table table-hover" id="tbl_classes_search_result">
                         <thead>
