@@ -1,5 +1,5 @@
 $("#tbl_classes_search_result").find("tbody").first().html("");
 
 <%@searched_classes.each do |c|%>
-	$("#tbl_classes_search_result").find("tbody").first().append("<tr><td uri=\"<%=c[:uri].html_safe%>\"><%=c[:name].html_safe%></td></tr>");
+	$("#tbl_classes_search_result").find("tbody").first().append("<tr><td uri=\"<%=c[:uri].html_safe%>\" class='clickable'><%=c[:name].html_safe%></td></tr>");
 <%end%>
