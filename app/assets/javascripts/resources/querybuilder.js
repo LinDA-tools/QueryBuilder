@@ -26,7 +26,16 @@ QueryBuilder = {
     },
     select_class : function(class_uri, class_name){
         $("#tbl_classes_search_result").hide("fast");
+        $(".clear-search-class").hide("fast");
         QueryBuilder.select_body($("#div_selected_class"),class_name);
+
+    },
+    reset_searched_class : function(){
+        $(".clear-search-class").show("fast");
+        $("#tbl_classes_search_result").find("tbody").html("");
+        $("#tbl_classes_search_result").show();
+        $(".done-search-class").hide("fast");
+        $("#txt_search_classes").val("");
     }
 };
     
