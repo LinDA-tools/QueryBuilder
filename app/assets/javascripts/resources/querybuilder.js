@@ -12,7 +12,6 @@ QueryBuilder = {
     },
     select_body : function(element,body){
         element.find(".select-body").first().html(body);
-        console.log(element.find(".select-body").first());
         element.show("fast");
     },
     reset_dataset : function(){
@@ -24,6 +23,10 @@ QueryBuilder = {
         var search_string = $("#txt_search_classes").val();
         var dataset = $("#hdn_qb_dataset").val();
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
+    },
+    select_class : function(class_uri, class_name){
+        $("#tbl_classes_search_result").hide("fast");
+        QueryBuilder.select_body($("#div_selected_class"),class_name);
     }
 };
     

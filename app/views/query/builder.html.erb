@@ -57,6 +57,7 @@
 
                         </tbody>
                     </table>
+                    <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_class", :div_classes=>"done-search-class", :div_id=>"div_selected_class", :remove_function=>"QueryBuilder.reset_searched_class()", :hidden_value_value=>""}%>
                 </div>
             </div>
 
