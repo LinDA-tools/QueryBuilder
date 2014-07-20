@@ -42,6 +42,7 @@ QueryBuilder = {
         $("#txt_search_classes").val("");
         $("#hdn_qb_class").val("");
         QueryBuilder.hide_equivalent_sparql_query();
+        QueryBuilder.hide_searched_query_results();
     },
     show_equivalent_sparql_query : function(){
         var query = "";
@@ -54,6 +55,9 @@ QueryBuilder = {
     },
     hide_equivalent_sparql_query : function(){
         $(".qb-equivalent-query-main").hide("fast");
+    },
+    hide_searched_query_results : function(){
+        $("#sparql_results_container").hide("fast");
     }
 
 };
