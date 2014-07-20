@@ -19,3 +19,24 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="sparql_download_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="sparql_download_modal_title">Download Result Set</h4>
+      </div>
+      <div class="modal-body">
+        <div class="btn-group ">
+  			<button type="button" class="btn btn-default btn-primary" onclick="download_sparql_result_set('rdb')"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;RDB Script</button>
+  			<button type="button" class="btn btn-default btn-success" onclick="download_sparql_result_set('csv')"><span class="glyphicon glyphicon-align-justify"></span>&nbsp;CSV</button>
+  			<button type="button" class="btn btn-default btn-info"><span class="glyphicon glyphicon-road"></span>&nbsp;JSON</button>
+  			<button type="button" class="btn btn-default btn-warning" onclick="download_sparql_result_set('pdf')"><span class="glyphicon glyphicon-file"></span>&nbsp;PDF</button>
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
