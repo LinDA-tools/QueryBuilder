@@ -20,6 +20,7 @@ QueryBuilder = {
         $(".clear-dataset").show("fast");
     },
     search_classes : function(){
+        show_loading();
         var search_string = $("#txt_search_classes").val();
         var dataset = $("#hdn_qb_dataset").val();
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
