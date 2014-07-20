@@ -18,6 +18,7 @@ QueryBuilder = {
         $(".done-dataset").hide("fast");
         $("#div_qb_select_class").hide("fast");
         $(".clear-dataset").show("fast");
+        QueryBuilder.reset_searched_class();
     },
     search_classes : function(){
         show_loading();
@@ -30,6 +31,7 @@ QueryBuilder = {
         $(".clear-search-class").hide("fast");
         QueryBuilder.select_body($("#div_selected_class"),class_name);
         $("#hdn_qb_class").val(class_uri);
+        QueryBuilder.show_equivalent_sparql_query();
 
     },
     reset_searched_class : function(){
@@ -39,6 +41,14 @@ QueryBuilder = {
         $(".done-search-class").hide("fast");
         $("#txt_search_classes").val("");
         $("#hdn_qb_class").val("");
+        QueryBuilder.hide_equivalent_sparql_query();
+    },
+    show_equivalent_sparql_query : function(){
+        $("#qb_equivalent_query_main").show("fast");
+    },
+    hide_equivalent_sparql_query : function(){
+        $("#qb_equivalent_query_main").hide("fast");
     }
+
 };
     

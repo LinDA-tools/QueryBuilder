@@ -48,7 +48,6 @@ function break_words(str) {
 
 $(document).ready(function() {
   $('.dropdown-toggle').dropdown();
-
 });
 
 
