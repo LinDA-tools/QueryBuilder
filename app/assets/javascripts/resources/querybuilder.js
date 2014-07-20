@@ -44,10 +44,14 @@ QueryBuilder = {
         QueryBuilder.hide_equivalent_sparql_query();
     },
     show_equivalent_sparql_query : function(){
-        $("#qb_equivalent_query_main").show("fast");
+        var query = "";
+        query += SPARQL.prefix.rdf;
+        query += "SELECT ?concept WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">} LIMIT 200";
+        $("#txt_sparql_query").html(query);
+        $(".qb-equivalent-query-main").show("fast");
     },
     hide_equivalent_sparql_query : function(){
-        $("#qb_equivalent_query_main").hide("fast");
+        $(".qb-equivalent-query-main").hide("fast");
     }
 
 };
