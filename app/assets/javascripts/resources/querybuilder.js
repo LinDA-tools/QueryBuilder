@@ -46,7 +46,8 @@ QueryBuilder = {
     show_equivalent_sparql_query : function(){
         var query = "";
         query += SPARQL.prefix.rdf;
-        query += "SELECT ?concept WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">} LIMIT 200";
+        query += SPARQL.prefix.rdfs;
+        query += "SELECT ?concept ?label WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">.\n ?concept rdfs:label ?label.}\n LIMIT 200";
         $("#txt_sparql_query").html(query);
         $(".qb-equivalent-query-main").show("fast");
     },
