@@ -10,27 +10,7 @@
 			<button onclick="generate_sample_query('1')" type="button" class="btn btn-xs btn-info">Sample Query</button>
 		</div>
 	</div>
-	<div class="row" id="sparql_results_container" style="display:none;">
-		<div class="col-md-12 " style="margin-top:20px;">
-			<div class="row">
-				<div class="col-md-6">
-					<button type="button" class="btn btn-danger" onclick="show_sparql_download_modal()"><span class="glyphicon glyphicon-floppy-save"></span>&nbsp;Download</button>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12" style="margin-top:20px;">
-					<table class="table table-striped" id="sparql_results_table">
-		      			<thead>
-
-		      			</thead>
-		      			<tbody>
-		        
-		      			</tbody>
-		    		</table>
-    			</div>
-    		</div>
-		</div>
-	</div>
+	<%=render :partial=>"query/search_results"%>
 </div>
 <div class="hide">
 	<textarea rows="5" id="txt_sample_query_1" >PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
