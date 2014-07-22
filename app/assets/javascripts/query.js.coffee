@@ -40,7 +40,7 @@
         result_table.find("thead").first().html(result_table_header)
         hide_loading()
         result_table.find("tbody").first().html("")
-        $("#sparql_results_container").show()
+        $("#sparql_results_container").show("fast")
         row_counter = 0
         while row_counter < result_rows.length
             row_counter++
