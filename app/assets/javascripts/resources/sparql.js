@@ -14,6 +14,11 @@ SPARQL = {
 			result += SPARQL.prefix.owl;
 			return result;
 		}
+	},
+	result : {
+		columns : function(data){
+			return data.head.vars;
+		}
 	}
 
 };
