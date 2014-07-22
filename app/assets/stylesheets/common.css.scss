@@ -36,14 +36,15 @@ body {
     width:100%;
     height:100%;
     z-index:1000;
-    background-color:$lighterBlue;
-    opacity: .8;
+    #background-color:rgb(2,196,252);
+    
+    opacity: .3;
 }
 
 .ajax-loader {
     position: absolute;
-    left: 50%;
-    top: 350px;;
+    left: 20%;
+    top: 10%;
     margin-left: -32px; /* -1 * image width / 2 */
     margin-top: -32px;  /* -1 * image height / 2 */
     display: block;   
