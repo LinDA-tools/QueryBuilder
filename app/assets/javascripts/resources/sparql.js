@@ -21,6 +21,9 @@ SPARQL = {
 		},
 		rows : function(data){
 			return data.results.bindings;
+		},
+		time_taken : function(data){
+			return data.results.time_taken;
 		}
 	}
 
