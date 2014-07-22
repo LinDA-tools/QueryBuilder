@@ -31,7 +31,7 @@
     , (data) ->
         result_columns = SPARQL.result.columns(data)
         result_rows = SPARQL.result.rows(data)
-        $("#sparql_results_time_taken").html("Time taken : "+SPARQL.result.time_taken(data).toString()+"s")
+        $("#sparql_results_time_taken").html(SPARQL.result.time_taken(data).toString()+"s")
         result_table = $("#sparql_results_table")
         result_table_header = "<tr><th>#</th>"
         $.each result_columns, (key,val) ->
