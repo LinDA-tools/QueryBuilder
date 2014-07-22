@@ -7,7 +7,7 @@ body {
 }
 
 #top_navbar{
-	background-color:$darkPurple;
+	background-color:$darkBlue;
 }
 
 #top_navbar ul li a{
@@ -15,11 +15,11 @@ body {
 }
 
 #top_navbar ul li a:hover{
-	background-color:$lightPurple;
+	background-color:$brandPrimary;
 }
 
 #top_navbar ul li a.active{
-	background-color:$lighterPurple;
+	background-color:$darkestBlue;
 }
 
 .main-container{
