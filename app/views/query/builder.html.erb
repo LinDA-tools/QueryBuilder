@@ -1,101 +1,105 @@
-<div class="main-container">
-    <div class="row">
-        <div class="col-md-12">
-            <h4>Please follow the steps to build your query</h4>
+<div class="panel panel-primary main-container">
+    <div class="panel-heading"><h4 class="panel-title">Query Builder</h4></div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Please follow the steps to build your query</h4>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="panel panel-primary" >
-                <div class="panel-heading">STEP 1 : Select Dataset</div>
-                <div class="panel-body">
-                    <div class="row ">
-                        <div class="col-md-12">
-                            <div class="dropdown clear-dataset">
-                              <button class="btn btn-default dropdown-toggle clear-dataset" type="button" id="dd_select_dataset" data-toggle="dropdown">
-                                Select
-                                <span class="caret"></span>
-                              </button>
-                              <ul class="dropdown-menu" role="menu" aria-labelledby="dd_select_dataset">
-                                <%get_datasets.each do |k,v|%>
-                                   <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.selected_dataset('<%=v%>')"><%=k%></a></li> 
-                                <%end%>
-                              </ul>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="panel panel-info" >
+                    <div class="panel-heading">STEP 1 : Select Dataset</div>
+                    <div class="panel-body">
+                        <div class="row ">
+                            <div class="col-md-12">
+                                <div class="dropdown clear-dataset">
+                                  <button class="btn btn-default dropdown-toggle clear-dataset" type="button" id="dd_select_dataset" data-toggle="dropdown">
+                                    Select
+                                    <span class="caret"></span>
+                                  </button>
+                                  <ul class="dropdown-menu" role="menu" aria-labelledby="dd_select_dataset">
+                                    <%get_datasets.each do |k,v|%>
+                                       <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.selected_dataset('<%=v%>')"><%=k%></a></li> 
+                                    <%end%>
+                                  </ul>
+                                </div>
+                                <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_dataset", :div_classes=>"done-dataset", :div_id=>"div_select_dataset", :remove_function=>"QueryBuilder.reset_dataset()", :hidden_value_value=>""}%>
                             </div>
-                            <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_dataset", :div_classes=>"done-dataset", :div_id=>"div_select_dataset", :remove_function=>"QueryBuilder.reset_dataset()", :hidden_value_value=>""}%>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div> 
-        <div class="col-md-3" id="div_qb_select_class" style="display:none;">
-            <div class="panel panel-primary">
-                <div class="panel-heading">STEP 2 : Select Class</div>
-                <div class="panel-body">
-                    <div class="row clear-search-class">
-                        <div class="col-md-12">
-                            <div class="row">
-                              <div class="col-lg-12">
-                                <div class="input-group">
-                                  <input type="text" class="form-control" placeholder="Type the class name..." id="txt_search_classes" required>
-                                  <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" onclick="QueryBuilder.search_classes()">Go!</button>
-                                  </span>
-                                </div><!-- /input-group -->
-                              </div><!-- /.col-lg-6 -->
-                            </div><!-- /.row -->
+            </div> 
+            <div class="col-md-3" id="div_qb_select_class" style="display:none;">
+                <div class="panel panel-info">
+                    <div class="panel-heading">STEP 2 : Select Class</div>
+                    <div class="panel-body">
+                        <div class="row clear-search-class">
+                            <div class="col-md-12">
+                                <div class="row">
+                                  <div class="col-lg-12">
+                                    <div class="input-group">
+                                      <input type="text" class="form-control" placeholder="Type the class name..." id="txt_search_classes" required>
+                                      <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" onclick="QueryBuilder.search_classes()">Go!</button>
+                                      </span>
+                                    </div><!-- /input-group -->
+                                  </div><!-- /.col-lg-6 -->
+                                </div><!-- /.row -->
+                            </div>
+                        </div>
+                        <div class="row" id="div_classes_search_result">
+                            <div class="col-md-12">
+                                
+                                <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_class", :div_classes=>"done-search-class", :div_id=>"div_selected_class", :remove_function=>"QueryBuilder.reset_searched_class()", :hidden_value_value=>""}%>
+                            </div>
                         </div>
                     </div>
-                    <div class="row" id="div_classes_search_result">
-                        <div class="col-md-12">
-                            
-                            <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_class", :div_classes=>"done-search-class", :div_id=>"div_selected_class", :remove_function=>"QueryBuilder.reset_searched_class()", :hidden_value_value=>""}%>
-                        </div>
+                    <div class="list-group" id="tbl_classes_search_result"></div>
+                </div>
+            </div>
+            <div class="col-md-3 hidden" >
+                <div class="row">
+                    <div class="col-md-12">
+                        STEP 3 : Select Property (Optional)
                     </div>
                 </div>
-                <div class="list-group" id="tbl_classes_search_result"></div>
-            </div>
-        </div>
-        <div class="col-md-3 hidden" >
-            <div class="row">
-                <div class="col-md-12">
-                    STEP 3 : Select Property (Optional)
+                <div class="row">
+                    <div class="col-md-12">
+                        
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    
+            <div class="col-md-3 " style="display:none;">
+                <div class="row">
+                    <div class="col-md-12">
+                        STEP 4 : Select Inequaly and type in values (Optional)
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3 " style="display:none;">
-            <div class="row">
-                <div class="col-md-12">
-                    STEP 4 : Select Inequaly and type in values (Optional)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    
+                <div class="row">
+                    <div class="col-md-12">
+                        
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row qb-equivalent-query-main" style="display:none;">
-        <div class="col-md-8 " >
-            <h4>Equivalent SPARQL Query</h4>
+        <div class="row qb-equivalent-query-main" style="display:none;">
+            <div class="col-md-8 " >
+                <h4>Equivalent SPARQL Query</h4>
+            </div>
         </div>
-    </div>
-    <div class="row qb-equivalent-query-main" style="display:none;"> 
-        <div class="col-md-8">
-            <textarea rows="7" id="txt_sparql_query" style="width:100%;" placeholder="Type your SPARQL query here ..."></textarea>
-        </div>
-        <div class="col-md-1">
-            <button  type="button" class="btn btn-lg btn-success" onclick="execute_sparql_query()">Run !</button>
-        </div>
+        <div class="row qb-equivalent-query-main" style="display:none;"> 
+            <div class="col-md-8">
+                <textarea rows="7" id="txt_sparql_query" style="width:100%;" placeholder="Type your SPARQL query here ..."></textarea>
+            </div>
+            <div class="col-md-1">
+                <button  type="button" class="btn btn-lg btn-success" onclick="execute_sparql_query()">Run !</button>
+            </div>
 
+        </div>
+        <%=render :partial=>"query/search_results"%>
     </div>
-    <%=render :partial=>"query/search_results"%>
+    
 </div>
 <script>
     $(function () {
