@@ -36,7 +36,7 @@ QueryBuilder = {
     },
     reset_searched_class : function(){
         $(".clear-search-class").show("fast");
-        $("#tbl_classes_search_result").find("tbody").html("");
+        $("#tbl_classes_search_result").html("");
         $("#tbl_classes_search_result").show();
         $(".done-search-class").hide("fast");
         $("#txt_search_classes").val("");
