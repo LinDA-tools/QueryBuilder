@@ -14,11 +14,11 @@
                         <div class="row ">
                             <div class="col-md-12">
                                 <div class="dropdown clear-dataset">
-                                  <button class="btn btn-default dropdown-toggle clear-dataset" type="button" id="dd_select_dataset" data-toggle="dropdown">
-                                    Select
+                                  <button class="btn btn-default dropdown-toggle clear-dataset col-md-12" type="button" id="dd_select_dataset" data-toggle="dropdown">
+                                    Choose a Dataset&nbsp;
                                     <span class="caret"></span>
                                   </button>
-                                  <ul class="dropdown-menu" role="menu" aria-labelledby="dd_select_dataset">
+                                  <ul class="dropdown-menu col-md-12" role="menu" aria-labelledby="dd_select_dataset">
                                     <%get_datasets.each do |k,v|%>
                                        <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.selected_dataset('<%=v%>')"><%=k%></a></li> 
                                     <%end%>
