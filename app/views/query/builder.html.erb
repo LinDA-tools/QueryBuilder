@@ -50,13 +50,7 @@
             </div>
             <div class="row" id="div_classes_search_result">
                 <div class="col-md-12">
-                    <table class="table table-hover" id="tbl_classes_search_result">
-                        <thead>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
+                    <div class="list-group" id="tbl_classes_search_result"></div>
                     <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_class", :div_classes=>"done-search-class", :div_id=>"div_selected_class", :remove_function=>"QueryBuilder.reset_searched_class()", :hidden_value_value=>""}%>
                 </div>
             </div>

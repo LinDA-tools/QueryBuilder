@@ -2,5 +2,5 @@ hide_loading();
 $("#tbl_classes_search_result").find("tbody").first().html("");
 
 <%@searched_classes.each do |c|%>
-	$("#tbl_classes_search_result").find("tbody").first().append("<tr><td uri=\"<%=c[:uri].html_safe%>\" class='clickable' onclick=\"QueryBuilder.select_class('<%=c[:uri]%>','<%=c[:name].html_safe%>')\"><%=c[:name].html_safe%></td></tr>");
+	$("#tbl_classes_search_result").append("<a href='javascript:void(0);' uri=\"<%=c[:uri].html_safe%>\" class='list-group-item' onclick=\"QueryBuilder.select_class('<%=c[:uri]%>','<%=c[:name].html_safe%>')\"><%=c[:name].html_safe%></a>");
 <%end%>
