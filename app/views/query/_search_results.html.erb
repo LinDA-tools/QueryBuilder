@@ -1,26 +1,23 @@
 <div class="row" id="sparql_results_container" style="display:none;">
-	<div class="col-md-12 " style="margin-top:20px;">
-		<div class="row">
-			<div class="col-md-3">
-				<button type="button" class="btn btn-danger" onclick="show_sparql_download_modal()"><span class="glyphicon glyphicon-floppy-save"></span>&nbsp;Download</button>
-			</div>
-			<div class="col-md-6" id="sparql_results_time_taken">
-				
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12" style="margin-top:20px;">
-				<table class="table table-striped" id="sparql_results_table">
-	      			<thead>
-
-	      			</thead>
-	      			<tbody>
-	        
-	      			</tbody>
-	    		</table>
-			</div>
-		</div>
-	</div>
+        <div class="col-md-12" style="margin-top:20px;">
+            <div class="panel panel-primary" >
+                <div class="panel-heading"><h3 class="panel-title">Search Results</h3></div>
+                <div class="panel-body">
+                    <p>
+                        <button type="button" class="btn btn-danger" onclick="show_sparql_download_modal()"><span class="glyphicon glyphicon-floppy-save"></span>&nbsp;Download</button>
+                    </p>
+                    <p id="sparql_results_time_taken">
+                    </p>
+                </div>
+                <table class="table table-striped" id="sparql_results_table">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="modal fade" id="sparql_download_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -31,11 +28,11 @@
       </div>
       <div class="modal-body">
         <div class="btn-group ">
-  			<button type="button" class="btn btn-default btn-primary" onclick="download_sparql_result_set('rdb')"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;RDB Script</button>
-  			<button type="button" class="btn btn-default btn-success" onclick="download_sparql_result_set('csv')"><span class="glyphicon glyphicon-align-justify"></span>&nbsp;CSV</button>
-  			<button type="button" class="btn btn-default btn-info"><span class="glyphicon glyphicon-road"></span>&nbsp;JSON</button>
-  			<button type="button" class="btn btn-default btn-warning" onclick="download_sparql_result_set('pdf')"><span class="glyphicon glyphicon-file"></span>&nbsp;PDF</button>
-		</div>
+            <button type="button" class="btn btn-default btn-primary" onclick="download_sparql_result_set('rdb')"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;RDB Script</button>
+            <button type="button" class="btn btn-default btn-success" onclick="download_sparql_result_set('csv')"><span class="glyphicon glyphicon-align-justify"></span>&nbsp;CSV</button>
+            <button type="button" class="btn btn-default btn-info"><span class="glyphicon glyphicon-road"></span>&nbsp;JSON</button>
+            <button type="button" class="btn btn-default btn-warning" onclick="download_sparql_result_set('pdf')"><span class="glyphicon glyphicon-file"></span>&nbsp;PDF</button>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
