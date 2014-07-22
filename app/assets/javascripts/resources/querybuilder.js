@@ -6,7 +6,6 @@ QueryBuilder = {
     selected_dataset : function(dataset){
         $("#div_qb_select_class").show("fast");
         $("#dd_select_dataset").hide("fast");
-        $("#div_step_info_dataset").hide("fast");
         QueryBuilder.select_body($("#div_select_dataset"),dataset);
         $("#hdn_qb_dataset").attr("value",dataset);
     },

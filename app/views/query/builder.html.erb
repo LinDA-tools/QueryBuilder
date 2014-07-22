@@ -6,28 +6,28 @@
     </div>
     <div class="row">
         <div class="col-md-3">
-            <div class="row clear-dataset" id="div_step_info_dataset">
-                <div class="col-md-12">
-                    STEP 1 : Select Dataset
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-md-12">
-                    <div class="dropdown clear-dataset">
-                      <button class="btn btn-default dropdown-toggle clear-dataset" type="button" id="dd_select_dataset" data-toggle="dropdown">
-                        Select
-                        <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="dd_select_dataset">
-                        <%get_datasets.each do |k,v|%>
-                           <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.selected_dataset('<%=v%>')"><%=k%></a></li> 
-                        <%end%>
-                      </ul>
+            <div class="panel panel-primary" >
+                <div class="panel-heading">STEP 1 : Select Dataset</div>
+                <div class="panel-body">
+                    <div class="row ">
+                        <div class="col-md-12">
+                            <div class="dropdown clear-dataset">
+                              <button class="btn btn-default dropdown-toggle clear-dataset" type="button" id="dd_select_dataset" data-toggle="dropdown">
+                                Select
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" role="menu" aria-labelledby="dd_select_dataset">
+                                <%get_datasets.each do |k,v|%>
+                                   <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.selected_dataset('<%=v%>')"><%=k%></a></li> 
+                                <%end%>
+                              </ul>
+                            </div>
+                            <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_dataset", :div_classes=>"done-dataset", :div_id=>"div_select_dataset", :remove_function=>"QueryBuilder.reset_dataset()", :hidden_value_value=>""}%>
+                        </div>
                     </div>
-                    <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_dataset", :div_classes=>"done-dataset", :div_id=>"div_select_dataset", :remove_function=>"QueryBuilder.reset_dataset()", :hidden_value_value=>""}%>
                 </div>
             </div>
-        </div>
+        </div> 
         <div class="col-md-3" id="div_qb_select_class" style="display:none;">
             <div class="row clear-search-class">
                 <div class="col-md-12 ">
