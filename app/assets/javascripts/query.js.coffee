@@ -11,6 +11,9 @@
 @get_sparql_result_rows = (data) ->
     return data.results.bindings
 
+@get_sparql_time_taken = (data) ->
+    return data.results.time_taken 
+
 @display_sparql_literal = (data) ->
     display_text = break_words(html_safe(data.value))
     unless data["xml:lang"] is undefined
@@ -37,6 +40,7 @@
     , (data) ->
         result_columns = get_sparql_result_columns(data)
         result_rows = get_sparql_result_rows(data)
+        $("#sparql_results_time_taken").html("Time taken : "+get_sparql_time_taken(data).toString()+"s")
         result_table = $("#sparql_results_table")
         result_table_header = "<tr><th>#</th>"
         $.each result_columns, (key,val) ->
