@@ -18,6 +18,9 @@ SPARQL = {
 	result : {
 		columns : function(data){
 			return data.head.vars;
+		},
+		rows : function(data){
+			return data.results.bindings;
 		}
 	}
 

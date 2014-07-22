@@ -5,9 +5,6 @@
 @generate_sample_query = (template_id)->
     $("#txt_sparql_query").html($("#txt_sample_query_"+template_id).html())
 
-@get_sparql_result_rows = (data) ->
-    return data.results.bindings
-
 @get_sparql_time_taken = (data) ->
     return data.results.time_taken 
 
@@ -36,7 +33,7 @@
     query: $("#txt_sparql_query").val()
     , (data) ->
         result_columns = SPARQL.result.columns(data)
-        result_rows = get_sparql_result_rows(data)
+        result_rows = SPARQL.result.rows(data)
         $("#sparql_results_time_taken").html("Time taken : "+get_sparql_time_taken(data).toString()+"s")
         result_table = $("#sparql_results_table")
         result_table_header = "<tr><th>#</th>"
