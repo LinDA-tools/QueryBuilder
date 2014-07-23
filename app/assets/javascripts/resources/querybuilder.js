@@ -20,7 +20,6 @@ QueryBuilder = {
         QueryBuilder.reset_searched_class();
     },
     search_classes : function(){
-        //show_loading();
         var search_string = $("#hdn_searched_class_value").val();
         var dataset = $("#hdn_qb_dataset").val();
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
@@ -68,15 +67,34 @@ QueryBuilder = {
                     $("#hdn_searched_class_value").val(searched_index);
                     QueryBuilder.search_classes();
                  }else{
-
+                    QueryBuilder.validate_searched_classes();
                  }
                 
             }
             else{
                 $("#hdn_searched_class_value").val("");
+                $("#tbl_classes_search_result").hide("fast");
             }
         }
+    },
+    validate_searched_classes : function(){
+        var search_strings = $("#txt_search_classes").val().trim().toLowerCase().split(" ");
+        $("#tbl_classes_search_result").find("a").each(function(index){
+            var a_value = $(this).html().toLowerCase();
+            var is_present = false;
+            for(var i=0;i<search_strings.length;i++){
+                if(a_value.indexOf(search_strings[i]) > -1){
+                    is_present = true;
+                    break;
+                }
+            }
+            if(is_present)
+                $(this).show();
+            else
+                $(this).hide();
+        });
     }
+
 
 };
     
