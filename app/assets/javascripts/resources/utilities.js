@@ -8,6 +8,11 @@ Utils = {
 	},
 	hide : function(e){
 		e.addClass('hide');
+	},
+	scroll_to : function(e){
+		$('html, body').animate({
+        	scrollTop: $(e).offset().top
+   	 	}, 500);
 	}
 
 };

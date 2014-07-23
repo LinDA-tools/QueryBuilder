@@ -49,7 +49,8 @@
                 result_rable_rows += display_sparql_row_entry(result_rows[row_counter-1][col])
             result_rable_rows += "</tr>" 
             result_table.find("tbody").first().append(result_rable_rows)
-        
+        Utils.scroll_to('#sparql_results_container'); 
+        return
     return
 
 @download_sparql_result_set = (type)->
