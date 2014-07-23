@@ -76,6 +76,7 @@ QueryBuilder = {
                 $("#hdn_searched_class_value").val("");
                 $("#tbl_classes_search_result").hide("fast");
                 $("#hdn_done_searching_class").val("false");
+                $("#qb_class_search_error").hide("fast");
             }
         }
     },
