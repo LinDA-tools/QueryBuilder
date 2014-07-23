@@ -1,22 +1,10 @@
 <div class="main-container panel panel-primary">
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-md-8">
-				<textarea rows="5" id="txt_sparql_query" class="form-control" style="width:100%;" placeholder="Type your SPARQL query here ..."></textarea>
-			</div>
-			<div class="col-md-1">
-				<button  type="button" class="btn btn-lg btn-success" onclick="execute_sparql_query()">Run !</button>
-			</div>
-			<div class="col-md-2" style="margin-left:20px;">
-				<button onclick="generate_sample_query('1')" type="button" class="btn btn-xs btn-info">Sample Query</button>
+			<div class="col-md-12">
+				<%=render :partial=>"query/sparql_query_editor", :locals=>{:mode=>"sparql"}%>
 			</div>
 		</div>
 		<%=render :partial=>"query/search_results"%>
 	</div>
-</div>
-<div class="hide">
-	<textarea rows="5" id="txt_sample_query_1" >PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?subject ?label 
-WHERE { ?subject rdfs:label ?label. 
-FILTER(langMatches(lang(?label), "EN"))} LIMIT 200</textarea>
 </div>
