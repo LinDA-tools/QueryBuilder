@@ -20,8 +20,8 @@ QueryBuilder = {
         QueryBuilder.reset_searched_class();
     },
     search_classes : function(){
-        show_loading();
-        var search_string = $("#txt_search_classes").val();
+        //show_loading();
+        var search_string = $("#hdn_searched_class_value").val();
         var dataset = $("#hdn_qb_dataset").val();
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
     },
@@ -57,6 +57,25 @@ QueryBuilder = {
     },
     hide_searched_query_results : function(){
         $("#sparql_results_container").hide("fast");
+    },
+    search_classes_change : function(){
+        var search = $("#txt_search_classes").val();
+        if(search != undefined){
+            search = search.trim();
+            if(search.length >= 3){
+                 var searched_index = search.substring(0,3);
+                 if(searched_index != $("#hdn_searched_class_value").val()){
+                    $("#hdn_searched_class_value").val(searched_index);
+                    QueryBuilder.search_classes();
+                 }else{
+
+                 }
+                
+            }
+            else{
+                $("#hdn_searched_class_value").val("");
+            }
+        }
     }
 
 };
