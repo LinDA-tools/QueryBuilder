@@ -13,6 +13,10 @@ Utils = {
 		$('html, body').animate({
         	scrollTop: $(e).offset().top
    	 	}, 500);
+	},
+	alert : function(message){
+		$("#alert_modal").find(".modal-body").first().html(message);
+		$("#alert_modal").modal("show");
 	}
 
 };
