@@ -67,7 +67,7 @@ QueryBuilder = {
                  if(searched_index != $("#hdn_searched_class_value").val()){
                     $("#hdn_searched_class_value").val(searched_index);
                     QueryBuilder.search_classes();
-                 }else{
+                 }else if($("#hdn_done_searching_class").val() == "true"){
                     QueryBuilder.classes.validate();
                  }
                 
@@ -75,6 +75,7 @@ QueryBuilder = {
             else{
                 $("#hdn_searched_class_value").val("");
                 $("#tbl_classes_search_result").hide("fast");
+                $("#hdn_done_searching_class").val("false");
             }
         }
     },
@@ -97,8 +98,20 @@ QueryBuilder = {
                 else
                     $(this).hide();
             });
+            QueryBuilder.classes.check_empty_error();
             
+        },
+        check_empty_error : function(){
+            if($("#tbl_classes_search_result").find("a:visible").length <= 0){
+                var search = $("#txt_search_classes").val().trim();
+                $("#qb_class_search_error").find(".alert").first().html("No classes found matching \""+search+"\"");
+                $("#qb_class_search_error").show();
+            }
+            else{
+                $("#qb_class_search_error").hide("fast");
+            }
         }
+    
     }
 
 
