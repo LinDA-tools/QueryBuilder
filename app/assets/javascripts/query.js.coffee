@@ -3,7 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 @generate_sample_query = (template_id)->
-    $("#txt_sparql_query").html($("#txt_sample_query_"+template_id).html())
+    $("#txt_sparql_query").val($("#txt_sample_query_"+template_id).html())
 
 @display_sparql_literal = (data) ->
     display_text = break_words(html_safe(data.value))

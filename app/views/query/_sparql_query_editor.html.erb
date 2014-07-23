@@ -11,9 +11,20 @@
 	</div>
 	<div class="panel-footer">
 	    <div class="row">
-	        <div class="col-md-12">
+	        <div class="col-md-9">
 	            <button  type="button" class="btn btn-lg btn-success" onclick="execute_sparql_query()"><span class="glyphicon glyphicon-play"></span>&nbsp;Run</button>
 	        </div>
+	        <%if mode == "sparql"%>
+		        <div class="col-md-3">
+		        	<button onclick="generate_sample_query('1')" type="button" class="btn btn-lg btn-info pull-right">Sample Query</button>
+		        </div>
+	        <%end%>
 	    </div>
 	</div>
+</div>
+<div class="hide">
+	<textarea rows="5" id="txt_sample_query_1" >PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?subject ?label 
+WHERE { ?subject rdfs:label ?label. 
+FILTER(langMatches(lang(?label), "EN"))} LIMIT 200</textarea>
 </div>
