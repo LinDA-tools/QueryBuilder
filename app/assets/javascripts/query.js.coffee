@@ -54,15 +54,6 @@
             return
         return
 
-@download_sparql_result_set = (type)->
-    if type is "csv"
-        window.open("http://localhost:8080/rdf2any/v1.0/convert/csv-converter.csv?query="+encodeURIComponent($("#txt_sparql_query").val()))
-    else if type is "rdb"
-        window.open("http://localhost:8080/rdf2any/v1.0/convert/rdb-converter.sql?query="+encodeURIComponent($("#txt_sparql_query").val()))
-    else if type is "pdf"
-        $.get get_server_address()+"/query/execute_sparql",
-            query: $("#txt_sparql_query").val()
-            pdf: "true"
 @show_sparql_download_modal =->
     if SPARQL.textbox.is_valid()
         $("#sparql_download_modal").modal("show")

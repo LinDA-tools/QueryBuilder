@@ -42,6 +42,12 @@ SPARQL = {
         },
         csv : function(){
             window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"/csv-converter.csv?query="+encodeURIComponent($("#txt_sparql_query").val()));
+        },
+        pdf : function(){
+            Utils.alert("The PDF download feature has not been implemented yet.");
+        },
+        json : function(){
+            Utils.alert("The JSON download feature has not been implemented yet.");
         }
     }
 
