@@ -20,6 +20,7 @@ QueryBuilder = {
         QueryBuilder.reset_searched_class();
     },
     search_classes : function(){
+        $("#qb_class_search_loading").show();
         var search_string = $("#hdn_searched_class_value").val();
         var dataset = $("#hdn_qb_dataset").val();
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
