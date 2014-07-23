@@ -85,6 +85,7 @@ QueryBuilder = {
         validate : function(){
             var search_strings = $("#txt_search_classes").val().trim().toLowerCase().split(" ");
             $("#tbl_classes_search_result").find("a").each(function(index){
+                $(this).html(QueryBuilder.classes.get_searched_result_item($(this)));
                 var a_value = $(this).html().toLowerCase();
                 var is_present = true;
                 for(var i=0;i<search_strings.length;i++){
@@ -92,9 +93,17 @@ QueryBuilder = {
                         is_present = false;
                         break;
                     }
+                    else{
+                        var start_index = a_value.indexOf(search_strings[i]);
+                        var end_index = start_index + search_strings[i].length ;
+                        a_value = a_value.splice(end_index, 0,'$');
+                        a_value = a_value.splice(start_index, 0,  '#');
+                    }
                 }
-                if(is_present)
+                if(is_present){
+                    $(this).html(a_value.replace(/\#/g,'<strong>').replace(/\$/g,'</strong>'));
                     $(this).show();
+                }
                 else
                     $(this).hide();
             });
@@ -110,6 +119,9 @@ QueryBuilder = {
             else{
                 $("#qb_class_search_error").hide("fast");
             }
+        },
+        get_searched_result_item : function(e){
+            return e.html().replace(/\<strong\>/g,'').replace(/\<\/strong\>/g,'');
         }
     
     }
