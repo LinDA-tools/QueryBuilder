@@ -38,7 +38,10 @@ SPARQL = {
     },
     download : {
         rdb : function(){
-            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"/rdb-converter.sql?query="+encodeURIComponent($("#txt_sparql_query").val()))
+            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"/rdb-converter.sql?query="+encodeURIComponent($("#txt_sparql_query").val()));
+        },
+        csv : function(){
+            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"/csv-converter.csv?query="+encodeURIComponent($("#txt_sparql_query").val()));
         }
     }
 
