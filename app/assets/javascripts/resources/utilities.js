@@ -17,6 +17,12 @@ Utils = {
 	alert : function(message){
 		$("#alert_modal").find(".modal-body").first().html(message);
 		$("#alert_modal").modal("show");
+	},
+	rdf2any : {
+		server : "http://localhost:8080/",
+		actions : {
+			convert : "rdf2any/v1.0/convert/"
+		} 
 	}
 
 };
