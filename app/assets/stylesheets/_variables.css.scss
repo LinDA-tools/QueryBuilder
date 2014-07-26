@@ -7,3 +7,9 @@ $brandPrimary: #428bca !default;
 $darkBlue : darken($brandPrimary, 20%) !default;
 $darkestBlue : darken($darkBlue, 10%) !default;
 $lightBlue : lighten($brandPrimary, 20%) !default;
+
+$grayDarker:  lighten(#000, 13.5%) !default; // #222
+$grayDark:    lighten(#000, 20%) !default;   // #333
+$gray:         lighten(#000, 33.5%) !default; // #555
+$grayLight:   lighten(#000, 46.7%) !default; // #777
+$grayLighter: lighten(#000, 93.5%) !default; // #eee
