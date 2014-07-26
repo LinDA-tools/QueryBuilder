@@ -31,6 +31,7 @@ QueryBuilder = {
         QueryBuilder.select_body($("#div_selected_class"),class_name);
         $("#hdn_qb_class").val(class_uri);
         QueryBuilder.show_equivalent_sparql_query();
+        QueryBuilder.properties.generate();
 
     },
     reset_searched_class : function(){
@@ -125,6 +126,12 @@ QueryBuilder = {
             return e.html().replace(/\<strong\>/g,'').replace(/\<\/strong\>/g,'');
         }
     
+    },
+
+    properties : {
+        generate : function(){
+            $("#div_qb_properties").show("fast");
+        }
     }
 
 
