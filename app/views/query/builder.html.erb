@@ -20,11 +20,11 @@
                                   </button>
                                   <ul class="dropdown-menu col-md-12" role="menu" aria-labelledby="dd_select_dataset">
                                     <%get_datasets.each do |k,v|%>
-                                       <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.selected_dataset('<%=v%>')"><%=k%></a></li> 
+                                       <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.datasets.select('<%=v%>')"><%=k%></a></li> 
                                     <%end%>
                                   </ul>
                                 </div>
-                                <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_dataset", :div_classes=>"done-dataset", :div_id=>"div_select_dataset", :remove_function=>"QueryBuilder.reset_dataset()", :hidden_value_value=>""}%>
+                                <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_dataset", :div_classes=>"done-dataset", :div_id=>"div_select_dataset", :remove_function=>"QueryBuilder.datasets.reset()", :hidden_value_value=>""}%>
                             </div>
                         </div>
                     </div>

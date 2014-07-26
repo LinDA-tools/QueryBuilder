@@ -3,22 +3,25 @@ if (typeof QueryBuilder == 'undefined') {
 }
 
 QueryBuilder = {
-    selected_dataset : function(dataset){
-        $("#div_qb_select_class").show("fast");
-        $("#dd_select_dataset").hide("fast");
-        QueryBuilder.select_body($("#div_select_dataset"),dataset);
-        $("#hdn_qb_dataset").attr("value",dataset);
+    datasets : {
+        reset : function(){
+            $(".done-dataset").hide("fast");
+            $("#div_qb_select_class").hide("fast");
+            $(".clear-dataset").show("fast");
+            QueryBuilder.reset_searched_class();
+        },
+        select : function(dataset){
+            $("#div_qb_select_class").show("fast");
+            $("#dd_select_dataset").hide("fast");
+            QueryBuilder.select_body($("#div_select_dataset"),dataset);
+            $("#hdn_qb_dataset").attr("value",dataset);
+        }
     },
     select_body : function(element,body){
         element.find(".select-body").first().html(body);
         element.show("fast");
     },
-    reset_dataset : function(){
-        $(".done-dataset").hide("fast");
-        $("#div_qb_select_class").hide("fast");
-        $(".clear-dataset").show("fast");
-        QueryBuilder.reset_searched_class();
-    },
+
     search_classes : function(){
         $("#qb_class_search_loading").show();
         var search_string = $("#hdn_searched_class_value").val();
@@ -43,6 +46,7 @@ QueryBuilder = {
         $("#hdn_qb_class").val("");
         QueryBuilder.hide_equivalent_sparql_query();
         QueryBuilder.hide_searched_query_results();
+        QueryBuilder.properties.hide();
     },
     show_equivalent_sparql_query : function(){
         var query = "";
@@ -131,6 +135,9 @@ QueryBuilder = {
     properties : {
         generate : function(){
             $("#div_qb_properties").show("fast");
+        },
+        hide : function(){
+           $("#div_qb_properties").hide("fast"); 
         }
     }
 
