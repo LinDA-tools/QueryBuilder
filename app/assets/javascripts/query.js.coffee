@@ -15,7 +15,7 @@
     uri_display = data.value
     if uri_display.length > 60
         uri_display = data.value.substring(0,60) + "..."
-    return "<td class='result-col-uri' uri=\""+data.value+"\"><a href=\""+data.value+"\" target='_blank'>"+uri_display+"</a></td>"
+    return "<td class='result-col-uri' uri=\""+data.value+"\"><a onclick=Utils.show_uri_viewer('"+data.value+"') class='clickable'>"+uri_display+"</a></td>"
 
 @display_sparql_row_entry = (data)->
     if data.type is "uri"

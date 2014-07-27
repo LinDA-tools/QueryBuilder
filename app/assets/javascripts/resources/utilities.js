@@ -23,6 +23,11 @@ Utils = {
 		actions : {
 			convert : "rdf2any/v1.0/convert/"
 		} 
+	},
+	show_uri_viewer : function(uri){
+		$("#iframe_uri_viewer").attr("src",uri);
+		$("#uri_viewer_modal").modal("show");
+		$("#a_uri_viewer_new_tab").attr("href",uri);
 	}
 
 };
