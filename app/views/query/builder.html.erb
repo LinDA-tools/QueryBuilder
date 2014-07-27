@@ -61,6 +61,11 @@
                                 <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_class", :div_classes=>"done-search-class", :div_id=>"div_selected_class", :remove_function=>"QueryBuilder.reset_searched_class()", :hidden_value_value=>""}%>
                             </div>
                         </div>
+                        <div class="row" id="div_classes_search_more" style="display:none;">
+                            <div class="col-md-12">
+                                <button class="btn btn-warning col-md-12" type="button" id="btn_classes_search_more">More details on </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="list-group" id="tbl_classes_search_result"></div>
                 </div>

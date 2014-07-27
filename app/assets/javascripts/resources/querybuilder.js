@@ -35,6 +35,9 @@ QueryBuilder = {
         $("#hdn_qb_class").val(class_uri);
         QueryBuilder.show_equivalent_sparql_query();
         QueryBuilder.properties.generate();
+        $("#div_classes_search_more").show("fast");
+        $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
+        $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
 
     },
     reset_searched_class : function(){
@@ -44,6 +47,7 @@ QueryBuilder = {
         $(".done-search-class").hide("fast");
         $("#txt_search_classes").val("");
         $("#hdn_qb_class").val("");
+        $("#div_classes_search_more").hide("fast");
         QueryBuilder.hide_equivalent_sparql_query();
         QueryBuilder.hide_searched_query_results();
         QueryBuilder.properties.hide();

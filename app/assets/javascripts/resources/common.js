@@ -50,7 +50,15 @@ $(document).ready(function() {
   $('.dropdown-toggle').dropdown();
 });
 
-
+function truncate(string, length, o)
+{
+  if(string.length <= length){
+    return string;
+  }
+  else{
+    return string.substring(0,length)+o;
+  }
+}
 String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
