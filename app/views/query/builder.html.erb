@@ -92,9 +92,8 @@
                         <a class="list-group-item property-subclass-group" href="javascript:void(0)" onclick="QueryBuilder.properties.select_subclass('all')" uri="all" clicked='true' display-name="All"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;<strong>All</strong></a>
                     </div>
                     <div class="row" id="qb_properties_sub_classes_loading" style="display:none;">
-                            <div class="col-md-12">
-                                <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
-                            </div>
+                        <div class="col-md-12">
+                            <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
                         </div>
                     </div>
                 </div>    
@@ -110,12 +109,7 @@
     </div>
     
 </div>
-<div class="row" id="template_row_loading" style="display:none;">
-        <div class="col-md-12">
-            <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
-        </div>
-    </div>
-</div>
+
 <script>
     $(function () {
         $('.dropdown-toggle').dropdown();
