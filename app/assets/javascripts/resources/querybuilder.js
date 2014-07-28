@@ -56,13 +56,18 @@ QueryBuilder = {
         QueryBuilder.hide_searched_query_results();
         QueryBuilder.properties.reset();
     },
-    show_equivalent_sparql_query : function(){
+    generate_equivalent_sparql_query : function(){
         var query = "";
         query += SPARQL.prefix.rdf;
         query += SPARQL.prefix.rdfs;
         query += "SELECT ?concept ?label WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">.\n ?concept rdfs:label ?label.\n";
+        query += QueryBuilder.properties.get_subclasses_triples();
         query += "FILTER(langMatches(lang(?label), \"EN\"))}\n LIMIT 200";
         $("#txt_sparql_query").val(query);
+    }
+    ,
+    show_equivalent_sparql_query : function(){
+        QueryBuilder.generate_equivalent_sparql_query();
         $(".qb-equivalent-query-main").show("fast");
     },
     hide_equivalent_sparql_query : function(){
@@ -163,7 +168,36 @@ QueryBuilder = {
         get_subclasses_for_selected_class : function(){
             QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
         },
+        get_subclasses_triples : function(){
+            var result = "";
+            var all = false;
+            $(".property-subclass-group").each(function(index){
+                if($(this).attr("clicked") == "true")
+                    all = true;
+            });
+            if(!all){
+                var subclasses = [];
+                $(".property-subclass-individual").each(function(index){
+                    if($(this).attr("clicked") == "true"){
+                        all = false;
+                        subclasses.push("<"+$(this).attr("uri")+">");
+                    }
+                        
+                });
+                if(!all){
+                    for(var i=0;i < subclasses.length ; i++){
+                        if(result != "")
+                            result += "UNION \n"
+                        result += "{?concept rdf:type "+subclasses[i]+"} ";
+                    }
+                    result += " .\n"
+                }
+            }
+
+            return result;
+        },
         select_subclass : function(uri){
+
             $("#property_main_subclasses_group").find(".list-group-item").each(function(index){
                 var html = "";
                 if($(this).attr("uri") == uri){
@@ -192,6 +226,7 @@ QueryBuilder = {
                     $(this).html(html);       
                 }
             });
+            QueryBuilder.generate_equivalent_sparql_query();
         }
     }
 
