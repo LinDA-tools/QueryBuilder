@@ -1,0 +1,11 @@
+$("#qb_properties_sub_classes_loading").hide("fast");
+$(".property-subclass-header").each(function(index){
+	if($(this).attr("uri") == "<%=params[:class_uri]%>" ){
+		$(this).after("<div class=\"list-group\" ></div>");
+		var list_group = $(this).next();
+		<%@subclasses.each do |sc|%>
+			var html = "<a class='property-subclass-header list-group-item' uri='<%=sc[:uri]%>'><%=sc[:name]%></a>";
+			$(list_group).append(html);
+		<%end%>
+	}
+});

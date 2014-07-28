@@ -41,6 +41,7 @@ QueryBuilder = {
         $("#div_classes_search_more").show("fast");
         $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
         $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
+        $("#property_main_subclass_header").attr("uri",class_uri);
         QueryBuilder.properties.get_subclasses(class_uri);
     },
     reset_searched_class : function(){
