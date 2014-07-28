@@ -157,10 +157,13 @@ QueryBuilder = {
         },
         reset : function(){
             QueryBuilder.properties.hide();
+            QueryBuilder.properties.reset_subclasses();
+        },
+        reset_subclasses : function(){
             $(".property-subclass-individual").remove();
             $("#property_main_subclass_header").find("button").first().show();
-        }
-        ,
+            $(".property-subclass-group").click();
+        },
         get_subclasses : function(class_uri){
             $("#qb_properties_sub_classes_loading").show();
             $.get("/query/subclasses.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+class_uri);
@@ -179,12 +182,11 @@ QueryBuilder = {
                 var subclasses = [];
                 $(".property-subclass-individual").each(function(index){
                     if($(this).attr("clicked") == "true"){
-                        all = false;
                         subclasses.push("<"+$(this).attr("uri")+">");
                     }
                         
                 });
-                if(!all){
+                if(subclasses.length > 0){
                     for(var i=0;i < subclasses.length ; i++){
                         if(result != "")
                             result += "UNION \n"
