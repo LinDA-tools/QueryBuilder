@@ -151,7 +151,7 @@ QueryBuilder = {
            $("#div_qb_properties").hide("fast"); 
         },
         get_subclasses : function(class_uri){
-            $("#qb_properties_sub_classes_loading").show("fast");
+            $("#qb_properties_sub_classes_loading").show();
             $.get("/query/subclasses.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+class_uri);
         },
         get_subclasses_for_selected_class : function(){
