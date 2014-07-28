@@ -162,6 +162,26 @@ QueryBuilder = {
         },
         get_subclasses_for_selected_class : function(){
             QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
+        },
+        select_subclass : function(uri){
+            
+            $("#property_main_subclasses_group").find(".list-group-item").each(function(index){
+                var html = "";
+                if($(this).attr("uri") == uri){
+                    if($(this).attr("clicked") == "true"){
+                        $(this).attr("clicked","false");
+                    }else{
+                        html += "<span class='glyphicon glyphicon-ok'></span>&nbsp;&nbsp;";
+                        $(this).attr("clicked","true");
+                    }
+                    if(uri == "all")
+                            html += "<strong>"
+                    html += $(this).attr("display-name");
+                    if(uri == "all")
+                        html += "</strong>";
+                    $(this).html(html);       
+                }
+            });
         }
     }
 
