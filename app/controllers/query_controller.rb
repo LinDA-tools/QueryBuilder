@@ -1,4 +1,5 @@
 include QueryHelper
+include ApplicationHelper
 class QueryController < ApplicationController
   def sparql
   	respond_to do |format|
@@ -31,6 +32,13 @@ class QueryController < ApplicationController
 
   def builder_classes
     @searched_classes = search_classes(params[:dataset],params[:search])
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def subclasses
+    @subclasses = get_sublasses_of_class(params[:dataset],params[:class_uri])
     respond_to do |format|
       format.js
     end

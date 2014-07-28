@@ -78,7 +78,19 @@
                                 <strong>STEP 3 :</strong> FILTER Properties
                             </div>
                             <div class="panel-body">
-                            <div class="row" id="qb_properties_loading" >
+                                <small>You can filter properties from various options here</small>
+                            </div>
+                            <div class="panel-heading alert" >
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        Sub-Classes
+                                    </div>
+                                    <div class="col-md-3">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" id="qb_properties_sub_classes_loading" >
                                     <div class="col-md-12">
                                         <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
                                     </div>
@@ -111,6 +123,12 @@
         <%=render :partial=>"query/search_results"%>
     </div>
     
+</div>
+<div class="row" id="template_row_loading" style="display:none;">
+        <div class="col-md-12">
+            <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
+        </div>
+    </div>
 </div>
 <script>
     $(function () {

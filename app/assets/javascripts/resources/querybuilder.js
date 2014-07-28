@@ -15,6 +15,9 @@ QueryBuilder = {
             $("#dd_select_dataset").hide("fast");
             QueryBuilder.select_body($("#div_select_dataset"),dataset);
             $("#hdn_qb_dataset").attr("value",dataset);
+        },
+        get_selected : function(){
+            return $("#hdn_qb_dataset").val();
         }
     },
     select_body : function(element,body){
@@ -38,7 +41,7 @@ QueryBuilder = {
         $("#div_classes_search_more").show("fast");
         $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
         $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
-
+        QueryBuilder.properties.get_subclasses(class_uri);
     },
     reset_searched_class : function(){
         $(".clear-search-class").show("fast");
@@ -142,6 +145,9 @@ QueryBuilder = {
         },
         hide : function(){
            $("#div_qb_properties").hide("fast"); 
+        },
+        get_subclasses : function(class_uri){
+            $.get("/query/subclasses.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+class_uri);
         }
     }
 

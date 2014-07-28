@@ -40,4 +40,25 @@ module QueryHelper
    		end
 		classes
 	end
+
+	def get_sublass_search_query(class_uri)
+		query = get_sparql_prefixes
+		query += " SELECT ?subclass_uri ?subclass_label WHERE {?subclass_uri rdfs:subClassOf <"+class_uri+">. ?subclass_uri rdfs:label ?subclass_label.  FILTER(langMatches(lang(?subclass_label), 'EN')) }"
+		return query
+	end
+
+	#This method returns the subclasses of a class_uri
+	def get_sublasses_of_class(dataset, class_uri)
+		query = get_sublass_search_query(class_uri)
+		classes = []
+		classes_json = get_sparql_result(dataset, query)
+		unless classes_json["results"].blank?
+			unless classes_json["results"]["bindings"].blank?
+				classes_json["results"]["bindings"].each do |b|
+					classes << {:uri=>b["subclass_uri"]["value"], :name=>b["subclass_label"]["value"]}
+				end
+			end
+		end
+		return classes
+	end
 end
