@@ -54,7 +54,7 @@ QueryBuilder = {
         $("#div_classes_search_more").hide("fast");
         QueryBuilder.hide_equivalent_sparql_query();
         QueryBuilder.hide_searched_query_results();
-        QueryBuilder.properties.hide();
+        QueryBuilder.properties.reset();
     },
     show_equivalent_sparql_query : function(){
         var query = "";
@@ -150,6 +150,12 @@ QueryBuilder = {
         hide : function(){
            $("#div_qb_properties").hide("fast"); 
         },
+        reset : function(){
+            QueryBuilder.properties.hide();
+            $(".property-subclass-individual").remove();
+            $("#property_main_subclass_header").find("button").first().show();
+        }
+        ,
         get_subclasses : function(class_uri){
             $("#qb_properties_sub_classes_loading").show();
             $.get("/query/subclasses.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+class_uri);
