@@ -42,7 +42,7 @@ QueryBuilder = {
         $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
         $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
         $("#property_main_subclass_header").attr("uri",class_uri);
-        QueryBuilder.properties.get_subclasses(class_uri);
+        //QueryBuilder.properties.get_subclasses(class_uri);
     },
     reset_searched_class : function(){
         $(".clear-search-class").show("fast");
@@ -136,6 +136,9 @@ QueryBuilder = {
         },
         get_searched_result_item : function(e){
             return e.html().replace(/\<strong\>/g,'').replace(/\<\/strong\>/g,'');
+        },
+        get_selected_class : function(){
+            return $("#hdn_qb_class").val();
         }
     
     },
@@ -148,7 +151,11 @@ QueryBuilder = {
            $("#div_qb_properties").hide("fast"); 
         },
         get_subclasses : function(class_uri){
+            $("#qb_properties_sub_classes_loading").show("fast");
             $.get("/query/subclasses.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+class_uri);
+        },
+        get_subclasses_for_selected_class : function(){
+            QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
         }
     }
 
