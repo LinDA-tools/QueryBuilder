@@ -164,7 +164,6 @@ QueryBuilder = {
             QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
         },
         select_subclass : function(uri){
-            
             $("#property_main_subclasses_group").find(".list-group-item").each(function(index){
                 var html = "";
                 if($(this).attr("uri") == uri){
@@ -173,6 +172,17 @@ QueryBuilder = {
                     }else{
                         html += "<span class='glyphicon glyphicon-ok'></span>&nbsp;&nbsp;";
                         $(this).attr("clicked","true");
+                        if(uri == "all"){
+                            $(".property-subclass-individual").each(function(i){
+                                $(this).attr("clicked","false");
+                                $(this).html($(this).attr("display-name"));
+                            });
+                        }else{
+                            $(".property-subclass-group").each(function(i){
+                                $(this).attr("clicked","false");
+                                $(this).html($(this).attr("display-name"));
+                            });
+                        }
                     }
                     if(uri == "all")
                             html += "<strong>"
