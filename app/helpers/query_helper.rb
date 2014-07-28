@@ -55,7 +55,7 @@ module QueryHelper
 		unless classes_json["results"].blank?
 			unless classes_json["results"]["bindings"].blank?
 				classes_json["results"]["bindings"].each do |b|
-					classes << {:uri=>b["subclass_uri"]["value"], :name=>b["subclass_label"]["value"]}
+					classes << {:uri=>b["subclass_uri"]["value"], :name=>b["subclass_label"]["value"].capitalize}
 				end
 			end
 		end
