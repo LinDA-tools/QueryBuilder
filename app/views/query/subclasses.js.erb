@@ -4,7 +4,7 @@ $(".property-subclass-header").each(function(index){
 		$(this).after("<div class=\"list-group\" ></div>");
 		var list_group = $(this).next();
 		<%@subclasses.each do |sc|%>
-			var html = "<a class='property-subclass-header list-group-item' uri='<%=sc[:uri]%>'><%=sc[:name]%></a>";
+			var html = "<a href='javascript:void(0);' class='property-subclass-header list-group-item' uri='<%=sc[:uri]%>'><%=sc[:name].capitalize%></a>";
 			$(list_group).append(html);
 		<%end%>
 	}

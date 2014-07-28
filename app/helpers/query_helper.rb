@@ -59,6 +59,6 @@ module QueryHelper
 				end
 			end
 		end
-		return classes
+		return classes.uniq
 	end
 end
