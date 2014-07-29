@@ -110,16 +110,20 @@
                                             <div class="col-md-9">
                                                 Properties
                                             </div>
-                                            <div class="col-md-3">
-                                                <button type="button" class="btn btn-primary btn-xs" onclick="QueryBuilder.properties.get_properties_for_selected_class(true)" id="btn_properties_properties_more">more</button>
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="panel-body">
                                         <small> Filter some specific properties of the selected class</small>
                                     </div>
                                     <div class="panel-heading alert">
-                                        Object Properties
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                Object Properties
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-primary btn-xs" onclick="QueryBuilder.properties.get_properties_for_selected_class(true,'object')" id="btn_properties_properties_object_more">more</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="list-group" id="property_main_properties_object_group" > 
 
@@ -130,7 +134,14 @@
                                         </div>
                                     </div>
                                     <div class="panel-heading alert">
-                                        Data type Properties
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                Data type Properties
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-primary btn-xs" onclick="QueryBuilder.properties.get_properties_for_selected_class(true,'datatype')" id="btn_properties_properties_datatype_more">more</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="list-group" id="property_main_properties_datatype_group" > 
 

@@ -181,7 +181,7 @@ QueryBuilder = {
         get_properties_for_selected_class : function(all, type){
             $("#qb_properties_properties_"+type+"_loading").show();
             if(all)
-                $("#btn_properties_properties_more").hide("fast");
+                $("#btn_properties_properties_"+type+"_more").hide("fast");
             $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class()+"&all="+all.toString()+"&type="+type);
         },
         get_subclasses_triples : function(){

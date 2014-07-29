@@ -1,6 +1,10 @@
 $("#qb_properties_properties_<%=@type%>_loading").hide("fast");
 $("#property_main_properties_<%=@type%>_group").html("");
 var list_group = $("#property_main_properties_<%=@type%>_group");
+<%if @properties.size < 5%>
+	$("#btn_properties_properties_<%=@type%>_more").hide("fast");
+<%end%>	
+
 <%@properties.each do |sc|%>
 	var html = "<a href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=sc[:uri]%>' display-name='<%=sc[:name]%>' clicked='false' ><%=sc[:name]%></a>";
 	$(list_group).append(html);
