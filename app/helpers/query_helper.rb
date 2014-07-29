@@ -56,7 +56,11 @@ module QueryHelper
 			query += " ?property rdf:type owl:DatatypeProperty. "
 		end
 		query += " FILTER(langMatches(lang(?label), 'EN'))} "
-		query += " LIMIT 5" unless all
+		if all
+			query += " LIMIT 40"
+		else
+			query += " LIMIT 5" 
+		end
 		query
 	end
 
