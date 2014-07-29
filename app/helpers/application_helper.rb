@@ -24,4 +24,12 @@ module ApplicationHelper
 		uri = get_uri(get_rdf2any_convert_url + "json?dataset="+dataset+"&query="+query)
 		return HTTParty.get(uri)
 	end
+
+	def is_sparql_result_empty?(resultset)
+		result = true
+		unless resultset["results"].blank?
+			result = false unless resultset["results"]["bindings"].blank?
+		end
+		result
+	end
 end
