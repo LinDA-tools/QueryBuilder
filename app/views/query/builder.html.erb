@@ -114,6 +114,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -122,10 +123,14 @@
                                         Property
                                     </div>
                                     <div class="panel-body">
-                                        <div class="row" >
-                                            <div class="col-md-12">
-                                                <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
-                                            </div>
+                                        <small> Filter some specific properties of the selected class</small>
+                                    </div>
+                                    <div class="list-group" id="property_main_properties_group" subclasses="all"> 
+
+                                    </div>
+                                    <div class="row" id="qb_properties_properties_loading">
+                                        <div class="col-md-12">
+                                            <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
                                         </div>
                                     </div>
                                 </div>

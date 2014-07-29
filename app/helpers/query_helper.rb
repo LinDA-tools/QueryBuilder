@@ -49,7 +49,7 @@ module QueryHelper
 
 	def get_class_properties_query(class_uri)
 		query = get_sparql_prefixes
-		query += "SELECT DISTINCT ?property ?label WHERE { ?concept rdf:type <"+class_uri+">. ?concept ?property ?o. ?property rdfs:label ?label. FILTER(langMatches(lang(?label), 'EN'))} "
+		query += "SELECT DISTINCT ?property ?label WHERE { ?concept rdf:type <"+class_uri+">. ?concept ?property ?o. ?property rdfs:label ?label. FILTER(langMatches(lang(?label), 'EN'))} LIMIT 5"
 		query
 	end
 
@@ -67,11 +67,13 @@ module QueryHelper
 	end
 
 	#This method returns the class properties
-	def get_class_properties(dataset, class_uri)
+	def get_properties_of_class(dataset, class_uri)
 		properties = []
 		properties_json = get_sparql_result(dataset,get_class_properties_query(class_uri))
 		unless is_sparql_result_empty?(properties_json)
-			properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"].capitalize}
+			properties_json["results"]["bindings"].each do |b|
+				properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"].capitalize}
+			end
 		end
 		properties.uniq
 	end

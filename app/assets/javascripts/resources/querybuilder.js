@@ -37,10 +37,10 @@ QueryBuilder = {
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
     },
     select_class : function(class_uri, class_name){
+        $("#hdn_qb_class").val(class_uri);
         $("#tbl_classes_search_result").hide("fast");
         $(".clear-search-class").hide("fast");
         QueryBuilder.select_body($("#div_selected_class"),class_name);
-        $("#hdn_qb_class").val(class_uri);
         QueryBuilder.show_equivalent_sparql_query();
         QueryBuilder.properties.generate();
         $("#div_classes_search_more").show("fast");
@@ -155,6 +155,7 @@ QueryBuilder = {
     //the methods related to properties
     properties : {
         generate : function(){
+            QueryBuilder.properties.get_properties_for_selected_class();
             $("#div_qb_properties").show("fast");
         },
         hide : function(){
@@ -175,6 +176,9 @@ QueryBuilder = {
         },
         get_subclasses_for_selected_class : function(){
             QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
+        },
+        get_properties_for_selected_class : function(){
+            $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class());
         },
         get_subclasses_triples : function(){
             var result = "";

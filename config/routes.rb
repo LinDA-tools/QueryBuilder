@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   get 'query/builder_classes'
   get 'query/subclasses'
+  get 'query/class_properties'
 
   root :to => 'query#sparql'
 

@@ -44,6 +44,13 @@ class QueryController < ApplicationController
     end
   end
 
+  def class_properties
+    @properties = get_properties_of_class(params[:dataset],params[:class_uri])
+    respond_to do |format|
+      format.js
+    end
+  end
+
   private 
     def generate_pdf(data)
         html = "hello world"
