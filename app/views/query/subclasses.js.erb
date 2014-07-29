@@ -1,7 +1,6 @@
 $("#qb_properties_sub_classes_loading").hide("fast");
 $("#property_main_subclass_header").find("button").first().hide("fast");
-		
-	var list_group = $("#property_main_subclasses_group").find(".list-group-item").first();
+var list_group = $("#property_main_subclasses_group").find(".list-group-item").first();
 <%@subclasses.each do |sc|%>
 	var html = "<a href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=sc[:uri]%>' display-name='<%=sc[:name]%>' clicked='false' onclick=\"QueryBuilder.properties.select_subclass('<%=sc[:uri]%>')\"><%=sc[:name]%></a>";
 	$(list_group).after(html);

@@ -3,19 +3,24 @@ if (typeof QueryBuilder == 'undefined') {
 }
 
 QueryBuilder = {
+    //The methods related to datasets
     datasets : {
+        //this method resets the dataset selected
         reset : function(){
             $(".done-dataset").hide("fast");
             $("#div_qb_select_class").hide("fast");
             $(".clear-dataset").show("fast");
             QueryBuilder.reset_searched_class();
         },
+        //this method is called when the dataset is selected from the dropdown list
         select : function(dataset){
             $("#div_qb_select_class").show("fast");
             $("#dd_select_dataset").hide("fast");
             QueryBuilder.select_body($("#div_select_dataset"),dataset);
             $("#hdn_qb_dataset").attr("value",dataset);
         },
+        //this method returns the selected dataset
+        //return String
         get_selected : function(){
             return $("#hdn_qb_dataset").val();
         }
@@ -24,7 +29,7 @@ QueryBuilder = {
         element.find(".select-body").first().html(body);
         element.show("fast");
     },
-
+    //This method calls the ajax method to search for the classes
     search_classes : function(){
         $("#qb_class_search_loading").show();
         var search_string = $("#hdn_searched_class_value").val();
@@ -42,7 +47,6 @@ QueryBuilder = {
         $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
         $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
         $("#property_main_subclass_header").attr("uri",class_uri);
-        //QueryBuilder.properties.get_subclasses(class_uri);
     },
     reset_searched_class : function(){
         $(".clear-search-class").show("fast");
@@ -99,7 +103,7 @@ QueryBuilder = {
         }
     },
 
-
+    //The methods related to classes
     classes : {
         validate : function(){
             var search_strings = $("#txt_search_classes").val().trim().toLowerCase().split(" ");
@@ -148,6 +152,7 @@ QueryBuilder = {
     
     },
 
+    //the methods related to properties
     properties : {
         generate : function(){
             $("#div_qb_properties").show("fast");
