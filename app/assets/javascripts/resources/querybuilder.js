@@ -155,7 +155,7 @@ QueryBuilder = {
     //the methods related to properties
     properties : {
         generate : function(){
-            QueryBuilder.properties.get_properties_for_selected_class();
+            QueryBuilder.properties.get_properties_for_selected_class(false);
             $("#div_qb_properties").show("fast");
         },
         hide : function(){
@@ -177,8 +177,11 @@ QueryBuilder = {
         get_subclasses_for_selected_class : function(){
             QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
         },
-        get_properties_for_selected_class : function(){
-            $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class());
+        get_properties_for_selected_class : function(all){
+            $("#qb_properties_properties_loading").show();
+            if(all)
+                $("#btn_properties_properties_more").hide("fast");
+            $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class()+"&all="+all.toString());
         },
         get_subclasses_triples : function(){
             var result = "";

@@ -1,4 +1,5 @@
 $("#qb_properties_properties_loading").hide("fast");
+$("#property_main_properties_group").html("");
 var list_group = $("#property_main_properties_group");
 <%@properties.each do |sc|%>
 	var html = "<a href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=sc[:uri]%>' display-name='<%=sc[:name]%>' clicked='false' ><%=sc[:name]%></a>";
