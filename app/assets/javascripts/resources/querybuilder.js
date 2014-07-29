@@ -244,6 +244,11 @@ QueryBuilder = {
                 }
             });
             QueryBuilder.generate_equivalent_sparql_query();
+        },
+        //This function is called when a property is clicked 
+        // type is "object" or "datatype"
+        property_click : function(uri, type){
+            Utils.show_uri_viewer(uri);
         }
     }
 
