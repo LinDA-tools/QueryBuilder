@@ -156,6 +156,7 @@ QueryBuilder = {
     properties : {
         generate : function(){
             QueryBuilder.properties.get_properties_for_selected_class(false,"object");
+            QueryBuilder.properties.get_properties_for_selected_class(false,"datatype");
             $("#div_qb_properties").show("fast");
         },
         hide : function(){
@@ -178,7 +179,7 @@ QueryBuilder = {
             QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
         },
         get_properties_for_selected_class : function(all, type){
-            $("#qb_properties_properties_loading").show();
+            $("#qb_properties_properties_"+type+"_loading").show();
             if(all)
                 $("#btn_properties_properties_more").hide("fast");
             $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class()+"&all="+all.toString()+"&type="+type);
