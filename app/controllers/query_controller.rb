@@ -45,7 +45,9 @@ class QueryController < ApplicationController
   end
 
   def class_properties
-    @properties = get_properties_of_class(params[:dataset],params[:class_uri])
+    search_all = false
+    search_all = true if params[:all] == "true"
+    @properties = get_properties_of_class(params[:dataset],params[:class_uri], search_all)
     respond_to do |format|
       format.js
     end
