@@ -65,32 +65,46 @@
                     <div class="list-group" id="tbl_classes_search_result"></div>
                 </div>
             </div>
-            <div class="col-md-4" style="display:none" id="div_qb_properties">
+           
+        </div>
+        <div class="row" style="display:none;" id="div_qb_properties">
+            <div class="col-md-12"  >
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <strong>STEP 3 :</strong> FILTER Properties
                     </div>
                     <div class="panel-body">
-                        <small>You can filter properties from various options here</small>
-                    </div>
-                    <div class="panel-heading alert property-subclass-header" uri="" id="property_main_subclass_header">
                         <div class="row">
-                            <div class="col-md-9">
-                                Sub-Classes
+                            <div class="col-md-12">
+                                <small>You can filter properties from various options here</small>
                             </div>
-                            <div class="col-md-3">
-                                <button type="button" class="btn btn-primary btn-xs" onclick="QueryBuilder.properties.get_subclasses_for_selected_class()">more</button>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading alert property-subclass-header" uri="" id="property_main_subclass_header">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                Sub-Classes
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-primary btn-xs" onclick="QueryBuilder.properties.get_subclasses_for_selected_class()">more</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="list-group" id="property_main_subclasses_group" subclasses="all"> 
+                                        <a class="list-group-item property-subclass-group" href="javascript:void(0)" onclick="QueryBuilder.properties.select_subclass('all')" uri="all" clicked='true' display-name="All"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;<strong>All</strong></a>
+                                    </div>
+                                    <div class="row" id="qb_properties_sub_classes_loading" style="display:none;">
+                                        <div class="col-md-12">
+                                            <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="list-group" id="property_main_subclasses_group" subclasses="all"> 
-                        <a class="list-group-item property-subclass-group" href="javascript:void(0)" onclick="QueryBuilder.properties.select_subclass('all')" uri="all" clicked='true' display-name="All"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;<strong>All</strong></a>
-                    </div>
-                    <div class="row" id="qb_properties_sub_classes_loading" style="display:none;">
-                        <div class="col-md-12">
-                            <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
-                        </div>
-                    </div>
+
                 </div>    
             </div>
         </div>
