@@ -89,7 +89,7 @@ module QueryHelper
 		properties_json = get_sparql_result(dataset,get_class_properties_query(class_uri, type, all))
 		unless is_sparql_result_empty?(properties_json)
 			properties_json["results"]["bindings"].each do |b|
-				properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"].capitalize}
+				properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"]}
 			end
 		end
 		properties.uniq
@@ -101,7 +101,7 @@ module QueryHelper
 		properties_json = get_sparql_result(dataset,get_class_schema_properties_query(class_uri))
 		unless is_sparql_result_empty?(properties_json)
 			properties_json["results"]["bindings"].each do |b|
-				properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"].capitalize}
+				properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"]}
 			end
 		end
 		properties.uniq

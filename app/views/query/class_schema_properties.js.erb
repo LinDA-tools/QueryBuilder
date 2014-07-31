@@ -2,6 +2,6 @@ $("#qb_properties_schema_properties_loading").hide("fast");
 $("#property_main_schema_properties_group").html("");
 var list_group = $("#property_main_schema_properties_group");
 <%@properties.each do |sc|%>
-	var html = "<a href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=sc[:uri]%>' display-name='<%=sc[:name]%>' clicked='false' onclick=\"QueryBuilder.properties.property_click('<%=sc[:uri]%>','<%=@type%>')\" ><%=sc[:name]%></a>";
+	var html = "<a href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=sc[:uri]%>' display-name='<%=sc[:name]%>' clicked='false' onclick=\"QueryBuilder.properties.property_click('<%=sc[:uri]%>','<%=sc[:name]%>','<%=@type%>')\" ><%=sc[:name]%></a>";
 	$(list_group).append(html);
 <%end%>
