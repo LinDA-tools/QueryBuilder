@@ -63,6 +63,13 @@ class QueryController < ApplicationController
     end
   end
 
+  def property_ranges
+    @property_ranges = get_property_ranges(params[:dataset], params[:property_uri])
+    respond_to do |format|
+      format.js
+    end
+  end
+
   private 
     def generate_pdf(data)
         html = "hello world"

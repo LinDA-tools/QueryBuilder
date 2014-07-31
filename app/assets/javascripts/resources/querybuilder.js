@@ -255,7 +255,8 @@ QueryBuilder = {
         //This function is called when a property is clicked 
         // type is "object" or "datatype"
         property_click : function(uri, type){
-            Utils.show_uri_viewer(uri);
+            show_loading();
+            $.get("/query/property_ranges.js?property_uri="+uri+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected());
         }
     }
 

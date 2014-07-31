@@ -107,4 +107,21 @@ module QueryHelper
 		properties.uniq
 	end
 
+	#This method gets the property details of a property
+	#Return {:type=>String, :data=> [{:value, :name}]}
+	def get_property_ranges(dataset, property_uri)
+		query = get_sparql_prefixes
+		query += " SELECT ?class ?label WHERE { <"+property_uri+"> rdfs:range ?class.  ?class rdfs:label ?label. FILTER(langMatches(lang(?label), 'EN')) }"
+		property_ranges = {:type=>nil,:data=>[]}
+		property_ranges_json = get_sparql_result(dataset, query)
+		unless is_sparql_result_empty?(property_ranges_json)
+			property_ranges_json["results"]["bindings"].each do |b|
+				property_ranges[:type] =  b["class"]["type"]
+				property_ranges[:data] << {:value=>b["class"]["value"], :name=>b["label"]["value"]}
+			end
+		end
+		property_ranges[:data] = property_ranges[:data].uniq
+		property_ranges
+	end
+
 end
