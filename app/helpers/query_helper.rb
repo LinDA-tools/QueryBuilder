@@ -66,7 +66,7 @@ module QueryHelper
 
 	def get_class_schema_properties_query(class_uri)
 		query = get_sparql_prefixes
-		query = "?property ?label WHERE { ?prop rdfs:domain <"+class_uri+">. ?property rdfs:range ?range.  ?property rdfs:label ?label. FILTER(langMatches(lang(?label), 'EN')) }"
+		query += " SELECT DISTINCT ?property ?label WHERE { ?property rdfs:domain <"+class_uri+">. ?property rdfs:range ?range.  ?property rdfs:label ?label. FILTER(langMatches(lang(?label), 'EN')) }"
 		query
 	end
 

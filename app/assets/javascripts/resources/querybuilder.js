@@ -157,6 +157,7 @@ QueryBuilder = {
         generate : function(){
             QueryBuilder.properties.get_properties_for_selected_class(false,"object");
             QueryBuilder.properties.get_properties_for_selected_class(false,"datatype");
+            QueryBuilder.properties.get_schema_properties_for_selected_class();
             $("#div_qb_properties").show("fast");
         },
         hide : function(){
@@ -185,6 +186,12 @@ QueryBuilder = {
             else
                 $("#btn_properties_properties_"+type+"_more").show("fast");
             $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class()+"&all="+all.toString()+"&type="+type);
+        },
+        get_schema_properties_for_selected_class : function(){
+            $("#property_main_schema_properties_group").html("");
+            $("#qb_properties_schema_properties_loading").show();
+            $.get("/query/class_schema_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class());
+
         },
         get_subclasses_triples : function(){
             var result = "";
