@@ -32,4 +32,11 @@ module ApplicationHelper
 		end
 		result
 	end
+
+	def get_datatype_type(uri)
+		type = ""
+		sp = uri.split("#")
+		type = sp[1] if sp.size == 2
+		type
+	end
 end

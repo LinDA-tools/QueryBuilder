@@ -124,7 +124,7 @@ module QueryHelper
 				if type == "object"
 					property_ranges[:data] << {:value=>b["class"]["value"], :name=>b["label"]["value"]}
 				else
-					property_ranges[:data] << {:value=>b["class"]["value"], :name=>b["class"]["type"]}
+					property_ranges[:data] << {:value=>b["class"]["value"], :name=>get_datatype_type(b["class"]["value"])}
 				end
 			end
 		end
