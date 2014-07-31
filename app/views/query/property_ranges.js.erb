@@ -1,5 +1,9 @@
 hide_loading();
 var selector_modal = $("#class_selector_modal")
-selector_modal.find(".modal-title").first().html("Select classes for \"<%=params[:property_name]%>\"");
+<%if @property_ranges[:type] == "object"%>
+	selector_modal.find(".modal-title").first().html("Select classes for \"<%=params[:property_name]%>\"");
+<%else%>
+	selector_modal.find(".modal-title").first().html("Add filters for \"<%=params[:property_name]%>\"");
+<%end%>
 selector_modal.find(".modal-body").first().html("<%=@property_ranges%>");
 selector_modal.modal("show");

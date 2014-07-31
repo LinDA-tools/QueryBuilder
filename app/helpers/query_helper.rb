@@ -120,16 +120,28 @@ module QueryHelper
 		property_ranges_json = get_sparql_result(dataset, query)
 		unless is_sparql_result_empty?(property_ranges_json)
 			property_ranges_json["results"]["bindings"].each do |b|
-				property_ranges[:type] =  type
-				if type == "object"
-					property_ranges[:data] << {:value=>b["class"]["value"], :name=>b["label"]["value"]}
+				if type.blank?
+					if is_xml_schema_node?(b["class"]["value"])
+						property_ranges[:type] = "datatype"
+						property_ranges[:data] << {:value=>b["class"]["value"], :name=>get_datatype_type(b["class"]["value"])}
+					else
+						property_ranges[:type] = "object"
+						property_ranges[:data] << {:value=>b["class"]["value"], :name=>get_node_label(dataset, b["class"]["value"].capitalize)}
+					end
 				else
-					property_ranges[:data] << {:value=>b["class"]["value"], :name=>get_datatype_type(b["class"]["value"])}
+					property_ranges[:type] =  type
+					if type == "object"
+						property_ranges[:data] << {:value=>b["class"]["value"], :name=>b["label"]["value"]}
+					else
+						property_ranges[:data] << {:value=>b["class"]["value"], :name=>get_datatype_type(b["class"]["value"])}
+					end
 				end
 			end
 		end
 		property_ranges[:data] = property_ranges[:data].uniq
 		property_ranges
 	end
+
+
 
 end
