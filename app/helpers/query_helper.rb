@@ -109,15 +109,23 @@ module QueryHelper
 
 	#This method gets the property details of a property
 	#Return {:type=>String, :data=> [{:value, :name}]}
-	def get_property_ranges(dataset, property_uri)
+	def get_property_ranges(dataset, property_uri, type)
 		query = get_sparql_prefixes
-		query += " SELECT ?class ?label WHERE { <"+property_uri+"> rdfs:range ?class.  ?class rdfs:label ?label. FILTER(langMatches(lang(?label), 'EN')) }"
+		if type == "object"
+			query += " SELECT ?class ?label WHERE { <"+property_uri+"> rdfs:range ?class.  OPTIONAL {?class rdfs:label ?label.} FILTER(langMatches(lang(?label), 'EN')) }"
+		else
+			query += " SELECT ?class WHERE { <"+property_uri+"> rdfs:range ?class.  }"
+		end
 		property_ranges = {:type=>nil,:data=>[]}
 		property_ranges_json = get_sparql_result(dataset, query)
 		unless is_sparql_result_empty?(property_ranges_json)
 			property_ranges_json["results"]["bindings"].each do |b|
-				property_ranges[:type] =  b["class"]["type"]
-				property_ranges[:data] << {:value=>b["class"]["value"], :name=>b["label"]["value"]}
+				property_ranges[:type] =  type
+				if type == "object"
+					property_ranges[:data] << {:value=>b["class"]["value"], :name=>b["label"]["value"]}
+				else
+					property_ranges[:data] << {:value=>b["class"]["value"], :name=>b["class"]["type"]}
+				end
 			end
 		end
 		property_ranges[:data] = property_ranges[:data].uniq
