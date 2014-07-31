@@ -64,6 +64,12 @@ module QueryHelper
 		query
 	end
 
+	def get_class_schema_properties_query(class_uri)
+		query = get_sparql_prefixes
+		query = "?property ?label WHERE { ?prop rdfs:domain <"+class_uri+">. ?property rdfs:range ?range.  ?property rdfs:label ?label. FILTER(langMatches(lang(?label), 'EN')) }"
+		query
+	end
+
 	#This method returns the subclasses of a class_uri
 	def get_sublasses_of_class(dataset, class_uri)
 		query = get_sublass_search_query(class_uri)
@@ -81,6 +87,18 @@ module QueryHelper
 	def get_properties_of_class(dataset, class_uri, type="object",  all = false)
 		properties = []
 		properties_json = get_sparql_result(dataset,get_class_properties_query(class_uri, type, all))
+		unless is_sparql_result_empty?(properties_json)
+			properties_json["results"]["bindings"].each do |b|
+				properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"].capitalize}
+			end
+		end
+		properties.uniq
+	end
+
+	#This method gets the properties of the class which are defined in the schema 
+	def get_schema_properties_of_class(dataset,class_uri)
+		properties = []
+		properties_json = get_sparql_result(dataset,get_class_schema_properties_query(class_uri))
 		unless is_sparql_result_empty?(properties_json)
 			properties_json["results"]["bindings"].each do |b|
 				properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"].capitalize}
