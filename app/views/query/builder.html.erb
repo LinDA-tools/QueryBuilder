@@ -196,20 +196,28 @@
     
 </div>
 <div class="modal fade in" id="class_selector_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" ></h4>
-      </div>
-      <div class="modal-body">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" ></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="class_selector_class_main">
+                    <div class="col-md-6">
+                        <input type="hidden" id="hdn_classes_of" />
+                        <input type="text" class="form-control" placeholder="eg, Actor, City ..." id="txt_search_classes_selector" required >
+                        <input type="hidden" id="hdn_searched_class_value_selector" />
+                        <input type="hidden" id="hdn_done_searching_class_selector" value="false"/>
+                    </div>
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
-      </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <script>
     $(function () {
