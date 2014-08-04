@@ -143,5 +143,27 @@ module QueryHelper
 	end
 
 
+	def search_classes_of_class_types(dataset,search_str, classes)
+		query = get_sparql_prefixes
+		query += " SELECT distinct ?object ?label "
+		query += " WHERE {  "
+		class_counter = 0
+		classes.each do |c|
+			query += " UNION " if class_counter > 0
+			query += " { ?object rdf:type &lt;"+c+"&gt;} "
+			class_counter += 1
+		end
+		query += ". ?object rdfs:label ?label.  "
+		query += " FILTER(bound(?label) && langMatches(lang(?label), 'EN') && REGEX(?label, '"+search_str+"'))}"
+		result = []
+		classes_json = get_sparql_result(dataset, query)
+		unless is_sparql_result_empty?(classes_json)
+			classes_json["results"]["bindings"].each do |b|
+				result << {:name=>b["label"]["value"], :uri=> b["object"]["value"]}
+			end
+		end
+		#debugger
+		result
+	end
 
 end
