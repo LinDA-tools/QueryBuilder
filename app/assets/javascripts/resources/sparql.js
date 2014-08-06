@@ -41,16 +41,16 @@ SPARQL = {
     },
     download : {
         rdb : function(){
-            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"rdb-converter.sql?query="+encodeURIComponent($("#txt_sparql_query").val()));
+            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"rdb-converter.sql?dataset="+QueryBuilder.datasets.get_selected()+"&query="+encodeURIComponent($("#txt_sparql_query").val()));
         },
         csv : function(){
-            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"csv-converter.csv?query="+encodeURIComponent($("#txt_sparql_query").val()));
+            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"csv-converter.csv?dataset="+QueryBuilder.datasets.get_selected()+"&query="+encodeURIComponent($("#txt_sparql_query").val()));
         },
         pdf : function(){
             Utils.alert("The PDF download feature has not been implemented yet.");
         },
         json : function(){
-            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"json?query="+encodeURIComponent($("#txt_sparql_query").val()));
+            window.open(Utils.rdf2any.server+Utils.rdf2any.actions.convert+"json?dataset="+QueryBuilder.datasets.get_selected()+"&query="+encodeURIComponent($("#txt_sparql_query").val()));
         }
     }
 

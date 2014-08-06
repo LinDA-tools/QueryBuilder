@@ -19,7 +19,7 @@ Utils = {
 		$("#alert_modal").modal("show");
 	},
 	rdf2any : {
-		server : "http://localhost:8080/",
+		server : "http://"+document.domain.toString()+":8080/",
 		actions : {
 			convert : "rdf2any/v1.0/convert/"
 		} 
