@@ -18,8 +18,9 @@ class QueryController < ApplicationController
   def execute_sparql
   	response = {:result=>"error"}
   	query = params[:query]
-   	unless query.blank?
-   		uri = get_uri("http://localhost:8080/rdf2any/v1.0/convert/json?query="+query)
+    dataset = params[:dataset]
+   	if !query.blank? && !dataset.blank?
+   		uri = get_uri("http://localhost:8080/rdf2any/v1.0/convert/json?dataset="+dataset+"&query="+query)
    		response = HTTParty.get(uri)
    	
       if params[:pdf].blank?
