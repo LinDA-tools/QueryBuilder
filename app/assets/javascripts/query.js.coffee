@@ -29,6 +29,7 @@
         $("#sparql_results_container").hide()
         $.getJSON get_server_address()+"/query/execute_sparql",
         query: $("#txt_sparql_query").val()
+        dataset : $("#hdn_qb_dataset").val()
         , (data) ->
             result_columns = SPARQL.result.columns(data)
             result_rows = SPARQL.result.rows(data)
