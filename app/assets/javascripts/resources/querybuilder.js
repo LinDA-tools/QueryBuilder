@@ -287,7 +287,7 @@ QueryBuilder = {
                 else
                     $(this).hide();
             });
-            QueryBuilder.classes.check_empty_error();
+            QueryBuilder.objects.check_empty_error();
             
         },
         check_empty_error : function(){
@@ -321,7 +321,7 @@ QueryBuilder = {
                     $("#hdn_searched_oject_value").val("");
                     $("#tbl_objects_search_result").hide("fast");
                     $("#hdn_done_searching_object").val("false");
-                    $("#qb_class_search_error").hide("fast");
+                    $("#qb_object_search_error").hide("fast");
                 }
             }
         },

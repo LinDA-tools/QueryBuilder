@@ -1,0 +1,28 @@
+ <%if mode == "object"%>
+     <div class="row" id="class_selector_class_main">
+        <div class="col-md-12">
+            <input type="hidden" id="hdn_objects_of_class" />
+            <input type="text" class="form-control" placeholder="Type in objects here ... " id="txt_search_objects" required >
+            <input type="hidden" id="hdn_searched_object_value" />
+            <input type="hidden" id="hdn_done_searching_object" value="false"/>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="list-group" id="tbl_objects_search_result">
+
+            </div>
+        </div>
+    </div>
+    <div class="row" id="qb_object_search_loading" style="display:none;">
+        <div class="col-md-12">
+            <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
+        </div>
+    </div>
+    <div class="row" id="qb_object_search_error"  style="display:none;">
+        <div class="col-md-12 ">
+            <div class="alert alert-danger" style="margin-top:20px;"></div>
+        </div>
+    </div>
+<%end%>

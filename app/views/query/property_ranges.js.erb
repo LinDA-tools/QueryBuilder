@@ -1,8 +1,10 @@
 hide_loading();
-var selector_modal = $("#class_selector_modal")
+var selector_modal = $("#class_selector_modal");
 <%if @property_ranges[:type] == "object"%>
+	selector_modal.find(".modal-body").first().html("<%=escape_javascript render :partial=>'query/properties_selector_body', :locals=>{:mode=>'object'}%>");
 	selector_modal.find(".modal-title").first().html("Select objects for \"<%=params[:property_name]%>\"");
 	$("#hdn_objects_of_class").val("<%=@property_ranges[:data].collect{|c| c[:value]}.join(',')%>");
+	$("#txt_search_objects").bind('input',function(){QueryBuilder.objects.search_change();});
 <%else%>
 	selector_modal.find(".modal-title").first().html("Add filters for \"<%=params[:property_name]%>\"");
 <%end%>
