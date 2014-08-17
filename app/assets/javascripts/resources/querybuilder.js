@@ -335,9 +335,18 @@ QueryBuilder = {
             $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes}); 
         },
         select : function(object_uri, object_name){
-            $("#p_selected_objects").append("<span uri='"+object_uri+"' class='label label-warning'>"+object_name+"</span>&nbsp;")
+            $("#p_selected_objects").append("<span object-name=\""+object_name+"\" uri='"+object_uri+"' class='label label-warning'>"+object_name+"</span>&nbsp;")
+            QueryBuilder.objects.hide_object_tile(object_uri);
             Utils.flash.notice("Successfully added object "+object_name);
 
+        },
+        hide_object_tile : function(object_uri){
+            $("#tbl_objects_search_result").find(".list-group-item").each(function(index){
+                if($(this).attr("uri") == object_uri){
+                    $(this).addClass("selected");
+                    $(this).hide("fast");
+                }
+            });
         }
     }
 
