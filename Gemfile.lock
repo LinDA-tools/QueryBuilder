@@ -53,6 +53,7 @@ GEM
       nokogiri (>= 1.4.3)
     erubis (2.7.0)
     execjs (2.0.2)
+    gritter (1.1.0)
     haml (4.0.5)
       tilt
     hike (1.2.3)
@@ -214,6 +215,7 @@ DEPENDENCIES
   codemirror-rails
   coffee-rails (~> 4.0.0)
   debugger
+  gritter (= 1.1.0)
   httparty
   jbuilder (~> 2.0)
   jquery-rails

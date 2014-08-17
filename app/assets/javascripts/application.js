@@ -17,3 +17,4 @@
 //= require bootstrap.min
 //= require codemirror
 //= require_tree ./resources
+//= require gritter

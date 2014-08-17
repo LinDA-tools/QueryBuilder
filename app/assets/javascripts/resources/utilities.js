@@ -28,6 +28,9 @@ Utils = {
 		$("#iframe_uri_viewer").attr("src",uri);
 		$("#uri_viewer_modal").modal("show");
 		$("#a_uri_viewer_new_tab").attr("href",uri);
+	},
+	notice : function(title,message){
+		$.gritter.add({title: title,text: message});
 	}
 
 };

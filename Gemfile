@@ -53,3 +53,5 @@ gem 'wkhtmltopdf-binary'
 gem 'sparql'
 
 gem 'linkeddata'
+
+gem "gritter", "1.1.0"
