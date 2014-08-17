@@ -275,6 +275,7 @@ QueryBuilder = {
                     names += "'"+data[i].name+"'";
                 }
                 $("#qb_properties_properties_selected_filters_list").append("<div class=\"list-group-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\"><strong>"+property_name+"</strong> "+names+"</div>");
+                Utils.flash.success("Added objects "+names+" to filter for "+property_name);
             }
         }
     },
