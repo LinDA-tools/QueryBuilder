@@ -19,18 +19,6 @@ module QueryHelper
 	#return <Hashmap>
 	def search_classes(dataset,search_str)
 		classes = []
-
-		#queryable = RDF::Repository.load(dataset)
-		#query = get_sparql_prefixes
-		#query += "SELECT distinct ?a ?label "
-		#query += " WHERE { ?a rdf:type owl:Class. ?a rdfs:label ?label. "
-		#query += " FILTER(bound(?label) && langMatches(lang(?label), \"EN\") && REGEX(?label, '"+search_str.downcase+"'))}"
-		#sse = SPARQL.parse(query)
-		#results = []
-		#queryable.query(sse) do |result|
-		#  results << result
-		#end
-		#results = SPARQL.execute(query, queryable)
 		uri = get_uri("http://localhost:8080/rdf2any/v1.0/builder/classes?search="+search_str.downcase+"&dataset="+dataset)
    		response = HTTParty.get(uri)
    		unless response["results"]["bindings"].blank?
@@ -39,6 +27,18 @@ module QueryHelper
    			end
    		end
 		classes
+	end
+
+	def search_objects(dataset, search_str, classes)
+		objects = []
+		uri = get_uri("http://localhost:8080/rdf2any/v1.0/builder/objects?search="+search_str.downcase+"&dataset="+dataset+"&classes="+classes)
+   		response = HTTParty.get(uri)
+   		unless response["results"]["bindings"].blank?
+   			response["results"]["bindings"].each do |result|
+   				objects << {:uri=>result["object"]["value"], :name=>result["label"]["value"].capitalize}
+   			end
+   		end
+		objects
 	end
 
 	def get_sublass_search_query(class_uri)

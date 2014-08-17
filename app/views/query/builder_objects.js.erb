@@ -1,0 +1,9 @@
+$("#qb_object_search_loading").hide();
+$("#tbl_objects_search_result").html("");
+
+<%@searched_objects.each do |c|%>
+	$("#tbl_objects_search_result").append("<a href='javascript:void(0);' uri=\"<%=c[:uri].html_safe%>\" class='list-group-item' onclick=\"QueryBuilder.select_class('<%=c[:uri]%>','<%=c[:name].html_safe%>')\"><%=c[:name].html_safe%></a>");
+<%end%>
+$("#tbl_objects_search_result").show();
+$("#hdn_done_searching_object").val("true");
+QueryBuilder.objects.validate();

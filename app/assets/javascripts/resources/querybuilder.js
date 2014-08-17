@@ -302,6 +302,35 @@ QueryBuilder = {
         },
         get_searched_result_item : function(e){
             return e.html().replace(/\<strong\>/g,'').replace(/\<\/strong\>/g,'');
+        },
+        search_change : function(){
+            var search = $("#txt_search_objects").val();
+            if(search != undefined){
+                search = search.trim();
+                if(search.length >= 3){
+                     var searched_index = search.substring(0,3);
+                     if(searched_index != $("#hdn_searched_object_value").val()){
+                        $("#hdn_searched_object_value").val(searched_index);
+                        QueryBuilder.objects.search();
+                     }else if($("#hdn_done_searching_object").val() == "true"){
+                        QueryBuilder.objects.validate();
+                     }
+                    
+                }
+                else{
+                    $("#hdn_searched_oject_value").val("");
+                    $("#tbl_objects_search_result").hide("fast");
+                    $("#hdn_done_searching_object").val("false");
+                    $("#qb_class_search_error").hide("fast");
+                }
+            }
+        },
+        search : function(){
+            $("#qb_object_search_loading").show();
+            var search_string = $("#hdn_searched_object_value").val();
+            var classes = $("#hdn_objects_of_class").val();
+            var dataset = $("#hdn_qb_dataset").val();
+            $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes}); 
         }
     }
 

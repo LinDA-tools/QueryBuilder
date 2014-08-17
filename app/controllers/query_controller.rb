@@ -38,6 +38,13 @@ class QueryController < ApplicationController
     end
   end
 
+  def builder_objects
+    @searched_objects = search_objects(params[:dataset],params[:search],params[:classes])
+    respond_to do |format|
+      format.js
+    end
+  end
+
   def subclasses
     @subclasses = get_sublasses_of_class(params[:dataset],params[:class_uri])
     respond_to do |format|
@@ -66,7 +73,6 @@ class QueryController < ApplicationController
 
   def property_ranges
     @property_ranges = get_property_ranges(params[:dataset], params[:property_uri], params[:type])
-    #x = search_classes_of_class_types(params[:dataset],'cou',['http://dbpedia.org/ontology/Animal'])
     respond_to do |format|
       format.js
     end
