@@ -18,6 +18,7 @@ QueryBuilder = {
             $("#dd_select_dataset").hide("fast");
             QueryBuilder.select_body($("#div_select_dataset"),dataset);
             $("#hdn_qb_dataset").attr("value",dataset);
+            //Utils.flash.notice("Selected dataset : "+dataset);
         },
         //this method returns the selected dataset
         //return String
@@ -47,6 +48,7 @@ QueryBuilder = {
         $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
         $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
         $("#property_main_subclass_header").attr("uri",class_uri);
+        //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
     },
     reset_searched_class : function(){
         $(".clear-search-class").show("fast");
@@ -333,7 +335,7 @@ QueryBuilder = {
             $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes}); 
         },
         select : function(object_uri, object_name){
-            Utils.notice("Notice","Successfully added object "+object_name);
+            Utils.flash.notice("Successfully added object "+object_name);
         }
     }
 

@@ -29,8 +29,19 @@ Utils = {
 		$("#uri_viewer_modal").modal("show");
 		$("#a_uri_viewer_new_tab").attr("href",uri);
 	},
-	notice : function(title,message){
-		$.gritter.add({title: title,text: message});
+	flash : {
+		notice : function(msg){
+			$.gritter.add({title: "Notice",text: msg});
+		},
+		warning : function(msg){
+			$.gritter.add({title: "Warning",text: msg});
+		},
+		error : function(msg){
+			$.gritter.add({title: "Error",text: msg});
+		},
+		success : function(msg){
+			$.gritter.add({title: "Success",text: msg});
+		}
 	}
 
 };
