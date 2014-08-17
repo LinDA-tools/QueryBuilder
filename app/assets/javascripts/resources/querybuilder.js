@@ -335,7 +335,9 @@ QueryBuilder = {
             $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes}); 
         },
         select : function(object_uri, object_name){
+            $("#p_selected_objects").append("<span uri='"+object_uri+"' class='label label-warning'>"+object_name+"</span>&nbsp;")
             Utils.flash.notice("Successfully added object "+object_name);
+
         }
     }
 
