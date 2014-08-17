@@ -338,7 +338,7 @@ QueryBuilder = {
         },
         select : function(object_uri, object_name){
             if(!QueryBuilder.objects.is_object_added(object_uri)){
-                $("#p_selected_objects").append("<span object-name=\""+object_name+"\" uri='"+object_uri+"' class='label label-warning selected-objects'>"+object_name+"</span>&nbsp;")
+                $("#p_selected_objects").append("<span object-name=\""+object_name+"\" uri='"+object_uri+"' class='label label-warning selected-objects'>"+object_name+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span></span>&nbsp;")
             }
             QueryBuilder.objects.hide_object_tile(object_uri);
             Utils.flash.notice("Successfully added object "+object_name);
