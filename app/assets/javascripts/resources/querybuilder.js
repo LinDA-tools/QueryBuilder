@@ -373,6 +373,13 @@ QueryBuilder = {
                 }
             });
             QueryBuilder.objects.validate();
+        },
+        get_selected_objects : function(){
+            result = [];
+            $("#p_selected_objects").find(".selected-objects").each(function(index){
+                result.push({name : $(this).attr("object-name"), uri : $(this).attr("uri")})
+            }); 
+            return result;
         }
 
     }
