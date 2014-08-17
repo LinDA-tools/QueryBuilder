@@ -68,6 +68,7 @@ QueryBuilder = {
         query += SPARQL.prefix.rdfs;
         query += "SELECT ?concept ?label WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">.\n ?concept rdfs:label ?label.\n";
         query += QueryBuilder.properties.get_subclasses_triples();
+        query += QueryBuilder.properties.get_properties_triples();
         query += "FILTER(langMatches(lang(?label), \"EN\"))}\n LIMIT 200";
         $("#txt_sparql_query").val(query);
     }
@@ -222,6 +223,23 @@ QueryBuilder = {
 
             return result;
         },
+        get_properties_triples : function(){
+            var result = "";
+            $("#qb_properties_properties_selected_filters_list").find(".list-item").each(function(index){
+                if($(this).attr("filter-type") == 'object'){
+                    var objects = $(this).attr("filter-value").split(",");
+                    var property_uri = $(this).attr("property-uri");
+                    result += "{";
+                    for(var i=0;i<objects.length;i++){
+                        if(i>0)
+                            result += " UNION ";
+                        result += "?concept <"+property_uri+"> <"+objects[i]+">";
+                    }
+                    result += "}.\n"
+                }
+            });
+            return result;
+        },
         select_subclass : function(uri){
 
             $("#property_main_subclasses_group").find(".list-group-item").each(function(index){
@@ -275,13 +293,14 @@ QueryBuilder = {
                     uris += data[i].uri;
                     names += "'"+data[i].name+"'";
                 }
-                var div_html = "<div id='qb_properties_properties_selected_filters_list_item_"+identifier+"' class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\" identifier=\""+identifier+"\">";
+                var div_html = "<div id='qb_properties_properties_selected_filters_list_item_"+identifier+"' class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\" identifier=\""+identifier+"\" filter-type='object'>";
                 div_html += "<div class='row'><div class='col-md-10'>";
                 div_html += "<strong>"+property_name+"</strong> "+names;
                 div_html += "</div>";
                 div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
                 div_html += "</div></div>";
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
+                QueryBuilder.generate_equivalent_sparql_query();
                 Utils.flash.success("Added objects "+names+" to filter for "+property_name);
             },
             //removes the filter
@@ -294,6 +313,7 @@ QueryBuilder = {
                         $("#qb_properties_properties_selected_filters_header").hide("fast");
                         $("#qb_properties_properties_selected_filters_list").hide("fast");
                     }
+                    QueryBuilder.generate_equivalent_sparql_query();
                 }, 500);
             },
             get_new_list_identifier : function(){
