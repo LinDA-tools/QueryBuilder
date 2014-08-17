@@ -5,7 +5,7 @@
         </div>
         <div class="col-md-5">
             <div class="btn-group pull-right">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Done</button>
+                <button type="button" class="btn btn-success" onclick="QueryBuilder.objects.done_click()">Done</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
@@ -18,6 +18,8 @@
     <div class="row" id="class_selector_class_main">
         <div class="col-md-12">
             <input type="hidden" id="hdn_objects_of_class" />
+            <input type="hidden" id="hdn_selector_property_uri"/>
+            <input type="hidden" id="hdn_selector_property_name"/>
             <input type="text" class="form-control" placeholder="Type in objects here ... " id="txt_search_objects" required >
             <input type="hidden" id="hdn_searched_object_value" />
             <input type="hidden" id="hdn_done_searching_object" value="false"/>

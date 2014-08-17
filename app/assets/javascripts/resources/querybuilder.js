@@ -259,6 +259,23 @@ QueryBuilder = {
         property_click : function(uri, name, type){
             show_loading();
             $.get("/query/property_ranges.js?property_uri="+uri+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name);
+        },
+        filter : {
+            add_objects : function(property_uri, property_name,  data){
+                $("#qb_properties_properties_selected_filters_header").show();
+                $("#qb_properties_properties_selected_filters_list").show();
+                var uris = "";
+                var names = "";
+                for(var i=0;i<data.length;i++){
+                    if(i>0){
+                        uris += ",";
+                        names += ", ";
+                    }
+                    uris += data[i].uri;
+                    names += "'"+data[i].name+"'";
+                }
+                $("#qb_properties_properties_selected_filters_list").append("<div class=\"list-group-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\"><strong>"+property_name+"</strong> "+names+"</div>");
+            }
         }
     },
 
@@ -380,6 +397,13 @@ QueryBuilder = {
                 result.push({name : $(this).attr("object-name"), uri : $(this).attr("uri")})
             }); 
             return result;
+        },
+        done_click : function(){
+            var selected_objects = QueryBuilder.objects.get_selected_objects();
+            if(selected_objects.length > 0){
+                QueryBuilder.properties.filter.add_objects($("#hdn_selector_property_uri").val(),$("#hdn_selector_property_name").val(),selected_objects);
+            }
+            $("#class_selector_modal").modal('hide');
         }
 
     }

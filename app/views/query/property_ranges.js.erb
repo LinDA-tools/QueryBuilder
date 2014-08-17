@@ -13,6 +13,8 @@ selector_modal.find(".modal-title").first().html("\"<%=params[:property_name]%>\
 		end
 	%>
 	$("#object_selector_header").find("p").first().html("Search objects for <%=display_object_classes.html_safe%>");
+	$("#hdn_selector_property_uri").val("<%=params[:property_uri]%>");
+	$("#hdn_selector_property_name").val("<%=params[:property_name]%>");
 	selector_modal.find(".modal-footer").hide();
 <%else%>
 	selector_modal.find(".modal-body").first().html("<%=escape_javascript render :partial=>'query/properties_selector_body', :locals=>{:mode=>'datatype'}%>");
