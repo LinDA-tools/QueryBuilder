@@ -338,7 +338,7 @@ QueryBuilder = {
         },
         select : function(object_uri, object_name){
             if(!QueryBuilder.objects.is_object_added(object_uri)){
-                $("#p_selected_objects").append("<span object-name=\""+object_name+"\" uri='"+object_uri+"' class='label label-warning selected-objects'>"+object_name+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span></span>&nbsp;")
+                $("#p_selected_objects").append("<span object-name=\""+object_name+"\" uri='"+object_uri+"' class='label label-warning selected-objects' onclick=\"QueryBuilder.objects.delete_selected('"+object_uri+"')\">"+object_name+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span></span>&nbsp;")
             }
             QueryBuilder.objects.hide_object_tile(object_uri);
             Utils.flash.notice("Successfully added object "+object_name);
@@ -360,7 +360,21 @@ QueryBuilder = {
                 }
             });
             return result;
+        },
+        delete_selected : function(object_uri){
+            $("#p_selected_objects").find(".selected-objects").each(function(index){
+                if($(this).attr("uri") == object_uri){
+                    $(this).hide("fast");
+                }
+            }); 
+            $("#tbl_objects_search_result").find(".list-group-item").each(function(index){
+                if($(this).attr("uri") == object_uri){
+                    $(this).removeClass("selected");
+                }
+            });
+            QueryBuilder.objects.validate();
         }
+
     }
 
 
