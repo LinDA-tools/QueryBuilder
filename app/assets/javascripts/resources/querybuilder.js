@@ -274,7 +274,13 @@ QueryBuilder = {
                     uris += data[i].uri;
                     names += "'"+data[i].name+"'";
                 }
-                $("#qb_properties_properties_selected_filters_list").append("<div class=\"list-group-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\"><strong>"+property_name+"</strong> "+names+"</div>");
+                var div_html = "<div class=\"list-group-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\">";
+                div_html += "<div class='row'><div class='col-md-10'>";
+                div_html += "<strong>"+property_name+"</strong> "+names;
+                div_html += "</div>";
+                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable\"></span></div>"
+                div_html += "</div></div>";
+                $("#qb_properties_properties_selected_filters_list").append(div_html);
                 Utils.flash.success("Added objects "+names+" to filter for "+property_name);
             }
         }
@@ -356,7 +362,7 @@ QueryBuilder = {
         },
         select : function(object_uri, object_name){
             if(!QueryBuilder.objects.is_object_added(object_uri)){
-                $("#p_selected_objects").append("<span object-name=\""+object_name+"\" uri='"+object_uri+"' class='label label-warning selected-objects' onclick=\"QueryBuilder.objects.delete_selected('"+object_uri+"')\">"+object_name+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span></span>&nbsp;")
+                $("#p_selected_objects").append("<span object-name=\""+object_name+"\" uri='"+object_uri+"' class='label label-warning selected-objects' >"+object_name+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\" onclick=\"QueryBuilder.objects.delete_selected('"+object_uri+"')\"></span></span></span>&nbsp;")
             }
             QueryBuilder.objects.hide_object_tile(object_uri);
             Utils.flash.notice("Successfully added object "+object_name);
