@@ -258,6 +258,51 @@ QueryBuilder = {
             show_loading();
             $.get("/query/property_ranges.js?property_uri="+uri+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name);
         }
+    },
+
+    // This contains methods for objects
+    objects : {
+            validate : function(){
+            var search_strings = $("#txt_search_objects").val().trim().toLowerCase().split(" ");
+            $("#tbl_objects_search_result").find("a").each(function(index){
+                $(this).html(QueryBuilder.classes.get_searched_result_item($(this)));
+                var a_value = $(this).html().toLowerCase();
+                var is_present = true;
+                for(var i=0;i<search_strings.length;i++){
+                    if(a_value.indexOf(search_strings[i]) < 0){
+                        is_present = false;
+                        break;
+                    }
+                    else{
+                        var start_index = a_value.indexOf(search_strings[i]);
+                        var end_index = start_index + search_strings[i].length ;
+                        a_value = a_value.splice(end_index, 0,'$');
+                        a_value = a_value.splice(start_index, 0,  '#');
+                    }
+                }
+                if(is_present){
+                    $(this).html(a_value.replace(/\#/g,'<strong>').replace(/\$/g,'</strong>'));
+                    $(this).show();
+                }
+                else
+                    $(this).hide();
+            });
+            QueryBuilder.classes.check_empty_error();
+            
+        },
+        check_empty_error : function(){
+            if($("#tbl_objects_search_result").find("a:visible").length <= 0){
+                var search = $("#txt_search_objects").val().trim();
+                $("#qb_object_search_error").find(".alert").first().html("No objects found matching \""+search+"\"");
+                $("#qb_object_search_error").show();
+            }
+            else{
+                $("#qb_object_search_error").hide("fast");
+            }
+        },
+        get_searched_result_item : function(e){
+            return e.html().replace(/\<strong\>/g,'').replace(/\<\/strong\>/g,'');
+        }
     }
 
 
