@@ -1,3 +1,8 @@
+Requirements
+------------
+1. Ruby installed on the local machine.
+2. [RDF2Any server](https://github.com/LinDA-tools/RDF2Any) running on the local machine.
+
 Installation
 ------------
 
