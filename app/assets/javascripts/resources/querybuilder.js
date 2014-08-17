@@ -262,6 +262,7 @@ QueryBuilder = {
         },
         filter : {
             add_objects : function(property_uri, property_name,  data){
+                var identifier = QueryBuilder.properties.filter.get_new_list_identifier();
                 $("#qb_properties_properties_selected_filters_header").show();
                 $("#qb_properties_properties_selected_filters_list").show();
                 var uris = "";
@@ -274,14 +275,31 @@ QueryBuilder = {
                     uris += data[i].uri;
                     names += "'"+data[i].name+"'";
                 }
-                var div_html = "<div class=\"alert alert-warning list-items\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\">";
+                var div_html = "<div id='qb_properties_properties_selected_filters_list_item_"+identifier+"' class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\" identifier=\""+identifier+"\">";
                 div_html += "<div class='row'><div class='col-md-10'>";
                 div_html += "<strong>"+property_name+"</strong> "+names;
                 div_html += "</div>";
-                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\"></span></div>"
+                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
                 div_html += "</div></div>";
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
                 Utils.flash.success("Added objects "+names+" to filter for "+property_name);
+            },
+            //removes the filter
+            remove : function(identifier){
+                var list_item = $("#qb_properties_properties_selected_filters_list_item_"+identifier);
+                list_item.remove();
+                if($("#qb_properties_properties_selected_filters_list").find(".list-item").length <= 0){
+                    $("#qb_properties_properties_selected_filters_header").hide("fast");
+                    $("#qb_properties_properties_selected_filters_list").hide("fast");
+                }
+            },
+            get_new_list_identifier : function(){
+                var max_id=0;
+                $("#qb_properties_properties_selected_filters_list").find(".list-item").each(function(index){
+                    if(parseInt($(this).attr("identifier")) > max_id)
+                        max_id = parseInt($(this).attr("identifier"));
+                });
+                return (max_id+1).toString();
             }
         }
     },
