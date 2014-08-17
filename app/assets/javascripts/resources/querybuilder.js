@@ -287,11 +287,14 @@ QueryBuilder = {
             //removes the filter
             remove : function(identifier){
                 var list_item = $("#qb_properties_properties_selected_filters_list_item_"+identifier);
-                list_item.remove();
-                if($("#qb_properties_properties_selected_filters_list").find(".list-item").length <= 0){
-                    $("#qb_properties_properties_selected_filters_header").hide("fast");
-                    $("#qb_properties_properties_selected_filters_list").hide("fast");
-                }
+                list_item.hide("fast");
+                setTimeout(function(){
+                    list_item.remove();
+                    if($("#qb_properties_properties_selected_filters_list").find(".list-item").length <= 0){
+                        $("#qb_properties_properties_selected_filters_header").hide("fast");
+                        $("#qb_properties_properties_selected_filters_list").hide("fast");
+                    }
+                }, 500);
             },
             get_new_list_identifier : function(){
                 var max_id=0;
@@ -383,7 +386,7 @@ QueryBuilder = {
                 $("#p_selected_objects").append("<span object-name=\""+object_name+"\" uri='"+object_uri+"' class='label label-warning selected-objects' >"+object_name+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\" onclick=\"QueryBuilder.objects.delete_selected('"+object_uri+"')\"></span></span></span>&nbsp;")
             }
             QueryBuilder.objects.hide_object_tile(object_uri);
-            Utils.flash.notice("Successfully added object "+object_name);
+            //Utils.flash.notice("Successfully added object "+object_name);
 
         },
         hide_object_tile : function(object_uri){
