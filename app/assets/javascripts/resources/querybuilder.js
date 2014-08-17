@@ -274,11 +274,11 @@ QueryBuilder = {
                     uris += data[i].uri;
                     names += "'"+data[i].name+"'";
                 }
-                var div_html = "<div class=\"list-group-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\">";
+                var div_html = "<div class=\"alert alert-warning list-items\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\">";
                 div_html += "<div class='row'><div class='col-md-10'>";
                 div_html += "<strong>"+property_name+"</strong> "+names;
                 div_html += "</div>";
-                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable\"></span></div>"
+                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\"></span></div>"
                 div_html += "</div></div>";
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
                 Utils.flash.success("Added objects "+names+" to filter for "+property_name);
