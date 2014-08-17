@@ -167,8 +167,12 @@ QueryBuilder = {
            $("#div_qb_properties").hide("fast"); 
         },
         reset : function(){
+            $("#qb_properties_properties_selected_filters_header").hide();
+            $("#qb_properties_properties_selected_filters_list").html("");
+            $("#qb_properties_properties_selected_filters_list").hide();
             QueryBuilder.properties.hide();
             QueryBuilder.properties.reset_subclasses();
+
         },
         reset_subclasses : function(){
             $(".property-subclass-individual").remove();
