@@ -270,16 +270,18 @@ QueryBuilder = {
                 $(this).html(QueryBuilder.classes.get_searched_result_item($(this)));
                 var a_value = $(this).html().toLowerCase();
                 var is_present = true;
-                for(var i=0;i<search_strings.length;i++){
-                    if(a_value.indexOf(search_strings[i]) < 0){
-                        is_present = false;
-                        break;
-                    }
-                    else{
-                        var start_index = a_value.indexOf(search_strings[i]);
-                        var end_index = start_index + search_strings[i].length ;
-                        a_value = a_value.splice(end_index, 0,'$');
-                        a_value = a_value.splice(start_index, 0,  '#');
+                if(!$(this).hasClass('selected')){
+                    for(var i=0;i<search_strings.length;i++){
+                        if(a_value.indexOf(search_strings[i]) < 0){
+                            is_present = false;
+                            break;
+                        }
+                        else{
+                            var start_index = a_value.indexOf(search_strings[i]);
+                            var end_index = start_index + search_strings[i].length ;
+                            a_value = a_value.splice(end_index, 0,'$');
+                            a_value = a_value.splice(start_index, 0,  '#');
+                        }
                     }
                 }
                 if(is_present){
