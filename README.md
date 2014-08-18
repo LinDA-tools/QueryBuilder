@@ -30,10 +30,6 @@ Install bundle.
 ```sh
 bundle install
 ```
-Create locale for [Gritter](https://github.com/RobinBrouwer/gritter)
-```sh
-rails g gritter:locale
-```
 <br> 
 Now the setup is complete. 
 
