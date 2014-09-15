@@ -7,7 +7,11 @@ module ApplicationHelper
 	end
 
 	def get_rdf2any_server_url
-		return "http://localhost:8080/rdf2any/"
+		return "http://localhost:"+get_rdf2any_server_port+"/rdf2any/"
+	end
+
+	def get_rdf2any_server_port
+		return "8081"
 	end
 
 	def get_rdf2any_convert_url

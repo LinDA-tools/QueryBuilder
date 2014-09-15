@@ -19,7 +19,7 @@ module QueryHelper
 	#return <Hashmap>
 	def search_classes(dataset,search_str)
 		classes = []
-		uri = get_uri("http://localhost:8080/rdf2any/v1.0/builder/classes?search="+search_str.downcase+"&dataset="+dataset)
+		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/classes?search="+search_str.downcase+"&dataset="+dataset)
    		response = HTTParty.get(uri)
    		unless response["results"]["bindings"].blank?
    			response["results"]["bindings"].each do |result|
@@ -31,7 +31,7 @@ module QueryHelper
 
 	def search_objects(dataset, search_str, classes)
 		objects = []
-		uri = get_uri("http://localhost:8080/rdf2any/v1.0/builder/objects?search="+search_str.downcase+"&dataset="+dataset+"&classes="+classes)
+		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/objects?search="+search_str.downcase+"&dataset="+dataset+"&classes="+classes)
    		response = HTTParty.get(uri)
    		unless response["results"]["bindings"].blank?
    			response["results"]["bindings"].each do |result|
