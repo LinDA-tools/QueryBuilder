@@ -80,28 +80,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading  property-subclass-header" uri="" id="property_main_subclass_header">
-                                        <div class="row">
-                                            <div class="col-md-9">
-                                                Sub-Classes
-                                            </div>
-                                            <div class="col-md-3">
-                                                <button type="button" class="btn btn-primary btn-xs pull-right" onclick="QueryBuilder.properties.get_subclasses_for_selected_class()"><span class="glyphicon glyphicon-plus"></span>&nbsp;more</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="list-group" id="property_main_subclasses_group" subclasses="all"> 
-                                        <a class="list-group-item property-subclass-group" href="javascript:void(0)" onclick="QueryBuilder.properties.select_subclass('all')" uri="all" clicked='true' display-name="All"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;<strong>All</strong></a>
-                                    </div>
-                                    <div class="row" id="qb_properties_sub_classes_loading" style="display:none;">
-                                        <div class="col-md-12">
-                                            <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
 
                             <div class="col-md-4">
                                 <div class="panel panel-default">
@@ -165,27 +144,24 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        Schema properties
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="row" >
-                                            <div class="col-md-12">
-                                                <small>
-                                                    These are the properties which are defined in the RDF Schema
-                                                </small>
+                                    <div class="panel-heading  property-subclass-header" uri="" id="property_main_subclass_header">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                Sub-Classes
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-primary btn-xs pull-right" onclick="QueryBuilder.properties.get_subclasses_for_selected_class()"><span class="glyphicon glyphicon-plus"></span>&nbsp;more</button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="list-group" id="property_main_schema_properties_group" > 
-
+                                    <div class="list-group" id="property_main_subclasses_group" subclasses="all"> 
+                                        <a class="list-group-item property-subclass-group" href="javascript:void(0)" onclick="QueryBuilder.properties.select_subclass('all')" uri="all" clicked='true' display-name="All"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;<strong>All</strong></a>
                                     </div>
-                                    <div class="row" id="qb_properties_schema_properties_loading">
+                                    <div class="row" id="qb_properties_sub_classes_loading" style="display:none;">
                                         <div class="col-md-12">
                                             <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
