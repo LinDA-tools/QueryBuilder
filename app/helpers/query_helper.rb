@@ -84,15 +84,22 @@ module QueryHelper
 	end
 
 	#This method returns the class properties
-	def get_properties_of_class(dataset, class_uri, type="object",  all = false)
-		properties = []
-		properties_json = get_sparql_result(dataset,get_class_properties_query(class_uri, type, all))
-		unless is_sparql_result_empty?(properties_json)
-			properties_json["results"]["bindings"].each do |b|
-				properties << {:uri=>b["property"]["value"], :name=>b["label"]["value"]}
+	def get_properties_of_class(dataset, class_uri)
+		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/properties?dataset="+dataset+"&class="+class_uri)
+		properties = {:data_type=>[], :object_type=>[]}
+		properties_json = HTTParty.get(uri)
+		unless properties_json["rdfClass"].blank?
+			unless properties_json["rdfClass"]["properties"].blank?
+				properties_json["rdfClass"]["properties"].each do |p|
+					if p["type"] == "data"
+						properties[:data_type] << p
+					elsif p["type"] == "object"
+						properties[:object_type] << p
+					end	
+				end
 			end
 		end
-		properties.uniq
+		properties
 	end
 
 	#This method gets the properties of the class which are defined in the schema 

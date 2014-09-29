@@ -158,9 +158,7 @@ QueryBuilder = {
     //the methods related to properties
     properties : {
         generate : function(){
-            QueryBuilder.properties.get_properties_for_selected_class(false,"object");
-            QueryBuilder.properties.get_properties_for_selected_class(false,"datatype");
-            QueryBuilder.properties.get_schema_properties_for_selected_class();
+            QueryBuilder.properties.get_properties_for_selected_class();
             $("#div_qb_properties").show("fast");
         },
         hide : function(){
@@ -186,13 +184,15 @@ QueryBuilder = {
         get_subclasses_for_selected_class : function(){
             QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
         },
-        get_properties_for_selected_class : function(all, type){
-            $("#qb_properties_properties_"+type+"_loading").show();
+        get_properties_for_selected_class : function(){
+            $("#qb_properties_properties_object_loading").show();
+            $("#qb_properties_properties_datatype_loading").show();
+            /*
             if(all)
                 $("#btn_properties_properties_"+type+"_more").hide("fast");
             else
-                $("#btn_properties_properties_"+type+"_more").show("fast");
-            $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class()+"&all="+all.toString()+"&type="+type);
+                $("#btn_properties_properties_"+type+"_more").show("fast");*/
+            $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class());
         },
         get_schema_properties_for_selected_class : function(){
             $("#property_main_schema_properties_group").html("");

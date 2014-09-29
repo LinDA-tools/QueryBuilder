@@ -53,12 +53,7 @@ class QueryController < ApplicationController
   end
 
   def class_properties
-    @search_all = false
-    @search_all = true if params[:all] == "true"
-    @type = params[:type]
-    @type = "object" if params[:type].blank?
-
-    @properties = get_properties_of_class(params[:dataset],params[:class_uri], @type, @search_all)
+    @properties = get_properties_of_class(params[:dataset],params[:class_uri])
     respond_to do |format|
       format.js
     end

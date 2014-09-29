@@ -1,11 +1,16 @@
-$("#qb_properties_properties_<%=@type%>_loading").hide("fast");
-$("#property_main_properties_<%=@type%>_group").html("");
-var list_group = $("#property_main_properties_<%=@type%>_group");
-<%if @properties.size < 5%>
-	$("#btn_properties_properties_<%=@type%>_more").hide("fast");
-<%end%>	
-
-<%@properties.each do |sc|%>
-	var html = "<a href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=sc[:uri]%>' display-name='<%=sc[:name]%>' clicked='false' onclick=\"QueryBuilder.properties.property_click('<%=sc[:uri]%>','<%=sc[:name]%>','<%=@type%>')\" ><%=sc[:name]%></a>";
-	$(list_group).append(html);
+var list_group_datatype = $("#property_main_properties_datatype_group");
+var list_group_object = $("#property_main_properties_object_group");
+$("#btn_properties_properties_object_more").hide("fast");
+$("#btn_properties_properties_datatype_more").hide("fast");
+$("#qb_properties_properties_datatype_loading").hide("fast");
+$("#property_main_properties_datatype_group").html("");
+<%@properties[:data_type].each do |p|%>
+	var html = "<a href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=p['uri']%>' display-name='<%=p['label']%>' clicked='false' onclick=\"QueryBuilder.properties.property_click('<%=p['uri']%>','<%=p['label']%>','datatype')\" ><%=p['label']%></a>";
+	$(list_group_datatype).append(html);
+<%end%>
+$("#qb_properties_properties_object_loading").hide("fast");
+$("#property_main_properties_object_group").html("");
+<%@properties[:object_type].each do |p|%>
+	var html = "<a href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=p['uri']%>' display-name='<%=p['label']%>' clicked='false' onclick=\"QueryBuilder.properties.property_click('<%=p['uri']%>','<%=p['label']%>','object')\" ><%=p['label']%></a>";
+	$(list_group_object).append(html);
 <%end%>
