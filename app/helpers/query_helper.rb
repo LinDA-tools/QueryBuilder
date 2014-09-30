@@ -91,14 +91,18 @@ module QueryHelper
 		unless properties_json["rdfClass"].blank?
 			unless properties_json["rdfClass"]["properties"].blank?
 				properties_json["rdfClass"]["properties"].each do |p|
-					if p["type"] == "data"
-						properties[:data_type] << p
-					elsif p["type"] == "object"
-						properties[:object_type] << p
-					end	
+					if p["count"] > 0
+						if p["type"] == "data"
+							properties[:data_type] << p
+						elsif p["type"] == "object"
+							properties[:object_type] << p
+						end	
+					end
 				end
 			end
 		end
+		properties[:data_type] = properties[:data_type].sort_by{|a|a['count']}.reverse unless properties[:data_type].blank?
+		properties[:object_type] = properties[:object_type].sort_by{|a|a['count']}.reverse unless properties[:object_type].blank?
 		properties
 	end
 
