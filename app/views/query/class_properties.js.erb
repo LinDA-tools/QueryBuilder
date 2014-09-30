@@ -14,3 +14,4 @@ $("#property_main_properties_object_group").html("");
 	var html = "<div href='javascript:void(0);' class='property-subclass-individual list-group-item' uri='<%=p['uri']%>' display-name='<%=p['label']%>' clicked='false' onclick=\"QueryBuilder.properties.property_click('<%=p['uri']%>','<%=p['label']%>','object')\" ><div class='row'><div class='col-md-5'><%=p['label']%></div><div class='col-md-5'><span class='badge span-property-range span-property-range-object'><%=p['range']['label'].capitalize%></span></div><div class='col-md-2'><span class='badge'><%=p['count']%></span></div></div></div>";
 	$(list_group_object).append(html);
 <%end%>
+QueryBuilder.properties.generate_range_badge_colors();

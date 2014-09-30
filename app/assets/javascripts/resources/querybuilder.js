@@ -276,6 +276,28 @@ QueryBuilder = {
             });
             QueryBuilder.generate_equivalent_sparql_query();
         },
+        //This method assigns colors to the badges of ranges of properties
+        generate_range_badge_colors : function(){
+            var colors =    [  "#E52B50","#9966CC","#007FFF","#964B00","#0095B6","#800020","#CD7F32","#702963","#007BA7","#808000",
+                                "#D2B48C","#483C32","#FF4500", "#FFA500", "#D1E231", "#1C2841", "#FA8072", "#7B3F00", "#2F4F4F",
+                                "#483D8B", "#FFD700", "#3CB371", "#BC8F8F", "#FF69B4", "#00CED1", "#0000CD"
+                            ];
+            var badge_classes = [".span-property-range-data",".span-property-range-object"];
+            for(var i=0;i<badge_classes.length;i++){
+                var color_counter = 0;
+                var range_color_lookup = {};
+                $(badge_classes[i]).each(function(index){
+                    var range_name = $(this).html();
+                    if(range_color_lookup[range_name] == undefined){
+                        range_color_lookup[range_name] = colors[color_counter];
+                        color_counter++;
+                        if(color_counter>=colors.length)
+                            color_counter = 0;
+                    }
+                    $(this).attr("style","background-color:"+range_color_lookup[range_name]+";");
+                });
+            }
+        },
         //This function is called when a property is clicked 
         // type is "object" or "datatype"
         property_click : function(uri, name, type){
