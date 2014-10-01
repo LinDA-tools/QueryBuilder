@@ -45,7 +45,7 @@ SPARQL = {
             var selected_class = QueryBuilder.classes.get_selected_class();
             if(selected_class != undefined && selected_class != ''){
                download_url += "&for_class="+selected_class;
-               download_url += "&properties="+window.btoa(QueryBuilder.properties.get_checked_properties()); 
+               download_url += "&properties="+encodeURIComponent(window.btoa(QueryBuilder.properties.get_checked_properties())); 
             }
                 
             window.open(download_url);
