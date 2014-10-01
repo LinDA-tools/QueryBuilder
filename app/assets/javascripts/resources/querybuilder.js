@@ -304,6 +304,16 @@ QueryBuilder = {
             show_loading();
             $.get("/query/property_ranges.js?property_uri="+uri+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name);
         },
+        //this method returns a comma separated string of selected properties
+        // returns "ALL" if all of them are checked
+        get_checked_properties : function(){
+            var all_ranges = $('.cb-property-range').map(function() {return this.value;}).get().join(',');
+            var checked_ranges = $('.cb-property-range:checked').map(function() {return this.value;}).get().join(',');
+            if(all_ranges == checked_ranges)
+                return "ALL";
+            else
+                return checked_ranges;
+        },
         filter : {
             add_objects : function(property_uri, property_name,  data){
                 var identifier = QueryBuilder.properties.filter.get_new_list_identifier();
