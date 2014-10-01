@@ -105,11 +105,11 @@
                                     </div>
                                     <div class="panel-heading alert">
                                         <div class="row">
-                                            <div class="col-md-9">
+                                            <div class="col-md-11">
                                                 Object Properties
                                             </div>
-                                            <div class="col-md-3">
-                                                <button type="button" class="btn btn-primary btn-xs pull-right" onclick="QueryBuilder.properties.get_properties_for_selected_class(true,'object')" id="btn_properties_properties_object_more"><span class="glyphicon glyphicon-plus"></span>&nbsp;more</button>
+                                            <div class="col-md-1">
+                                                <input type='checkbox' id='cb_property_range_all_object'  class='cb-property-range-all'  checked='checked' onclick="QueryBuilder.properties.click_check_all('object')"/>
                                             </div>
                                         </div>
                                     </div>
@@ -123,11 +123,11 @@
                                     </div>
                                     <div class="panel-heading alert">
                                         <div class="row">
-                                            <div class="col-md-9">
+                                            <div class="col-md-11">
                                                 Data type Properties
                                             </div>
-                                            <div class="col-md-3">
-                                                <button type="button" class="btn btn-primary btn-xs pull-right" onclick="QueryBuilder.properties.get_properties_for_selected_class(true,'datatype')" id="btn_properties_properties_datatype_more"><span class="glyphicon glyphicon-plus"></span>&nbsp;more</button>
+                                            <div class="col-md-1">
+                                                <input type='checkbox' id='cb_property_range_all_data'  class='cb-property-range-all'  checked='checked' onclick="QueryBuilder.properties.click_check_all('data')"/>
                                             </div>
                                         </div>
                                     </div>

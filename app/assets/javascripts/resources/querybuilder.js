@@ -193,6 +193,9 @@ QueryBuilder = {
             else
                 $("#btn_properties_properties_"+type+"_more").show("fast");*/
             $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class());
+            $(".cb-property-range-all").each(function(index){
+                $(this).prop("checked",true);
+            });
         },
         get_schema_properties_for_selected_class : function(){
             $("#property_main_schema_properties_group").html("");
@@ -313,6 +316,17 @@ QueryBuilder = {
                 return "ALL";
             else
                 return checked_ranges;
+        },
+        click_check_all : function(type){
+            var item = $("#cb_property_range_all_"+type);
+            var to_check = false;
+            if(item.prop('checked'))
+                to_check = true;
+            $(".cb-property-range").each(function(index){
+                if($(this).attr("range-type") == type){
+                    $(this).prop('checked',to_check);
+                }
+            });
         },
         filter : {
             add_objects : function(property_uri, property_name,  data){
