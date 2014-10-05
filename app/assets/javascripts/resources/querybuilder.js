@@ -328,6 +328,9 @@ QueryBuilder = {
                 }
             });
         },
+        get_clicked_filter_property : function(){
+            return $("#hdn_selector_property_uri").val();
+        },
         filter : {
             add_objects : function(property_uri, property_name,  data){
                 var identifier = QueryBuilder.properties.filter.get_new_list_identifier();
@@ -427,7 +430,7 @@ QueryBuilder = {
             if(search != undefined){
                 search = search.trim();
                 if(search.length >= 3){
-                     var searched_index = search.substring(0,3);
+                     var searched_index = search.substring(0,2);
                      if(searched_index != $("#hdn_searched_object_value").val()){
                         $("#hdn_searched_object_value").val(searched_index);
                         QueryBuilder.objects.search();
@@ -450,7 +453,8 @@ QueryBuilder = {
             var classes = $("#hdn_objects_of_class").val();
             var dataset = $("#hdn_qb_dataset").val();
             var for_class = QueryBuilder.classes.get_selected_class();
-            $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes, for_class: for_class}); 
+            var for_property = QueryBuilder.properties.get_clicked_filter_property();
+            $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes, for_class: for_class, for_property : for_property}); 
         },
         select : function(object_uri, object_name){
             if(!QueryBuilder.objects.is_object_added(object_uri)){

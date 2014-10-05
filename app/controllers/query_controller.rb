@@ -39,7 +39,7 @@ class QueryController < ApplicationController
   end
 
   def builder_objects
-    @searched_objects = search_objects(params[:dataset],params[:search],params[:classes],params[:for_class])
+    @searched_objects = search_objects(params[:dataset],params[:search],params[:classes],params[:for_class], params[:for_property])
     respond_to do |format|
       format.js
     end
