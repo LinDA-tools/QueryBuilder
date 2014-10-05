@@ -449,7 +449,8 @@ QueryBuilder = {
             var search_string = $("#hdn_searched_object_value").val();
             var classes = $("#hdn_objects_of_class").val();
             var dataset = $("#hdn_qb_dataset").val();
-            $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes}); 
+            var for_class = QueryBuilder.classes.get_selected_class();
+            $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes, for_class: for_class}); 
         },
         select : function(object_uri, object_name){
             if(!QueryBuilder.objects.is_object_added(object_uri)){

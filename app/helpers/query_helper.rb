@@ -29,9 +29,9 @@ module QueryHelper
 		classes
 	end
 
-	def search_objects(dataset, search_str, classes)
+	def search_objects(dataset, search_str, classes, for_class)
 		objects = []
-		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/objects?search="+search_str.downcase+"&dataset="+dataset+"&classes="+classes)
+		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/objects?search="+search_str.downcase+"&dataset="+dataset+"&classes="+classes+"&for_class="+for_class)
    		response = HTTParty.get(uri)
    		unless response["results"]["bindings"].blank?
    			response["results"]["bindings"].each do |result|
