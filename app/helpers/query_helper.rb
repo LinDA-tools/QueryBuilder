@@ -7,6 +7,10 @@ module QueryHelper
 		URI.encode(url.gsub("&lt;","<").gsub("&gt;",">"))
 	end
 
+	def clean_sparq_query(str)
+		return str.gsub("&lt;","<").gsub("&gt;",">").strip
+	end
+
 	# This method lists the available datasets to query the data
 	#return <Hashmap> 
 	def get_datasets

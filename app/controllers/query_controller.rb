@@ -1,3 +1,4 @@
+require 'base64'
 include QueryHelper
 include ApplicationHelper
 class QueryController < ApplicationController
@@ -17,7 +18,7 @@ class QueryController < ApplicationController
 
   def execute_sparql
   	response = {:result=>"error"}
-  	query = params[:query]
+  	query = Base64.encode64(clean_sparq_query(params[:query]))
     dataset = params[:dataset]
    	if !query.blank? && !dataset.blank?
    		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/convert/json?dataset="+dataset+"&query="+query)
