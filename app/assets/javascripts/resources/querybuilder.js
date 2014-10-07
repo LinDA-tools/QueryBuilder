@@ -312,10 +312,10 @@ QueryBuilder = {
         get_checked_properties : function(){
             var all_ranges = $('.cb-property-range').map(function() {return this.value;}).get().join(',');
             var checked_ranges = $('.cb-property-range:checked').map(function() {return this.value;}).get().join(',');
-            if(all_ranges == checked_ranges)
-                return "ALL";
-            else
-                return checked_ranges;
+            //if(all_ranges == checked_ranges)
+            //    return "ALL";
+            //else
+            return checked_ranges;
         },
         click_check_all : function(type){
             var item = $("#cb_property_range_all_"+type);

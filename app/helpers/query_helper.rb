@@ -95,7 +95,7 @@ module QueryHelper
 		unless properties_json["rdfClass"].blank?
 			unless properties_json["rdfClass"]["properties"].blank?
 				properties_json["rdfClass"]["properties"].each do |p|
-					if p["count"] > 0
+					if p["count"] > 0 && !p["range"]["label"].blank?
 						if p["type"] == "data"
 							properties[:data_type] << p
 						elsif p["type"] == "object"
