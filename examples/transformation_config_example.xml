@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<builderQuery>
+	<dataset>http://dbpedia.org/sparql</dataset>
+	<query>
+		PREFIX rdf:&lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs:&lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+SELECT ?concept ?label WHERE 
+{ ?concept rdf:type &lt;http://dbpedia.org/ontology/Actor&gt;.
+ ?concept rdfs:label ?label.
+FILTER(langMatches(lang(?label), "EN"))}
+	</query>
+	<forClass>http://dbpedia.org/ontology/Actor</forClass>
+	<inputFormat>rdf</inputFormat>
+	<outputFormat>rdb</outputFormat>
+	<properties>
+		<property>http://dbpedia.org/ontology/birthPlace</property>
+		<property>http://dbpedia.org/ontology/spouse</property>
+	</properties>
+</builderQuery>
