@@ -303,18 +303,15 @@ QueryBuilder = {
         },
         //This function is called when a property is clicked 
         // type is "object" or "datatype"
-        property_click : function(uri, name, type){
+        property_click : function(uri, name, type, range_uri, range_name, count){
             show_loading();
-            $.get("/query/property_ranges.js?property_uri="+uri+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name);
+            $.get("/query/property_ranges.js?property_uri="+uri+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name+"&range_uri="+range_uri+"&range_name="+range_name+"&count="+count);
         },
         //this method returns a comma separated string of selected properties
         // returns "ALL" if all of them are checked
         get_checked_properties : function(){
             var all_ranges = $('.cb-property-range').map(function() {return this.value;}).get().join(',');
             var checked_ranges = $('.cb-property-range:checked').map(function() {return this.value;}).get().join(',');
-            //if(all_ranges == checked_ranges)
-            //    return "ALL";
-            //else
             return checked_ranges;
         },
         click_check_all : function(type){
