@@ -1,22 +1,24 @@
 hide_loading();
 var selector_modal = $("#class_selector_modal");
 selector_modal.find(".modal-title").first().html("\"<%=params[:property_name]%>\" FILTER");
+var range_span = "<span class='badge'";
+$(".span-property-range").each(function(index){
+	if($(this).attr("property-uri")=="<%=params[:property_uri]%>"){
+		range_span += " style=\"" + $(this).attr("style") +"\" >"+$(this).html()+"</span>";
+	}
+});
+console.log(range_span);
 <%if @property_ranges[:type] == "object"%>
 	selector_modal.find(".modal-body").first().html("<%=escape_javascript render :partial=>'query/properties_selector_body', :locals=>{:mode=>'object'}%>");
 	$("#hdn_objects_of_class").val("<%=@property_ranges[:data].collect{|c| c[:value]}.join(',')%>");
 	$("#txt_search_objects").bind('input',function(){QueryBuilder.objects.search_change();});
-	<%
-		display_object_classes = ""
-		@property_ranges[:data].each do |d|
-			display_object_classes += ", " unless display_object_classes.blank?
-			display_object_classes += "<span class='badge'>" + d[:name].capitalize + "</span>"
-		end
-	%>
-	$("#object_selector_header").find("p").first().html("Search objects for <%=display_object_classes.html_safe%>");
+	$("#object_selector_header").find("p").first().html("Search objects for "+range_span);
 	selector_modal.find(".modal-footer").hide();
 <%else%>
 	selector_modal.find(".modal-body").first().html("<%=escape_javascript render :partial=>'query/properties_selector_body', :locals=>{:mode=>'data'}%>");
+	$("#p_selector_has_range_holder").html("has range "+range_span);
 	selector_modal.find(".modal-footer").show();
+
 <%end%>
 $("#hdn_selector_property_uri").val("<%=params[:property_uri]%>");
 $("#hdn_selector_property_name").val("<%=params[:property_name]%>");
