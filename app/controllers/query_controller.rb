@@ -67,7 +67,8 @@ class QueryController < ApplicationController
   end
 
   def property_ranges
-    @property_ranges = get_property_ranges(params[:dataset], params[:property_uri], params[:type])
+    #@property_ranges = get_property_ranges(params[:dataset], params[:property_uri], params[:type])
+    @property_ranges = {:type=>params[:type],:data=>[{:value=>params[:range_uri],:name=>params[:range_name]}]}
     respond_to do |format|
       format.js
     end
