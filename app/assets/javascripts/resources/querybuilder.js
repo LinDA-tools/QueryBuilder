@@ -353,6 +353,21 @@ QueryBuilder = {
                 QueryBuilder.generate_equivalent_sparql_query();
                 Utils.flash.success("Added objects "+names+" to filter for "+property_name);
             },
+            add_data_filter : function(property_uri, property_name, data_filter){
+                var identifier = QueryBuilder.properties.filter.get_new_list_identifier();
+                $("#qb_properties_properties_selected_filters_header").show();
+                $("#qb_properties_properties_selected_filters_list").show();
+                var div_html = "<div id='qb_properties_properties_selected_filters_list_item_"+identifier+"' class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\"  identifier=\""+identifier+"\" filter-type='data'>";
+                div_html += "<div class='row'><div class='col-md-10'>";
+                div_html += "<strong>"+property_name+"</strong> "+data_filter;
+                div_html += "</div>";
+                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
+                div_html += "</div></div>";
+                $("#qb_properties_properties_selected_filters_list").append(div_html);
+                QueryBuilder.generate_equivalent_sparql_query();
+                Utils.flash.success("Added data filter "+data_filter+" to filter for "+property_name);
+
+            },
             //removes the filter
             remove : function(identifier){
                 var list_item = $("#qb_properties_properties_selected_filters_list_item_"+identifier);
@@ -499,9 +514,14 @@ QueryBuilder = {
             return result;
         },
         done_click : function(){
-            var selected_objects = QueryBuilder.objects.get_selected_objects();
-            if(selected_objects.length > 0){
-                QueryBuilder.properties.filter.add_objects($("#hdn_selector_property_uri").val(),$("#hdn_selector_property_name").val(),selected_objects);
+            if($("#hdn_selector_type").val()=="object"){
+                var selected_objects = QueryBuilder.objects.get_selected_objects();
+                if(selected_objects.length > 0){
+                    QueryBuilder.properties.filter.add_objects($("#hdn_selector_property_uri").val(),$("#hdn_selector_property_name").val(),selected_objects);
+                }
+            }
+            else{
+                QueryBuilder.properties.filter.add_data_filter($("#hdn_selector_property_uri").val(),$("#hdn_selector_property_name").val(),$("#txt_filter_datatype").val());
             }
             $("#class_selector_modal").modal('hide');
         }
