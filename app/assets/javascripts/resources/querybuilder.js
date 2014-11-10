@@ -236,13 +236,12 @@ QueryBuilder = {
                 if($(this).attr("filter-type") == 'object'){
                     var objects = $(this).attr("filter-value").split(",");
                     var property_uri = $(this).attr("property-uri");
-                    result += "{";
                     for(var i=0;i<objects.length;i++){
                         if(i>0)
                             result += " UNION ";
-                        result += "?concept <"+property_uri+"> <"+objects[i]+">";
+                        result += "{ ?concept <"+property_uri+"> <"+objects[i]+"> }";
                     }
-                    result += "}.\n"
+                    result += ".\n"
                 }
             });
             return result;
