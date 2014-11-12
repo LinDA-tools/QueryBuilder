@@ -139,9 +139,13 @@ QueryBuilder = {
         get_selected_class : function(){
             return $("#hdn_qb_class").val();
         },
-        //this method returns a hashmap containing examples of a class
+        //this method returns a url to retrieve  examples of a class
         get_examples_action_url : function(class_uri){
             return "/query/class_examples?class="+class_uri+"&dataset="+QueryBuilder.datasets.get_selected();
+        },
+        //this method returns a url to subclasses  examples of a class
+        get_subclasses_action_url : function(class_uri){
+            return "/query/class_subclasses?class="+class_uri+"&dataset="+QueryBuilder.datasets.get_selected();
         },
         select : function(class_uri, class_name){
             $("#hdn_qb_class").val(class_uri);
@@ -171,6 +175,9 @@ QueryBuilder = {
                 }
                 element.find("strong").after(element_append_html);
             });
+        },
+        add_subclasses_details : function(element,class_uri){
+
         }
     
     },
