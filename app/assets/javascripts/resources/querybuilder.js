@@ -37,19 +37,6 @@ QueryBuilder = {
         var dataset = $("#hdn_qb_dataset").val();
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
     },
-    select_class : function(class_uri, class_name){
-        $("#hdn_qb_class").val(class_uri);
-        $("#tbl_classes_search_result").hide("fast");
-        $(".clear-search-class").hide("fast");
-        QueryBuilder.select_body($("#div_selected_class"),"<strong>"+class_name+"</strong>");
-        QueryBuilder.show_equivalent_sparql_query();
-        QueryBuilder.properties.generate();
-        $("#div_classes_search_more").show("fast");
-        $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
-        $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
-        $("#property_main_subclass_header").attr("uri",class_uri);
-        //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
-    },
     reset_searched_class : function(){
         $(".clear-search-class").show("fast");
         $("#tbl_classes_search_result").html("");
@@ -155,6 +142,19 @@ QueryBuilder = {
         //this method returns a hashmap containing examples of a class
         get_examples_action_url : function(class_uri){
             return "/query/class_examples?class="+class_uri+"&dataset="+QueryBuilder.datasets.get_selected();
+        },
+        select : function(class_uri, class_name){
+            $("#hdn_qb_class").val(class_uri);
+            $("#tbl_classes_search_result").hide("fast");
+            $(".clear-search-class").hide("fast");
+            QueryBuilder.select_body($("#div_selected_class"),"<strong>"+class_name+"</strong>");
+            QueryBuilder.show_equivalent_sparql_query();
+            QueryBuilder.properties.generate();
+            $("#div_classes_search_more").show("fast");
+            $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
+            $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
+            $("#property_main_subclass_header").attr("uri",class_uri);
+            //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
         }
     
     },
