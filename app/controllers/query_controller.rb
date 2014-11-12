@@ -1,3 +1,4 @@
+require 'json'
 include QueryHelper
 include ApplicationHelper
 class QueryController < ApplicationController
@@ -72,6 +73,12 @@ class QueryController < ApplicationController
     respond_to do |format|
       format.js
     end
+  end
+
+  def class_examples
+    example_map = {:result=>'ok'}
+
+    render :json => example_map
   end
 
   private 

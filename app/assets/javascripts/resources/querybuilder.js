@@ -151,6 +151,10 @@ QueryBuilder = {
         },
         get_selected_class : function(){
             return $("#hdn_qb_class").val();
+        },
+        //this method returns a hashmap containing examples of a class
+        get_examples_action_url : function(class_uri){
+            return "/query/class_examples?class="+class_uri+"&dataset="+QueryBuilder.datasets.get_selected();
         }
     
     },
