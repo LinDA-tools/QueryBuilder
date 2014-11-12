@@ -76,9 +76,8 @@ class QueryController < ApplicationController
   end
 
   def class_examples
-    example_map = {:result=>'ok'}
-
-    render :json => example_map
+    response = HTTParty.get("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/classes/examples?dataset="+params[:dataset]+"&class="+params[:class])
+    render :json => response.to_json
   end
 
   private 
