@@ -165,7 +165,7 @@ QueryBuilder = {
                     for(i=0;i<data.sample_objects.length;i++){
                         if(i>0)
                             element_append_html += ",&nbsp;"
-                        element_append_html += data.sample_objects[i]["label"]
+                        element_append_html += "<a onclick=\"Utils.show_uri_viewer('"+data.sample_objects[i]["uri"]+"')\" href=\"javascript:void(0);\">"+data.sample_objects[i]["label"]+"</a>"
                     }
                     element_append_html += "&nbsp;)</small>";   
                 }
