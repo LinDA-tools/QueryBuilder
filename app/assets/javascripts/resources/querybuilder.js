@@ -159,7 +159,17 @@ QueryBuilder = {
         },
         add_class_details : function(element,class_uri){
             $.getJSON(QueryBuilder.classes.get_examples_action_url(class_uri),function(data){
-                element.find("strong").after("&nbsp;&nbsp;&nbsp;<span class='badge'>"+data.total_objects.toString()+"</span>");
+                var element_append_html = "&nbsp;&nbsp;&nbsp;<span class='badge'>"+data.total_objects.toString()+"</span>";
+                if(data.total_objects > 0){
+                    element_append_html += "&nbsp;&nbsp;<small>(&nbsp;";
+                    for(i=0;i<data.sample_objects.length;i++){
+                        if(i>0)
+                            element_append_html += ",&nbsp;"
+                        element_append_html += data.sample_objects[i]["label"]
+                    }
+                    element_append_html += "&nbsp;)</small>";   
+                }
+                element.find("strong").after(element_append_html);
             });
         }
     
