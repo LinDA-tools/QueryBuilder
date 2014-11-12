@@ -248,7 +248,7 @@ QueryBuilder = {
         },
         select_subclass : function(uri){
 
-            $("#property_main_subclasses_group").find(".list-group-item").each(function(index){
+            $("#property_main_subclasses").find(".list-group-item").each(function(index){
                 var html = "";
                 if($(this).attr("uri") == uri){
                     if($(this).attr("clicked") == "true"){
