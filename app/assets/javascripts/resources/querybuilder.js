@@ -41,7 +41,7 @@ QueryBuilder = {
         $("#hdn_qb_class").val(class_uri);
         $("#tbl_classes_search_result").hide("fast");
         $(".clear-search-class").hide("fast");
-        QueryBuilder.select_body($("#div_selected_class"),class_name);
+        QueryBuilder.select_body($("#div_selected_class"),"<strong>"+class_name+"</strong>");
         QueryBuilder.show_equivalent_sparql_query();
         QueryBuilder.properties.generate();
         $("#div_classes_search_more").show("fast");
