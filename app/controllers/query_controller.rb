@@ -80,6 +80,11 @@ class QueryController < ApplicationController
     render :json => response.to_json
   end
 
+  def class_subclasses
+    response = HTTParty.get("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/classes/subclasses?dataset="+params[:dataset]+"&class="+params[:class])
+    render :json => response.to_json
+  end
+
   private 
     def generate_pdf(data)
         html = "hello world"
