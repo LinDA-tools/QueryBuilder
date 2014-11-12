@@ -44,6 +44,7 @@ QueryBuilder = {
         $(".done-search-class").hide("fast");
         $("#txt_search_classes").val("");
         $("#hdn_qb_class").val("");
+        $(".span-more-subclasses").remove();
         $("#div_classes_search_more").hide("fast");
         QueryBuilder.hide_equivalent_sparql_query();
         QueryBuilder.hide_searched_query_results();
@@ -175,9 +176,15 @@ QueryBuilder = {
                 }
                 element.find("strong").after(element_append_html);
             });
+            QueryBuilder.classes.add_subclasses_details(element,class_uri);
         },
         add_subclasses_details : function(element,class_uri){
-
+            $.getJSON(QueryBuilder.classes.get_subclasses_action_url(class_uri),function(data){
+                var right_element = element.parent().find(".select-right-actions").first();
+                if(data.subclasses.length > 0){
+                    right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\"></span>");
+                }
+            });
         }
     
     },

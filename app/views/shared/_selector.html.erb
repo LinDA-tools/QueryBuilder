@@ -1,14 +1,10 @@
-<%plus_function ||= nil%>
 <input type="hidden" id="<%=hidden_value_id%>" value="<%=hidden_value_value%>">
 <div id="<%=div_id%>" style="display:none" class="<%=div_classes%> alert alert-warning">
     <div class="row">
         <div class="col-md-10 select-body" >
 
         </div>
-        <div class="col-md-2">
-        	<%unless plus_function.blank?%>
-        		<span class='glyphicon glyphicon-plus clickable ' onclick="<%=plus_function%>"></span>
-        	<%end%>
+        <div class="col-md-2 select-right-actions" >
             <span class="glyphicon glyphicon-remove clickable pull-right" onclick="<%=remove_function%>"></span>
         </div>
     </div>
