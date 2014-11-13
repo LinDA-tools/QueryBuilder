@@ -160,9 +160,9 @@ QueryBuilder = {
             $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
             $("#property_main_subclass_header").attr("uri",class_uri);
             //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
-            QueryBuilder.classes.add_class_details($("#div_selected_class").find('.select-body').first(),class_uri);
+            QueryBuilder.classes.add_class_details($("#div_selected_class").find('.select-body').first(),class_uri,0);
         },
-        add_class_details : function(element,class_uri){
+        add_class_details : function(element,class_uri,tab_level){
             element.attr('class-uri',class_uri);
             $.getJSON(QueryBuilder.classes.get_examples_action_url(class_uri),function(data){
                 var element_append_html = "&nbsp;&nbsp;&nbsp;<span class='badge'>"+data.total_objects.toString()+"</span>";
@@ -177,13 +177,20 @@ QueryBuilder = {
                 }
                 element.find("strong").after(element_append_html);
             });
-            QueryBuilder.classes.add_subclasses_details(element,class_uri);
+            QueryBuilder.classes.add_subclasses_details(element,class_uri,tab_level);
         },
-        add_subclasses_details : function(element,class_uri){
+        add_subclasses_details : function(element,class_uri,tab_level){
             $.getJSON(QueryBuilder.classes.get_subclasses_action_url(class_uri),function(data){
                 var right_element = element.parent().find(".select-right-actions").first();
                 if(data.subclasses.length > 0){
-                    right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\"></span>");
+                    right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" class-uri=\""+class_uri+"\" onclick=\"QueryBuilder.classes.expand_selected_class('"+class_uri+"',"+tab_level.toString()+")\"></span>");
+                }
+            });
+        },
+        expand_selected_class : function(class_uri,tab_level){
+            $(".span-more-subclasses").each(function(index){
+                if($(this).attr("class-uri") == class_uri){
+                    $(this).remove();
                 }
             });
         }
