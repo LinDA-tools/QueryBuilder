@@ -45,7 +45,8 @@ QueryBuilder = {
         $("#txt_search_classes").val("");
         $("#hdn_qb_class").val("");
         $(".span-more-subclasses").remove();
-        $("#div_classes_search_more").hide("fast")
+        $("#div_classes_search_more").hide("fast");
+        $(".select-class-subclass-row").remove();
         QueryBuilder.hide_equivalent_sparql_query();
         QueryBuilder.hide_searched_query_results();
         QueryBuilder.properties.reset();
@@ -192,6 +193,7 @@ QueryBuilder = {
                         after_html = "<div class='row select-class-subclass-row' parent-class-uri=\""+class_uri+"\" style='display:none;'>";
                         after_html += "<div class='col-md-"+(tab_level+1).toString()+"'></div>";
                         after_html += "<div class=\"col-md-"+(9-tab_level).toString()+" select-class-subclass-body\" class-uri=\""+data.subclasses[i]['uri']+"\" parent-class-uri=\""+class_uri+"\"><strong>"+data.subclasses[i]['label']+"</strong></div>"
+                        after_html += "<div class=\"col-md-2 select-right-actions\" ></div>";
                         after_html += "</div>";
                         element.parent().parent().append(after_html);
                     }
