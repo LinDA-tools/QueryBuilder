@@ -159,6 +159,7 @@ QueryBuilder = {
             $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
             $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
             $("#property_main_subclass_header").attr("uri",class_uri);
+            $("#property_main_subclasses").hide();
             //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
             QueryBuilder.classes.add_class_details($("#div_selected_class").find('.select-body').first(),class_uri,0);
         },
@@ -183,7 +184,11 @@ QueryBuilder = {
             $.getJSON(QueryBuilder.classes.get_subclasses_action_url(class_uri),function(data){
                 var right_element = element.parent().find(".select-right-actions").first();
                 if(data.subclasses.length > 0){
+                    $("#property_main_subclasses").show();
                     right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" class-uri=\""+class_uri+"\" onclick=\"QueryBuilder.classes.expand_selected_class('"+class_uri+"',"+tab_level.toString()+")\"></span>");
+                }
+                else if(tab_level == 0){
+                    $("#property_main_subclasses").hide();
                 }
             });
         },
