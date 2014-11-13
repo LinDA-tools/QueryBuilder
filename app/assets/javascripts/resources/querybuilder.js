@@ -189,13 +189,13 @@ QueryBuilder = {
                         $("#property_main_subclasses").show();
                     right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" class-uri=\""+class_uri+"\" onclick=\"QueryBuilder.classes.expand_selected_class('"+class_uri+"',"+tab_level.toString()+")\"></span>");
                     var after_html = "";
-                    for(i=0;i<data.subclasses.length;i++){
-                        after_html = "<div class='row select-class-subclass-row' parent-class-uri=\""+class_uri+"\" style='display:none;'>";
+                    for(i=data.subclasses.length-1;i>=0;i--){
+                        after_html = "<div class='row select-class-subclass-row' parent-class-uri=\""+class_uri+"\" style='display:none;' class-uri=\""+data.subclasses[i]['uri']+"\">";
                         after_html += "<div class='col-md-"+(tab_level+1).toString()+"'></div>";
                         after_html += "<div class=\"col-md-"+(9-tab_level).toString()+" select-class-subclass-body\" class-uri=\""+data.subclasses[i]['uri']+"\" parent-class-uri=\""+class_uri+"\"><strong>"+data.subclasses[i]['label']+"</strong></div>"
                         after_html += "<div class=\"col-md-2 select-right-actions\" ></div>";
                         after_html += "</div>";
-                        element.parent().parent().append(after_html);
+                        element.parent().after(after_html);
                     }
 
                 }
@@ -212,6 +212,7 @@ QueryBuilder = {
             $(".select-class-subclass-row").each(function(index){
                 if($(this).attr("parent-class-uri") == class_uri){
                     $(this).show("fast");
+                    QueryBuilder.classes.add_class_details($(this).find('.select-class-subclass-body').first(),$(this).attr("class-uri"),tab_level+1);
                 }
             });
         }
