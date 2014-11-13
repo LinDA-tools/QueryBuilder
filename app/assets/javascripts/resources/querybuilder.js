@@ -184,18 +184,32 @@ QueryBuilder = {
             $.getJSON(QueryBuilder.classes.get_subclasses_action_url(class_uri),function(data){
                 var right_element = element.parent().find(".select-right-actions").first();
                 if(data.subclasses.length > 0){
-                    $("#property_main_subclasses").show();
+                    if(tab_level == 0)
+                        $("#property_main_subclasses").show();
                     right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" class-uri=\""+class_uri+"\" onclick=\"QueryBuilder.classes.expand_selected_class('"+class_uri+"',"+tab_level.toString()+")\"></span>");
+                    var after_html = "";
+                    for(i=0;i<data.subclasses.length;i++){
+                        after_html = "<div class='row select-class-subclass-row' parent-class-uri=\""+class_uri+"\" style='display:none;'>";
+                        after_html += "<div class='col-md-"+(tab_level+1).toString()+"'></div>";
+                        after_html += "<div class=\"col-md-"+(9-tab_level).toString()+" select-class-subclass-body\" class-uri=\""+data.subclasses[i]['uri']+"\" parent-class-uri=\""+class_uri+"\"><strong>"+data.subclasses[i]['label']+"</strong></div>"
+                        after_html += "</div>";
+                        element.parent().parent().append(after_html);
+                    }
+
                 }
-                else if(tab_level == 0){
+                else if(tab_level == 0)
                     $("#property_main_subclasses").hide();
-                }
             });
         },
         expand_selected_class : function(class_uri,tab_level){
             $(".span-more-subclasses").each(function(index){
                 if($(this).attr("class-uri") == class_uri){
                     $(this).remove();
+                }
+            });
+            $(".select-class-subclass-row").each(function(index){
+                if($(this).attr("parent-class-uri") == class_uri){
+                    $(this).show("fast");
                 }
             });
         }
