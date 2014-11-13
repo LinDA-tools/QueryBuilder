@@ -167,7 +167,7 @@ QueryBuilder = {
         add_class_details : function(element,class_uri,tab_level){
             element.attr('class-uri',class_uri);
             element.find('strong').first().after("<span class='loading-image'>&nbsp;&nbsp;&nbsp;<img  height=\"10px\" src=\"/assets/horizontal-loading.gif\"></span>");
-            $.getJSON(QueryBuilder.classes.get_examples_action_url(class_uri),function(data){
+            $.getJSON(QueryBuilder.classes.get_examples_action_url(class_uri)).success(function(data){
                 var element_append_html = "&nbsp;&nbsp;&nbsp;<span class='badge'>"+data.total_objects.toString()+"</span>";
                 if(data.total_objects > 0){
                     element_append_html += "&nbsp;&nbsp;<small>(&nbsp;";
@@ -178,8 +178,10 @@ QueryBuilder = {
                     }
                     element_append_html += "&nbsp;)</small>";   
                 }
-                element.find(".loading-image").first().remove();
+                //element.find(".loading-image").first().remove();
                 element.find("strong").after(element_append_html);
+            }).always(function(){
+                element.find(".loading-image").first().remove();
             });
             QueryBuilder.classes.add_subclasses_details(element,class_uri,tab_level);
         },
