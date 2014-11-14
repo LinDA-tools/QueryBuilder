@@ -75,6 +75,7 @@ SPARQL = {
     initiate_configured_download : function(){
         $(".div-configured-download").show("fast");
         $("#btn_group_download").hide("fast");
+        $("#btn_download_configured_convert_template").attr("href","/query/configured_convert_template?selected_properties="+QueryBuilder.properties.get_checked_properties());
     }
 
 

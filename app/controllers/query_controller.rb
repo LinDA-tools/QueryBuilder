@@ -87,7 +87,12 @@ class QueryController < ApplicationController
 
   def configured_convert_template
     #render plain: "CONFIGURED DOWNLOAD TEMPLATE"
-    send_data get_configured_template(params[:selected_properties]), :filename => 'configured_convert_template.txt'
+    if params[:selected_properties].blank?
+      selected_properties = []
+    else
+      selected_properties = params[:selected_properties].split(",")
+    end
+    send_data get_configured_template(selected_properties), :filename => 'configured_convert_template.txt'
   end
 
 
