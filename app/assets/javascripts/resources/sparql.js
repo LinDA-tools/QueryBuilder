@@ -70,6 +70,11 @@ SPARQL = {
             }
             window.open(download_url);
         }
+
+    },
+    initiate_configured_download : function(){
+        $(".div-configured-download").show("fast");
+        $("#btn_group_download").hide("fast");
     }
 
 

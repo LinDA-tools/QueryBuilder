@@ -36,12 +36,22 @@
         <h4 class="modal-title" id="sparql_download_modal_title">Download Result Set</h4>
       </div>
       <div class="modal-body">
-        <div class="btn-group ">
+        <div class="btn-group " id="btn_group_download">
             <button type="button" class="btn btn-default btn-primary" onclick="SPARQL.download.rdb()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;RDB Script</button>
             <button type="button" class="btn btn-default btn-success" onclick="SPARQL.download.csv()"><span class="glyphicon glyphicon-align-justify"></span>&nbsp;CSV</button>
             <button type="button" class="btn btn-default btn-info" onclick="SPARQL.download.json()"><span class="glyphicon glyphicon-road"></span>&nbsp;JSON</button>
             <button type="button" class="btn btn-default btn-warning" onclick="SPARQL.download.pdf()"><span class="glyphicon glyphicon-file"></span>&nbsp;PDF</button>
+            <%if in_query_builder_action?%>
+              <button class="btn btn-default btn-danger" onclick="SPARQL.initiate_configured_download()"><span class="glyphicon glyphicon-glass"></span>&nbsp;Generic</button>
+            <%end%>
         </div>
+        <%if in_query_builder_action?%>
+          <div class="div-configured-download row"  style="display:none;">
+            <div class="col-md-12">
+              configured download
+            </div>
+          </div>
+        <%end%>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

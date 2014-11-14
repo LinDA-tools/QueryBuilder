@@ -181,4 +181,12 @@ module QueryHelper
 		result
 	end
 
+	def in_query_builder_action?
+		if params[:controller] == "query" && params[:action] == "builder"
+			return true
+		else
+			return false
+		end
+	end
+
 end
