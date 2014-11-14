@@ -168,7 +168,7 @@ QueryBuilder = {
             element.attr('class-uri',class_uri);
             element.find('strong').first().after("<span class='loading-image'>&nbsp;&nbsp;&nbsp;<img  height=\"10px\" src=\"/assets/horizontal-loading.gif\"></span>");
             $.getJSON(QueryBuilder.classes.get_examples_action_url(class_uri)).success(function(data){
-                var element_append_html = "&nbsp;&nbsp;&nbsp;<span class='badge'>"+data.total_objects.toString()+"</span>";
+                var element_append_html = "&nbsp;&nbsp;&nbsp;<span class='badge'>"+get_long_number_display(data.total_objects)+"</span>";
                 if(data.total_objects > 0){
                     element_append_html += "&nbsp;&nbsp;<small>(&nbsp;";
                     for(i=0;i<data.sample_objects.length;i++){
