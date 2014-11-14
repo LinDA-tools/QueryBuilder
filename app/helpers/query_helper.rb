@@ -191,7 +191,13 @@ module QueryHelper
 
 	def get_configured_template(selected_properties = [])
 		result = "{{start variable_dictionary}}\n"
-		result += "INPUT YOUR VARIABLE DICTIONARY HERE\n"
+		if selected_properties.blank?
+			result += "INPUT YOUR VARIABLE DICTIONARY HERE\n"
+		else
+			selected_properties.each do |prop|
+				result += get_variable_name_of_property(prop)+" = "+prop+"\n"
+			end
+		end
 		result += "{{end}}\n\n"
 		result += "{{start header}}\n" 
 		result += "INPUT YOUR HEADER HERE\n"
