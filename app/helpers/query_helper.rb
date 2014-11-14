@@ -189,4 +189,19 @@ module QueryHelper
 		end
 	end
 
+	def get_configured_template(selected_properties = [])
+		result = "{{start variable_dictionary}}\n"
+		result += "INPUT YOUR VARIABLE DICTIONARY HERE\n"
+		result += "{{end}}\n\n"
+		result += "{{start header}}\n" 
+		result += "INPUT YOUR HEADER HERE\n"
+		result += "{{end}}\n\n"
+		result += "{{start body}}\n" 
+		result += "INPUT YOUR BODY HERE\n"
+		result += "{{end}}\n\n"
+		result += "{{start footer}}\n" 
+		result += "INPUT YOUR FOOTER HERE\n"
+		result += "{{end}}"
+	end
+
 end
