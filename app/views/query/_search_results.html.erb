@@ -48,7 +48,8 @@
         <%if in_query_builder_action?%>
           <div class="div-configured-download row"  style="display:none;">
             <div class="col-md-12">
-              configured download
+                <input type="file" id="configured_template_files" name="files[]" multiple />
+                <output id="list"></output>
             </div>
           </div>
         <%end%>
@@ -59,3 +60,8 @@
     </div>
   </div>
 </div>
+<%if in_query_builder_action?%>
+  <script>
+    document.getElementById('configured_template_files').addEventListener('change', QueryBuilder.convert.configured.handle_file_upload, false);
+  </script>
+<%end%>
