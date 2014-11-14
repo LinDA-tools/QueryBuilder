@@ -85,6 +85,12 @@ class QueryController < ApplicationController
     render :json => response.to_json
   end
 
+  def configured_convert_template
+    #render plain: "CONFIGURED DOWNLOAD TEMPLATE"
+    send_data 'CONFIGURED DOWNLOAD TEMPLATE', :filename => 'configured_convert_template.txt'
+  end
+
+
   private 
     def generate_pdf(data)
         html = "hello world"
@@ -93,4 +99,5 @@ class QueryController < ApplicationController
         pdf = kit.to_pdf
         return pdf 
     end
+    
 end

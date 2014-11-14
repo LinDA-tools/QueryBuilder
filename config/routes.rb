@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get 'query/property_ranges'
   get 'query/class_examples'
   get 'query/class_subclasses'
+  get 'query/configured_convert_template'
 
   root :to => 'query#sparql'
 
