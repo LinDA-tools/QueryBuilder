@@ -232,6 +232,8 @@ QueryBuilder = {
     //the methods related to properties
     properties : {
         generate : function(){
+            $("#property_main_properties_datatype_group").hide();
+            $("#property_main_properties_object_group").hide();
             QueryBuilder.properties.get_properties_for_selected_class();
             $("#div_qb_properties").show("fast");
         },
