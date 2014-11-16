@@ -180,6 +180,8 @@ QueryBuilder = {
                 }
                 //element.find(".loading-image").first().remove();
                 element.find("strong").after(element_append_html);
+                if(tab_level > 0)
+                    element.parent().find(".select-right-actions").first().append("<span class=\"glyphicon glyphicon-globe clickable pull-right\" onclick=\"QueryBuilder.classes.select_again('"+class_uri+"','"+element.find("strong").first().html()+"')\"></span>");
             }).always(function(){
                 element.find(".loading-image").first().remove();
             });
@@ -219,6 +221,10 @@ QueryBuilder = {
                     QueryBuilder.classes.add_class_details($(this).find('.select-class-subclass-body').first(),$(this).attr("class-uri"),tab_level+1);
                 }
             });
+        },
+        select_again : function(class_uri,class_name){
+            QueryBuilder.reset_searched_class();
+            QueryBuilder.classes.select(class_uri,class_name);
         }
     
     },
