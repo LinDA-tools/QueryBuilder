@@ -356,21 +356,28 @@ QueryBuilder = {
         },
         //This method assigns colors to the badges of ranges of properties
         generate_range_badge_colors : function(){
-            var colors =    [  "#E52B50","#9966CC","#007FFF","#964B00","#0095B6","#800020","#CD7F32","#702963","#007BA7","#808000",
+            var original_colors = [  "#E52B50","#9966CC","#007FFF","#964B00","#0095B6","#800020","#CD7F32","#702963","#007BA7","#808000",
                                 "#D2B48C","#483C32","#FF4500", "#FFA500", "#D1E231", "#1C2841", "#FA8072", "#7B3F00", "#2F4F4F",
                                 "#483D8B", "#FFD700", "#3CB371", "#BC8F8F", "#FF69B4", "#00CED1", "#0000CD"
                             ];
+
             var badge_classes = [".span-property-range-data",".span-property-range-object"];
+            var color_index = 0;
             for(var i=0;i<badge_classes.length;i++){
-                var color_counter = 0;
+                var colors =  [];
+                for(var j = 0 ; j<original_colors.length ; j++)
+                    colors.push(original_colors[j]);
                 var range_color_lookup = {};
                 $(badge_classes[i]).each(function(index){
                     var range_name = $(this).html();
                     if(range_color_lookup[range_name] == undefined){
-                        range_color_lookup[range_name] = colors[color_counter];
-                        color_counter++;
-                        if(color_counter>=colors.length)
-                            color_counter = 0;
+                        color_index = get_random_int(0,colors.length-1);
+                        range_color_lookup[range_name] = colors[color_index];
+                        colors.splice(color_index,1);
+                        if(colors.length <= 0){
+                            for(var k = 0 ; k<original_colors.length ; k++)
+                                colors.push(original_colors[k]); 
+                        }
                     }
                     $(this).attr("style","background-color:"+range_color_lookup[range_name]+";");
                 });
