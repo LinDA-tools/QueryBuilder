@@ -154,8 +154,6 @@ QueryBuilder = {
             $("#tbl_classes_search_result").hide("fast");
             $(".clear-search-class").hide("fast");
             QueryBuilder.select_body($("#div_selected_class"),"<strong>"+class_name+"</strong>");
-            QueryBuilder.show_equivalent_sparql_query();
-            QueryBuilder.properties.generate();
             $("#div_classes_search_more").show("fast");
             $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
             $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
@@ -163,6 +161,8 @@ QueryBuilder = {
             $("#property_main_subclasses").hide();
             //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
             QueryBuilder.classes.add_class_details($("#div_selected_class").find('.select-body').first(),class_uri,0);
+            QueryBuilder.show_equivalent_sparql_query();
+            QueryBuilder.properties.generate();
         },
         add_class_details : function(element,class_uri,tab_level){
             element.attr('class-uri',class_uri);
