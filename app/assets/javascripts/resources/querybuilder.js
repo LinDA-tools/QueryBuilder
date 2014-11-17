@@ -629,6 +629,15 @@ QueryBuilder = {
                         configured_convert.head = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"head");
                         configured_convert.body = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"body");
                         configured_convert.footer = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"footer");
+                        str_variable_dictionary = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"variable_dictionary");
+                        arr_variable_dictionary = str_variable_dictionary.split("\n");
+                        configured_convert.variable_dictionary = [];
+                        for(i=0;i<arr_variable_dictionary.length;i++){
+                            arr_var = arr_variable_dictionary[i].split("=");
+                            if(arr_var.length == 2){
+                                configured_convert.variable_dictionary.push({variable : arr_var[0].trim(), value: arr_var[1].trim()});
+                            }
+                        }
                     };
                     reader.readAsText(f);
               }
