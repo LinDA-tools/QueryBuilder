@@ -625,7 +625,8 @@ QueryBuilder = {
                     var reader = new FileReader();
                     var file_data = "";
                     reader.onload = function(e){
-                        console.log(QueryBuilder.convert.configured.get_string_blocks(reader.result));
+                        var blocks = QueryBuilder.convert.configured.get_string_blocks(reader.result);
+                        console.log(QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"variable_dictionary"));
                     };
                     reader.readAsText(f);
               }
@@ -634,6 +635,29 @@ QueryBuilder = {
 
             },
         
+            get_block_string_from_blocks : function(blocks, block_type){
+                var result = "";
+                var inside = false;
+                var break_loop = false;
+                for(i=0;i<blocks.length;i++){
+                    if(blocks[i].charAt(0) == '{' && blocks[i].charAt(1) == '{' && blocks[i].charAt(blocks[i].length-1) == '}' && blocks[i].charAt(blocks[i].length-2) == '}')
+                    {    
+                        if(blocks[i].indexOf("start") > -1){
+                            if(blocks[i].indexOf(block_type) > -1){
+                                inside = true;
+                            }
+                        }
+                        else if(inside == true && blocks[i].indexOf("end")){
+                            result = blocks[i-1];
+                            break_loop = true;
+                        }
+                    }
+                    if(break_loop == true)
+                        break;
+                }
+                return result;
+
+            },
             get_string_blocks : function(file_data){
                 var result = [];
                 var index_pairs = QueryBuilder.convert.configured.get_block_index_pairs(file_data);
@@ -650,11 +674,8 @@ QueryBuilder = {
                 var index_pairs = [];
                 var start_index = 0;
                 var end_index = 0;
-                console.log("getting block index pairs ... ");
-                console.log(file_data);
                 for(i=0;i<file_data.length-1;i++){
                     if(entered_block == false){
-                        console.log(file_data);
                         if(file_data.charAt(i) == '{' && file_data.charAt(i+1) == '{'){
                             start_index = i;
                             entered_block = true;
