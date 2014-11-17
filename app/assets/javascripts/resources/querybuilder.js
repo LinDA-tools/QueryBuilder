@@ -622,18 +622,58 @@ QueryBuilder = {
                             f.size, ' bytes, last modified: ',
                             f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
                             '</li>');
-                  var reader = new FileReader();
-              
-
-              reader.readAsText(f);
-              console.log(reader);
+                    var reader = new FileReader();
+                    var file_data = "";
+                    reader.onload = function(e){
+                        console.log(QueryBuilder.convert.configured.get_string_blocks(reader.result));
+                    };
+                    reader.readAsText(f);
               }
 
               document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
 
+            },
+        
+            get_string_blocks : function(file_data){
+                var result = [];
+                var index_pairs = QueryBuilder.convert.configured.get_block_index_pairs(file_data);
+                for(i=0;i<index_pairs.length;i++){
+                    result.push(file_data.substring(index_pairs[i].start,index_pairs[i].end));
+                    if(i<index_pairs.length-1){
+                        result.push(file_data.substring(index_pairs[i].end,index_pairs[i+1].start));
+                    }
+                }
+                return result;
+            },
+            get_block_index_pairs : function(file_data){
+                var entered_block = false;
+                var index_pairs = [];
+                var start_index = 0;
+                var end_index = 0;
+                console.log("getting block index pairs ... ");
+                console.log(file_data);
+                for(i=0;i<file_data.length-1;i++){
+                    if(entered_block == false){
+                        console.log(file_data);
+                        if(file_data.charAt(i) == '{' && file_data.charAt(i+1) == '{'){
+                            start_index = i;
+                            entered_block = true;
+                            i=i+1;
+                        }
+                    }
+                    else{
+                        if(file_data.charAt(i) == '}' && file_data.charAt(i+1) == '}'){
+                            end_index = i+2;
+                            entered_block = false;
+                            index_pairs.push({start: start_index, end : end_index});
+                            i = i+1;
+                        }
+                    }
+                }
+                return index_pairs;
             }
-        }
-    }
+        } // end configured
+    } // end convert
 
 
 };
