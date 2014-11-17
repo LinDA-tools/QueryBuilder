@@ -82,7 +82,7 @@ SPARQL = {
 
             }
             download_url += "&variable_dictionary="+encodeURIComponent(str_variable_dictionary);
-            download_url += "&header="+encodeURIComponent(configured_convert.head);
+            download_url += "&header="+encodeURIComponent(configured_convert.header);
             download_url += "&body="+encodeURIComponent(configured_convert.body);
             download_url += "&footer="+encodeURIComponent(configured_convert.footer);
             window.open(download_url);
