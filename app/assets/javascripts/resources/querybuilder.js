@@ -626,7 +626,9 @@ QueryBuilder = {
                     var file_data = "";
                     reader.onload = function(e){
                         var blocks = QueryBuilder.convert.configured.get_string_blocks(reader.result);
-                        console.log(QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"variable_dictionary"));
+                        configured_convert.head = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"head");
+                        configured_convert.body = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"body");
+                        configured_convert.footer = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"footer");
                     };
                     reader.readAsText(f);
               }
@@ -648,13 +650,14 @@ QueryBuilder = {
                             }
                         }
                         else if(inside == true && blocks[i].indexOf("end")){
-                            result = blocks[i-1];
+                            result = blocks[i-1].substring(1,blocks[i-1].length-1);
                             break_loop = true;
                         }
                     }
                     if(break_loop == true)
                         break;
                 }
+
                 return result;
 
             },
