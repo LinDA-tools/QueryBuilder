@@ -704,7 +704,22 @@ QueryBuilder = {
                     }
                 }
                 return index_pairs;
-            }
+            },
+                initiate_download : function(){
+                    $(".div-configured-download").show("fast");
+                    $("#btn_group_download").hide("fast");
+                    $("#btn_download_configured_convert_template").attr("href","/query/configured_convert_template?selected_properties="+QueryBuilder.properties.get_checked_properties());
+                },
+                hide_download : function(motion){
+                    if(motion != undefined && motion != ""){
+                        $(".div-configured-download").hide("fast");
+                        $("#btn_group_download").show("fast");
+                    }
+                    else{
+                        $(".div-configured-download").hide();
+                        $("#btn_group_download").show(); 
+                    }
+                }
         } // end configured
     } // end convert
 

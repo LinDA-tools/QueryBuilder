@@ -42,12 +42,15 @@
             <button type="button" class="btn btn-default btn-info" onclick="SPARQL.download.json()"><span class="glyphicon glyphicon-road"></span>&nbsp;JSON</button>
             <button type="button" class="btn btn-default btn-warning" onclick="SPARQL.download.pdf()"><span class="glyphicon glyphicon-file"></span>&nbsp;PDF</button>
             <%if in_query_builder_action?%>
-              <button class="btn btn-default btn-danger" onclick="SPARQL.initiate_configured_download()"><span class="glyphicon glyphicon-glass"></span>&nbsp;Generic</button>
+              <button class="btn btn-default btn-danger" onclick="QueryBuilder.convert.configured.initiate_download()"><span class="glyphicon glyphicon-glass"></span>&nbsp;Generic</button>
             <%end%>
         </div>
         <%if in_query_builder_action?%>
           <div class="div-configured-download row"  style="display:none;">
             <div class="col-md-12">
+              <p>
+                <button class="btn btn-danger btn-xs" type="button" onclick="QueryBuilder.convert.configured.hide_download('fast')"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;back</button>
+              </p>
               <p>
                 <strong>STEP 1 :</strong> You need to write your template in <strong>.txt</strong> file. 
               </p>
@@ -59,9 +62,10 @@
                 <strong>STEP 2 : </strong> Ready with the template file ? Awesome !! Now all you have to do is upload that file below.
               </p>
               <p>
-                <input type="file" id="configured_template_files" name="files[]" multiple class="btn btn-primary btn-xs col-md-12"/>
+                <input type="file" id="configured_template_files" name="files[]" multiple class="btn btn-warning btn-xs col-md-12"/>
                 <output id="list"></output>
               </p>
+
             </div>
           </div>
           <div class="div-configured-download row"  style="display:none;">
