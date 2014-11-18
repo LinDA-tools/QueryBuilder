@@ -58,4 +58,4 @@
 @show_sparql_download_modal =->
     if SPARQL.textbox.is_valid()
         $("#sparql_download_modal").modal("show")
-
+        QueryBuilder.convert.configured.hide_download()
