@@ -613,8 +613,47 @@ QueryBuilder = {
         configured : {
             check_validity_of_file_content : function(file_data){
                 var result = { valid : true, description: ""};
+                var blocks = QueryBuilder.convert.configured.get_string_blocks(file_data);
+                var block_types = ["variable_dictionary","header","body","footer"];
+                for(i=0;i<block_types.length;i++){
+                    result.valid = QueryBuilder.convert.configured.check_file_body_item(blocks,block_types[i]);
+                    if(result.valid == false){
+                        result.description = "These seems to be some problem with the <strong>"+block_types[i]+"</strong> section of your template. Please correct it and upload again.";
+                        break;
+                    }    
+                }
                 return result;
             },
+            check_file_body_item : function(blocks,block_type){
+                var result = false;
+
+                var inside = false;
+                var break_loop = false;
+                for(i=0;i<blocks.length;i++){
+                    if(blocks[i].charAt(0) == '{' && blocks[i].charAt(1) == '{' && blocks[i].charAt(blocks[i].length-1) == '}' && blocks[i].charAt(blocks[i].length-2) == '}')
+                    {    
+                        if(blocks[i].indexOf("start") > -1 && inside == false){
+                            if(blocks[i].indexOf(block_type) > -1){
+                                inside = true;
+                            }
+                        }
+                        else if(blocks[i].indexOf("start") > -1 && inside == true){
+                            //nested block.
+                            //will throw an errow.
+                            break_loop = true;
+                            result = false;
+                        }
+                        else if(inside == true && blocks[i].indexOf("end")){
+                            result = true;
+                            break_loop = true;
+                        }
+                    }
+                    if(break_loop == true)
+                        break;
+                }
+                return result;
+            }
+            ,
             handle_error_output : function(valid,error_description){
                 if(valid == true){
                     $(".configured-download-file-ok").show("fast");
