@@ -48,13 +48,20 @@
         <%if in_query_builder_action?%>
           <div class="div-configured-download row"  style="display:none;">
             <div class="col-md-12">
-              <a type="button" class="btn btn-default btn-success" target="_blank" id="btn_download_configured_convert_template">Download template</a>
-            </div>
-          </div>
-          <div class="div-configured-download row"  style="display:none;">
-            <div class="col-md-12">
-                <input type="file" id="configured_template_files" name="files[]" multiple />
+              <p>
+                <strong>STEP 1 :</strong> You need to write your template in <strong>.txt</strong> file. 
+              </p>
+              <p>
+                Not sure how your template should be? Download the template from here :&nbsp;
+                <a type="button" class="btn btn-default btn-xs btn-success" target="_blank" id="btn_download_configured_convert_template">Download template</a>
+              </p>
+              <p >
+                <strong>STEP 2 : </strong> Ready with the template file ? Awesome !! Now all you have to do is upload that file below.
+              </p>
+              <p>
+                <input type="file" id="configured_template_files" name="files[]" multiple class="btn btn-primary btn-xs col-md-12"/>
                 <output id="list"></output>
+              </p>
             </div>
           </div>
           <div class="div-configured-download row"  style="display:none;">
