@@ -56,7 +56,7 @@
               </p>
               <p>
                 Not sure how your template should be? Download the template from here :&nbsp;
-                <a type="button" class="btn btn-default btn-xs btn-success" target="_blank" id="btn_download_configured_convert_template">Download template</a>
+                <a type="button" class="btn btn-default btn-xs btn-success" target="_blank" id="btn_download_configured_convert_template"><span class='glyphicon glyphicon-file'></span>&nbsp;Download template</a>
               </p>
               <p >
                 <strong>STEP 2 : </strong> Ready with the template file ? Awesome !! Now all you have to do is upload that file below.
@@ -65,12 +65,12 @@
                 <input type="file" id="configured_template_files" name="files[]" multiple class="btn btn-warning btn-xs col-md-12"/>
                 <output id="list"></output>
               </p>
-
-            </div>
-          </div>
-          <div class="div-configured-download row"  style="display:none;">
-            <div class="col-md-12">
-              <button type="button" onclick="SPARQL.download.configured()">download final file !!</button>
+              <p class="configured-download-file-ok">
+                <span class="badge alert-success"><span class='glyphicon glyphicon-ok'></span></span> The uploaded template file is a valid template. You can now proceed to download your final serialization output :)
+              </p>
+              <p class="configured-download-file-ok">
+                <button type="button" class="btn btn-primary" onclick="SPARQL.download.configured()"><span class='glyphicon glyphicon-glass'></span>&nbsp;download final output file</button>
+              </p>
             </div>
           </div>
         <%end%>

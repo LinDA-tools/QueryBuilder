@@ -642,7 +642,8 @@ QueryBuilder = {
                     reader.readAsText(f);
               }
 
-              document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+              //document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+              $(".configured-download-file-ok").show("fast");
 
             },
         
@@ -709,6 +710,7 @@ QueryBuilder = {
                     $(".div-configured-download").show("fast");
                     $("#btn_group_download").hide("fast");
                     $("#btn_download_configured_convert_template").attr("href","/query/configured_convert_template?selected_properties="+QueryBuilder.properties.get_checked_properties());
+                    $(".configured-download-file-ok").hide();
                 },
                 hide_download : function(motion){
                     if(motion != undefined && motion != ""){
