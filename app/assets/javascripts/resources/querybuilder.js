@@ -777,6 +777,7 @@ QueryBuilder = {
                     $("#btn_download_configured_convert_template").attr("href","/query/configured_convert_template?selected_properties="+QueryBuilder.properties.get_checked_properties());
                     $(".configured-download-file-ok").hide();
                     $(".configured-download-file-error").hide();
+                    $("#form_configured_template_files")[0].reset();
                 },
                 hide_download : function(motion){
                     if(motion != undefined && motion != ""){

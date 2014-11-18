@@ -62,8 +62,10 @@
                 <strong>STEP 2 : </strong> Ready with the template file ? Awesome !! Now all you have to do is upload that file below.
               </p>
               <p>
-                <input type="file" id="configured_template_files" name="files[]" multiple class="btn btn-warning btn-xs col-md-12"/>
-                <output id="list"></output>
+                <form id="form_configured_template_files">
+                  <input type="file" id="configured_template_files" name="files[]" multiple class="btn btn-warning btn-xs col-md-12"/>
+                  <output id="list"></output>
+                </form>
               </p>
               <p class="configured-download-file-error">
                 <span class="badge alert-danger"><span class='glyphicon glyphicon-remove'></span></span>&nbsp;<span id="configured_download_error_message"></span> 
