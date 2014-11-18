@@ -611,41 +611,67 @@ QueryBuilder = {
     },
     convert : {
         configured : {
+            check_validity_of_file_content : function(file_data){
+                var result = { valid : true, description: ""};
+                return result;
+            },
+            handle_error_output : function(valid,error_description){
+                if(valid == true){
+                    $(".configured-download-file-ok").show("fast");
+                }
+                else{
+                    $("#configured_download_error_message").html(error_description);
+                    $(".configured-download-file-error").show("fast");
+                } 
+            },
             handle_file_upload : function(evt) {
-              var files = evt.target.files; // FileList object
+                $(".configured-download-file-ok").hide();
+                $(".configured-download-file-error").hide();
+                var files = evt.target.files; // FileList object
+                var valid_file = false;
+                var error_description = "";
+                var output = [];
+                var f = files[0];
 
-              // files is a FileList of File objects. List some properties.
-              var output = [];
-              for (var i = 0, f; f = files[i]; i++) {
-
-                output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                if(get_file_extension(f.name) != "txt"){
+                    QueryBuilder.convert.configured.handle_error_output(false,"The file uploaded is not <strong>.txt</strong> file");
+                }
+                else{
+                    output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
                             f.size, ' bytes, last modified: ',
                             f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
                             '</li>');
                     var reader = new FileReader();
                     var file_data = "";
                     reader.onload = function(e){
-                        var blocks = QueryBuilder.convert.configured.get_string_blocks(reader.result);
-                        configured_convert.header = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"header");
-                        configured_convert.body = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"body");
-                        configured_convert.footer = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"footer");
-                        str_variable_dictionary = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"variable_dictionary");
-                        arr_variable_dictionary = str_variable_dictionary.split("\n");
-                        configured_convert.variable_dictionary = [];
-                        for(i=0;i<arr_variable_dictionary.length;i++){
-                            arr_var = arr_variable_dictionary[i].split("=");
-                            if(arr_var.length == 2){
-                                configured_convert.variable_dictionary.push({variable : arr_var[0].trim(), value: arr_var[1].trim()});
+                        var file_validity =  QueryBuilder.convert.configured.check_validity_of_file_content(reader.result);
+                        if(file_validity.valid == true){
+                            var blocks = QueryBuilder.convert.configured.get_string_blocks(reader.result);
+                            configured_convert.header = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"header");
+                            configured_convert.body = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"body");
+                            configured_convert.footer = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"footer");
+                            str_variable_dictionary = QueryBuilder.convert.configured.get_block_string_from_blocks(blocks,"variable_dictionary");
+                            arr_variable_dictionary = str_variable_dictionary.split("\n");
+                            configured_convert.variable_dictionary = [];
+                            for(i=0;i<arr_variable_dictionary.length;i++){
+                                arr_var = arr_variable_dictionary[i].split("=");
+                                if(arr_var.length == 2){
+                                    configured_convert.variable_dictionary.push({variable : arr_var[0].trim(), value: arr_var[1].trim()});
+                                }
                             }
                         }
+                        QueryBuilder.convert.configured.handle_error_output(file_validity.valid,file_validity.description);
                     };
                     reader.readAsText(f);
-              }
+                }
+              
 
               //document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-              $(".configured-download-file-ok").show("fast");
+  
 
             },
+
+
         
             get_block_string_from_blocks : function(blocks, block_type){
                 var result = "";
@@ -711,6 +737,7 @@ QueryBuilder = {
                     $("#btn_group_download").hide("fast");
                     $("#btn_download_configured_convert_template").attr("href","/query/configured_convert_template?selected_properties="+QueryBuilder.properties.get_checked_properties());
                     $(".configured-download-file-ok").hide();
+                    $(".configured-download-file-error").hide();
                 },
                 hide_download : function(motion){
                     if(motion != undefined && motion != ""){
