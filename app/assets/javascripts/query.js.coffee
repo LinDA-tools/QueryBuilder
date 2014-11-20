@@ -64,8 +64,6 @@
     break_index = null
     i = uri.length - 1
     while i >= 0
-      
-      #var a=3+1;
       if uri.charAt(i) is "/" or uri.charAt(i) is "#"
         break_index = i
         break
