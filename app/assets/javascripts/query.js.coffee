@@ -59,3 +59,15 @@
     if SPARQL.textbox.is_valid()
         $("#sparql_download_modal").modal("show")
         QueryBuilder.convert.configured.hide_download()
+
+@get_uri_element_val =(uri)->
+    break_index = null
+    i = uri.length - 1
+    while i >= 0
+      
+      #var a=3+1;
+      if uri.charAt(i) is "/" or uri.charAt(i) is "#"
+        break_index = i
+        break
+      i--
+    return uri.substring(i + 1, uri.length).replace(/[^0-9a-z]/i).toUnderscore()

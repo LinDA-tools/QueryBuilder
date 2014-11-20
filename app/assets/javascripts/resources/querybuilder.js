@@ -396,6 +396,15 @@ QueryBuilder = {
             var checked_ranges = $('.cb-property-range:checked').map(function() {return this.value;}).get().join(',');
             return checked_ranges;
         },
+        get_checked_properties_map : function(){
+            var checked_properties = $('.cb-property-range:checked').map(function() {return this.value;});
+            var property_map = {};
+            for(i=0;i<checked_properties.length;i++){
+                property_map[get_uri_element_val(checked_properties[i])] = checked_properties[i];
+            }
+            return property_map;
+
+        },
         click_check_all : function(type){
             var item = $("#cb_property_range_all_"+type);
             var to_check = false;

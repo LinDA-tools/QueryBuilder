@@ -82,3 +82,11 @@ String.prototype.splice = function( idx, rem, s ) {
     return (this.slice(0,idx) + s + this.slice(idx + Math.abs(rem)));
 };
 
+String.prototype.toDash = function(){
+  return this.replace(/([A-Z])/g, function($1){return "-"+$1.toLowerCase();});
+};
+
+String.prototype.toUnderscore = function(){
+  return this.replace(/([A-Z])/g, function($1){return "_"+$1.toLowerCase();});
+};
+
