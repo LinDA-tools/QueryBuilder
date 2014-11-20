@@ -150,6 +150,7 @@ QueryBuilder = {
             return "/query/class_subclasses?class="+class_uri+"&dataset="+QueryBuilder.datasets.get_selected();
         },
         select : function(class_uri, class_name){
+            $("#btn_show_checked_properties_no").click();
             $("#hdn_qb_class").val(class_uri);
             $("#tbl_classes_search_result").hide("fast");
             $(".clear-search-class").hide("fast");

@@ -92,6 +92,7 @@ SPARQL = {
 
     equivalent_query : {
         handle_checked_properties : function(response){
+            $("#hdn_show_checked_properties").val(response);
             if(response == "yes"){
                 $("#btn_show_checked_properties_no").removeClass("btn-success");
                 $("#btn_show_checked_properties_yes").addClass("btn-danger");
