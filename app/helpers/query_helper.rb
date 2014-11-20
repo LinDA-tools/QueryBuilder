@@ -25,9 +25,10 @@ module QueryHelper
 		classes = []
 		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/classes?search="+search_str.downcase+"&dataset="+dataset)
    		response = HTTParty.get(uri)
-   		unless response["results"]["bindings"].blank?
-   			response["results"]["bindings"].each do |result|
-   				classes << {:uri=>result["class"]["value"], :name=>result["label"]["value"].capitalize}
+   		unless response["searched_items"].blank?
+   			searched_items = response["searched_items"].sort_by{|item| item["sequence"]}
+   			searched_items.each do |result|
+   				classes << {:uri=>result["uri"], :name=>result["labels"]["en"].capitalize} unless result["labels"]["en"].blank?
    			end
    		end
 		classes
