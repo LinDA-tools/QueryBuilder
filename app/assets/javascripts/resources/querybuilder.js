@@ -53,11 +53,24 @@ QueryBuilder = {
     },
     generate_equivalent_sparql_query : function(){
         var query = "";
+        var properties_map = null;
         query += SPARQL.prefix.rdf;
         query += SPARQL.prefix.rdfs;
-        query += "SELECT ?concept ?label WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">.\n ?concept rdfs:label ?label.\n";
+        query += "SELECT ?concept ?label ";
+        if(QueryBuilder.properties.will_show_properties_in_preview()){
+            properties_map = QueryBuilder.properties.get_checked_properties_map();
+            $.each(properties_map, function(k,v){
+                query+= "?" +k +" ";
+            });
+        }
+        query += "WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">.\n ?concept rdfs:label ?label.\n";
         query += QueryBuilder.properties.get_subclasses_triples();
         query += QueryBuilder.properties.get_properties_triples();
+        if(QueryBuilder.properties.will_show_properties_in_preview()){
+            $.each(properties_map, function(k,v){
+                query+= "OPTIONAL{?concept <"+v+"> ?"+k+"}.\n";
+            });
+        }
         query += "FILTER(langMatches(lang(?label), \"EN\"))}\n LIMIT 200";
         $("#txt_sparql_query").val(query);
     }
@@ -232,6 +245,12 @@ QueryBuilder = {
 
     //the methods related to properties
     properties : {
+        will_show_properties_in_preview : function(){
+            if($("#hdn_show_checked_properties").val() == "yes")
+                return true ;
+            else
+                return false ;
+        },
         generate : function(){
             $("#property_main_properties_datatype_group").hide();
             $("#property_main_properties_object_group").hide();
@@ -800,8 +819,21 @@ QueryBuilder = {
                     }
                 }
         } // end configured
-    } // end convert
-
+    }, // end convert
+    equivalent_query : {
+        handle_checked_properties : function(response){
+            $("#hdn_show_checked_properties").val(response);
+            if(response == "yes"){
+                $("#btn_show_checked_properties_no").removeClass("btn-success");
+                $("#btn_show_checked_properties_yes").addClass("btn-danger");
+            }
+            else if(response == "no"){
+                $("#btn_show_checked_properties_no").addClass("btn-success");
+                $("#btn_show_checked_properties_yes").removeClass("btn-danger");
+            }
+            QueryBuilder.show_equivalent_sparql_query();
+        }
+    }
 
 };
     
