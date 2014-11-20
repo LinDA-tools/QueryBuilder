@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get 'query/builder'
 
 
-  get 'query/execute_sparql'
+  post 'query/execute_sparql'
 
   get 'query/builder_classes'
   get 'query/builder_objects'
