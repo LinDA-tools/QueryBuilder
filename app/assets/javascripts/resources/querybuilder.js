@@ -71,7 +71,8 @@ QueryBuilder = {
                 query+= "OPTIONAL{?concept <"+v+"> ?"+k+"}.\n";
             });
         }
-        query += "FILTER(langMatches(lang(?label), \"EN\"))}\n LIMIT 200";
+        query += "FILTER(langMatches(lang(?label), \"EN\"))}\n LIMIT ";
+        query += $("#txt_sparql_query_limit").val();
         $("#txt_sparql_query").val(query);
     }
     ,
