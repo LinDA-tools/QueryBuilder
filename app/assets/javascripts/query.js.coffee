@@ -11,6 +11,9 @@
         display_text += "&nbsp;<span class='badge'>"+data["xml:lang"]+"</span>"
     return "<td class='result-col-uri' style=\"word-wrap: break;\">"+display_text+"</td>"
 
+@display_blank_result_column = ->
+   return "<td class= style=\"word-wrap: break;\">&nbsp;</td>" 
+
 @display_sparql_uri = (data) ->
     uri_display = data.value
     if uri_display.length > 60
@@ -22,6 +25,9 @@
         return display_sparql_uri(data)
     else if data.type is "literal"
         return display_sparql_literal(data)
+    else
+        return display_blank_result_column()  
+
 
 @execute_sparql_query =->
     if SPARQL.textbox.is_valid()
