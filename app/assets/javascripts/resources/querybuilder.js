@@ -442,7 +442,7 @@ QueryBuilder = {
             return $("#hdn_selector_property_uri").val();
         },
         checkbox_click : function(){
-            if(QueryBuilder.properties.will_show_properties_in_preview()){
+            if(QueryBuilder.properties.will_show_properties_in_preview() == true){
                 QueryBuilder.show_equivalent_sparql_query();
             }
         },
