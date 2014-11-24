@@ -175,9 +175,11 @@ QueryBuilder = {
             $("#property_main_subclass_header").attr("uri",class_uri);
             $("#property_main_subclasses").hide();
             //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
+            $("#txt_sparql_query_limit").val(default_sparql_result_limit);
             QueryBuilder.classes.add_class_details($("#div_selected_class").find('.select-body').first(),class_uri,0);
             QueryBuilder.show_equivalent_sparql_query();
             QueryBuilder.properties.generate();
+
         },
         add_class_details : function(element,class_uri,tab_level){
             element.attr('class-uri',class_uri);

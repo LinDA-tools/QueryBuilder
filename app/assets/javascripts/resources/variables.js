@@ -10,3 +10,5 @@ var configured_convert = {
 	body : "",
 	footer : ""
 };
+
+var default_sparql_result_limit = 200;
