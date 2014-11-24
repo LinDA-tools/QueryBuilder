@@ -73,14 +73,31 @@ SPARQL = {
         pdf : function(){
             Utils.alert("The PDF download feature has not been implemented yet.");
         },
-        json : function(){
-            var download_url = Utils.rdf2any.server+Utils.rdf2any.actions.convert+"json?dataset="+QueryBuilder.datasets.get_selected()+"&query="+encodeURIComponent($("#txt_sparql_query").val());
-            var selected_class = QueryBuilder.classes.get_selected_class();
-            if(selected_class != undefined && selected_class != ''){
-               download_url += "&for_class="+selected_class;
-               download_url += "&properties="+encodeURIComponent(QueryBuilder.properties.get_checked_properties()); 
+        json :{ 
+            initiate : function(){
+
+            },
+            sesame : function(){
+                var query = $("#txt_sparql_query").val();
+                if(QueryBuilder.properties.will_show_properties_in_preview() == false){
+                    $("#btn_show_checked_properties_yes").click();
+                    query = $("#txt_sparql_query").val();
+                    $("#btn_show_checked_properties_no").click();
+                }
+                var download_url = Utils.rdf2any.server+Utils.rdf2any.actions.convert+"json?dataset="+QueryBuilder.datasets.get_selected()+"&query="+encodeURIComponent(query)+"&json_output_format=sesame";
+                window.open(download_url);
+            },
+            virtuoso : function(){
+                var query = $("#txt_sparql_query").val();
+                if(QueryBuilder.properties.will_show_properties_in_preview() == false){
+                    $("#btn_show_checked_properties_yes").click();
+                    query = $("#txt_sparql_query").val();
+                    $("#btn_show_checked_properties_no").click();
+                }
+                var download_url = Utils.rdf2any.server+Utils.rdf2any.actions.convert+"json?dataset="+QueryBuilder.datasets.get_selected()+"&query="+encodeURIComponent(query);
+                window.open(download_url);
             }
-            window.open(download_url);
+
         },
         configured : function(){
             var query = $("#txt_sparql_query").val();
