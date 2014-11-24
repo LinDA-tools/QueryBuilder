@@ -435,9 +435,15 @@ QueryBuilder = {
                     $(this).prop('checked',to_check);
                 }
             });
+            QueryBuilder.properties.checkbox_click();
         },
         get_clicked_filter_property : function(){
             return $("#hdn_selector_property_uri").val();
+        },
+        checkbox_click : function(){
+            if(QueryBuilder.properties.will_show_properties_in_preview()){
+                QueryBuilder.show_equivalent_sparql_query();
+            }
         },
         filter : {
             add_objects : function(property_uri, property_name,  data){
