@@ -88,6 +88,10 @@ SPARQL = {
             window.open(download_url);
         }
 
+    },
+
+    flash_error : function(msg){
+        $.gritter.add({title: "ERROR in SPARQL query execution",text: msg, sticky:true});
     }
 
 

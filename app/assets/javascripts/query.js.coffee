@@ -37,28 +37,33 @@
         query: $("#txt_sparql_query").val()
         dataset : QueryBuilder.datasets.get_selected()
         , (data) ->
-            result_columns = SPARQL.result.columns(data)
-            result_rows = SPARQL.result.rows(data)
-            $("#sparql_results_time_taken").html(SPARQL.result.time_taken(data).toString()+" s")
-            result_table = $("#sparql_results_table")
-            result_table_header = "<tr><th>#</th>"
-            $.each result_columns, (key,val) ->
-                result_table_header += "<th>"+val+"</th>"
-            result_table_header += "</tr>"
-            result_table.find("thead").first().html(result_table_header)
-            hide_loading()
-            result_table.find("tbody").first().html("")
-            $("#sparql_results_container").show("fast")
-            row_counter = 0
-            while row_counter < result_rows.length
-                row_counter++
-                result_rable_rows = "<tr><td>"+row_counter.toString()+"</td>"
-                $.each result_columns, (key,col) ->
-                    result_rable_rows += display_sparql_row_entry(result_rows[row_counter-1][col])
-                result_rable_rows += "</tr>" 
-                result_table.find("tbody").first().append(result_rable_rows)
-            Utils.scroll_to('#sparql_results_container'); 
-            return
+            if data.error isnt undefined
+                SPARQL.flash_error(data.description)
+                hide_loading()
+                return
+            else
+                result_columns = SPARQL.result.columns(data)
+                result_rows = SPARQL.result.rows(data)
+                $("#sparql_results_time_taken").html(SPARQL.result.time_taken(data).toString()+" s")
+                result_table = $("#sparql_results_table")
+                result_table_header = "<tr><th>#</th>"
+                $.each result_columns, (key,val) ->
+                    result_table_header += "<th>"+val+"</th>"
+                result_table_header += "</tr>"
+                result_table.find("thead").first().html(result_table_header)
+                hide_loading()
+                result_table.find("tbody").first().html("")
+                $("#sparql_results_container").show("fast")
+                row_counter = 0
+                while row_counter < result_rows.length
+                    row_counter++
+                    result_rable_rows = "<tr><td>"+row_counter.toString()+"</td>"
+                    $.each result_columns, (key,col) ->
+                        result_rable_rows += display_sparql_row_entry(result_rows[row_counter-1][col])
+                    result_rable_rows += "</tr>" 
+                    result_table.find("tbody").first().append(result_rable_rows)
+                Utils.scroll_to('#sparql_results_container'); 
+                return
         return
 
 @show_sparql_download_modal =->
