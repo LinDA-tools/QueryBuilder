@@ -1,3 +1,4 @@
+require 'open-uri'
 module ApplicationHelper
 	def get_sparql_prefixes
 		prefix = ""
@@ -64,5 +65,9 @@ module ApplicationHelper
 	def get_variable_name_of_property(property_uri)
 		variable_name = property_uri.split("/").last
 		return variable_name.gsub(/[^[:alnum:]]/, "").underscore
+	end
+
+	def uri_value_encode(str)
+		URI::encode(str).gsub("\&","%26")
 	end
 end

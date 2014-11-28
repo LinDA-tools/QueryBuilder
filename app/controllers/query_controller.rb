@@ -21,8 +21,8 @@ class QueryController < ApplicationController
     dataset = params[:dataset]
     query = params[:query]
    	if !query.blank? && !dataset.blank?
-   		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/convert/json?dataset="+dataset+"&query="+query)
-   		response = HTTParty.get(uri)
+   		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/convert/json?dataset="+dataset+"&query="+uri_value_encode(query))
+      response = HTTParty.get(uri)
    	
       if params[:pdf].blank?
      	  render :json => response.to_json
