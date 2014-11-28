@@ -332,6 +332,20 @@ QueryBuilder = {
         },
         get_properties_triples : function(){
             var result = "";
+            $.each(selected_filter_values,function(k,v){
+                if(v.type == "object"){
+                    for(j=0;j<v.value.length;j++){
+                        if(j>0)
+                            result += " UNION ";
+                        result += "{ ?concept <"+v.property_uri+"> <"+v.value[j]["uri"]+"> }";
+                    }
+                    result += ".\n"
+                }
+            });
+            /*
+            
+            This is now an old method. Getting the values from variable instead of the div
+
             $("#qb_properties_properties_selected_filters_list").find(".list-item").each(function(index){
                 if($(this).attr("filter-type") == 'object'){
                     var objects = $(this).attr("filter-value").split(",");
@@ -344,6 +358,7 @@ QueryBuilder = {
                     result += ".\n"
                 }
             });
+            */
             return result;
         },
         select_subclass : function(uri){
