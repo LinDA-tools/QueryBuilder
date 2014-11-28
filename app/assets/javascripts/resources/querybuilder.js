@@ -470,8 +470,10 @@ QueryBuilder = {
                 div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
                 div_html += "</div></div>";
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
+                selected_filter_values[identifier] = {type:"object", property_uri : property_uri, value: data};
                 QueryBuilder.generate_equivalent_sparql_query();
                 Utils.flash.success("Added objects "+names+" to filter for "+property_name);
+
             },
             add_data_filter : function(property_uri, property_name, data_filter){
                 var identifier = QueryBuilder.properties.filter.get_new_list_identifier();
@@ -484,6 +486,7 @@ QueryBuilder = {
                 div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
                 div_html += "</div></div>";
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
+                selected_filter_values[identifier] = {type:"data", property_uri : property_uri, value: data_filter};
                 QueryBuilder.generate_equivalent_sparql_query();
                 Utils.flash.success("Added data filter "+data_filter+" to filter for "+property_name);
 

@@ -12,3 +12,5 @@ var configured_convert = {
 };
 
 var default_sparql_result_limit = 200;
+
+var selected_filter_values = {};
