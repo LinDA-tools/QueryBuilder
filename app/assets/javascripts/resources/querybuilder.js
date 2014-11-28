@@ -506,8 +506,12 @@ QueryBuilder = {
                 }
                 var div_html = "<div id='qb_properties_properties_selected_filters_list_item_"+identifier+"' class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\" identifier=\""+identifier+"\" filter-type='object'>";
                 div_html += "<div class='row'><div class='col-md-10'>";
-                div_html += "<strong>"+property_name+"</strong> "+names;
-                div_html += "</div>";
+                div_html += "<strong>"+property_name+"</strong> ";
+                if($("#hdn_object_selector_filter_type").val() == "not_equals")
+                    div_html+="&nbsp;NOT IN&nbsp;";
+                else
+                    div_html += "&nbsp;IN&nbsp;";
+                div_html += names+"</div>";
                 div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
                 div_html += "</div></div>";
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
