@@ -72,11 +72,17 @@ QueryBuilder = {
                 query+= "OPTIONAL{?concept <"+v+"> ?"+k+"}.\n";
             });
         }
-        query += "FILTER(langMatches(lang(?label), \"EN\"))}\n LIMIT ";
-        query += $("#txt_sparql_query_limit").val();
+        query += QueryBuilder.get_equivalent_sparql_filter_values();
+        query += "LIMIT "+$("#txt_sparql_query_limit").val();
         $("#txt_sparql_query").val(query);
     }
     ,
+    get_equivalent_sparql_filter_values : function(){
+        result = "";
+        result = "FILTER(langMatches(lang(?label), \"EN\"))}\n";
+        return result;
+
+    },
     show_equivalent_sparql_query : function(){
         QueryBuilder.generate_equivalent_sparql_query();
         $(".qb-equivalent-query-main").show("fast");
