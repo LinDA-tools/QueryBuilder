@@ -1,13 +1,25 @@
  <%if mode == "object"%>
     <div class="row" id="object_selector_header">
-        <div class="col-md-7">
+        <div class="col-md-6">
             <p>Search objects for </p>
+            <p>
+                <div class="btn-group ">
+                    <button type="button" class="btn btn-success" onclick="QueryBuilder.properties.filter.select_object_filter_type('equals')" id="btn_object_selector_filter_type_equals">Equals to</button>
+                    <button type="button" class="btn " onclick="QueryBuilder.properties.filter.select_object_filter_type('not_equals')" id="btn_object_selector_filter_type_not_equals">NOT Equals to</button>
+                </div>
+                <input id="hdn_object_selector_filter_type" type="hidden" value="equals" />
+            </p>
         </div>
-        <div class="col-md-5">
-            <div class="btn-group pull-right">
-                <button type="button" class="btn btn-success" onclick="QueryBuilder.objects.done_click()">Done</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-success" onclick="QueryBuilder.objects.done_click()">Done</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
     <div class="row" >

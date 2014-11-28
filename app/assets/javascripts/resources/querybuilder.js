@@ -544,6 +544,16 @@ QueryBuilder = {
                         max_id = parseInt($(this).attr("identifier"));
                 });
                 return (max_id+1).toString();
+            },
+            select_object_filter_type : function(filter_type){
+                $("#hdn_object_selector_filter_type").attr("value",filter_type);
+                var other_filter_type = "not_equals";
+                if(filter_type == "not_equals")
+                    other_filter_type = "equals";
+                if($("#btn_object_selector_filter_type_"+filter_type).hasClass("btn-success") == false){
+                    $("#btn_object_selector_filter_type_"+filter_type).addClass("btn-success");
+                    $("#btn_object_selector_filter_type_"+other_filter_type).removeClass("btn-success");
+                }
             }
         }
     },
