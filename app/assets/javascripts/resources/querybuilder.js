@@ -78,10 +78,14 @@ QueryBuilder = {
     }
     ,
     get_equivalent_sparql_filter_values : function(){
-        result = "";
-        result = "FILTER(langMatches(lang(?label), \"EN\"))}\n";
+        var result = "FILTER(langMatches(lang(?label), \"EN\")";
+        $.each(selected_filter_values,function(k,v){
+            if(v.type == "data"){
+                result += "\n&& (?d_filter"+k.toString()+" "+v.value+")";
+            }
+        });
+        result += ")}\n";
         return result;
-
     },
     show_equivalent_sparql_query : function(){
         QueryBuilder.generate_equivalent_sparql_query();
@@ -340,12 +344,17 @@ QueryBuilder = {
             var result = "";
             $.each(selected_filter_values,function(k,v){
                 if(v.type == "object"){
+                    // section for object type properties
                     for(j=0;j<v.value.length;j++){
                         if(j>0)
                             result += " UNION ";
                         result += "{ ?concept <"+v.property_uri+"> <"+v.value[j]["uri"]+"> }";
                     }
                     result += ".\n"
+                }
+                else if(v.type == "data"){
+                    //section for data type properties
+                    result += "?concept <"+v.property_uri+"> ?d_filter"+k.toString()+".\n";
                 }
             });
             /*
