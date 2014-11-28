@@ -14,6 +14,7 @@ console.log(range_span);
 	$("#txt_search_objects").bind('input',function(){QueryBuilder.objects.search_change();});
 	$("#object_selector_header").find("p").first().html("Search objects for "+range_span);
 	selector_modal.find(".modal-footer").hide();
+	$("#btn_object_selector_filter_type_equals").click();
 <%else%>
 	selector_modal.find(".modal-body").first().html("<%=escape_javascript render :partial=>'query/properties_selector_body', :locals=>{:mode=>'data'}%>");
 	$("#p_selector_has_range_holder").html("has range "+range_span);

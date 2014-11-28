@@ -501,7 +501,7 @@ QueryBuilder = {
                 div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
                 div_html += "</div></div>";
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
-                selected_filter_values[identifier] = {type:"object", property_uri : property_uri, value: data};
+                selected_filter_values[identifier] = {type:"object", property_uri : property_uri, value: data, filter_type:$("#hdn_object_selector_filter_type").val()};
                 QueryBuilder.generate_equivalent_sparql_query();
                 Utils.flash.success("Added objects "+names+" to filter for "+property_name);
 
