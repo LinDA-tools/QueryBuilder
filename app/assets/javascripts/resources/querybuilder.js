@@ -83,6 +83,11 @@ QueryBuilder = {
             if(v.type == "data"){
                 result += "\n&& (?d_filter"+k.toString()+" "+v.value+")";
             }
+            else if(v.type == "object" && v.filter_type == "not_equals"){
+                for(i=0;i<v.value.length;i++){
+                    result += "\n&& (?o_filter"+k.toString()+" != <"+v.value[i].uri+">)";
+                }
+            }
         });
         result += ")}\n";
         return result;
@@ -345,10 +350,15 @@ QueryBuilder = {
             $.each(selected_filter_values,function(k,v){
                 if(v.type == "object"){
                     // section for object type properties
-                    for(j=0;j<v.value.length;j++){
-                        if(j>0)
-                            result += " UNION ";
-                        result += "{ ?concept <"+v.property_uri+"> <"+v.value[j]["uri"]+"> }";
+                    if(v.filter_type == "not_equals"){
+                        result += "?concept <"+v.property_uri+"> ?o_filter"+k.toString();
+                    }
+                    else{
+                        for(j=0;j<v.value.length;j++){
+                            if(j>0)
+                                result += " UNION ";
+                            result += "{ ?concept <"+v.property_uri+"> <"+v.value[j]["uri"]+"> }";
+                        }
                     }
                     result += ".\n"
                 }
