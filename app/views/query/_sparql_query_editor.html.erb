@@ -55,10 +55,7 @@
 	</div>
 </div>
 <div class="hide">
-	<textarea rows="5" id="txt_sample_query_1" >PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?subject ?label 
-WHERE { ?subject rdfs:label ?label. 
-FILTER(langMatches(lang(?label), "EN"))} LIMIT 200</textarea>
+<textarea rows="5" id="txt_sample_query_1" >select distinct ?Concept where {[] a ?Concept} LIMIT 100</textarea>
 </div>
 <%if mode == "builder"%>
 	<script>
