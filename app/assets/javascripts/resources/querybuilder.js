@@ -50,6 +50,7 @@ QueryBuilder = {
         QueryBuilder.hide_equivalent_sparql_query();
         QueryBuilder.hide_searched_query_results();
         QueryBuilder.properties.reset();
+        selected_filter_values = {};
     },
     generate_equivalent_sparql_query : function(){
         var query = "";
@@ -495,6 +496,7 @@ QueryBuilder = {
             remove : function(identifier){
                 var list_item = $("#qb_properties_properties_selected_filters_list_item_"+identifier);
                 list_item.hide("fast");
+                delete selected_filter_values[parseInt(identifier)];
                 setTimeout(function(){
                     list_item.remove();
                     if($("#qb_properties_properties_selected_filters_list").find(".list-item").length <= 0){
@@ -503,6 +505,7 @@ QueryBuilder = {
                     }
                     QueryBuilder.generate_equivalent_sparql_query();
                 }, 500);
+
             },
             get_new_list_identifier : function(){
                 var max_id=0;
