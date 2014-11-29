@@ -105,6 +105,7 @@ SPARQL = {
                     $("#btn_show_checked_properties_yes").click();
                 }
                 var download_url = Utils.rdf2any.server+Utils.rdf2any.actions.convert+"json?dataset="+QueryBuilder.datasets.get_selected()+"&query="+encodeURIComponent(query)+"&for_class="+QueryBuilder.classes.get_selected_class();
+                download_url += "&properties="+encodeURIComponent(QueryBuilder.properties.get_checked_properties()); 
                 window.open(download_url);
             }
 
