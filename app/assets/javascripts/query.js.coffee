@@ -11,6 +11,9 @@
         display_text += "&nbsp;<span class='badge'>"+data["xml:lang"]+"</span>"
     return "<td class='result-col-uri' style=\"word-wrap: break;\">"+display_text+"</td>"
 
+@display_sparql_typed_literal = (data) ->
+    return "<td class='result-col-uri' style=\"word-wrap: break;\">"+data.value+"</td>"
+
 @display_blank_result_column = ->
    return "<td class= style=\"word-wrap: break;\">&nbsp;</td>" 
 
@@ -25,6 +28,8 @@
         return display_sparql_uri(data)
     else if data.type is "literal"
         return display_sparql_literal(data)
+    else if data.type is "typed-literal"
+        return display_sparql_typed_literal(data)
     else
         return display_blank_result_column()  
 
