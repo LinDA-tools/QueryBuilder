@@ -73,10 +73,7 @@ SPARQL = {
         pdf : function(){
             Utils.alert("The PDF download feature has not been implemented yet.");
         },
-        json :{ 
-            initiate : function(){
-
-            },
+        json :{
             sesame : function(){
                 var query = $("#txt_sparql_query").val();
                 if(QueryBuilder.properties.will_show_properties_in_preview() == false){

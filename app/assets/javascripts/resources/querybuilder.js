@@ -887,8 +887,26 @@ QueryBuilder = {
                         $("#btn_group_download").show(); 
                     }
                 }
-        } // end configured
-    }, // end convert
+        }, // end QueryBuilder.convert.configured
+        json:{
+                initiate_download : function(){
+                    $("#btn_group_download").hide("fast");
+                    $("#div_json_download").show("fast");
+                
+                },
+                hide_download : function(motion){
+                    if(motion != undefined && motion != ""){
+                        $("#div_json_download").hide("fast");
+                        $("#btn_group_download").show("fast");
+                    }
+                    else{
+                        $("#div_json_download").hide();
+                        $("#btn_group_download").show();
+                    } 
+                }  
+
+        }//end QueryBuilder.convert.json
+    }, // end QueryBuilder.convert
     equivalent_query : {
         handle_checked_properties : function(response){
             $("#hdn_show_checked_properties").val(response);

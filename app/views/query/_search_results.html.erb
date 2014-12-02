@@ -39,11 +39,33 @@
         <div class="btn-group " id="btn_group_download">
             <button type="button" class="btn btn-default btn-primary" onclick="SPARQL.download.rdb()"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;RDB Script</button>
             <button type="button" class="btn btn-default btn-success" onclick="SPARQL.download.csv()"><span class="glyphicon glyphicon-align-justify"></span>&nbsp;CSV</button>
-            <button type="button" class="btn btn-default btn-info" onclick="SPARQL.download.json.virtuoso()"><span class="glyphicon glyphicon-road"></span>&nbsp;JSON</button>
+            <button type="button" class="btn btn-default btn-info" onclick="QueryBuilder.convert.json.initiate_download()"><span class="glyphicon glyphicon-road"></span>&nbsp;JSON</button>
             <button type="button" class="btn btn-default btn-warning" onclick="SPARQL.download.pdf()"><span class="glyphicon glyphicon-file"></span>&nbsp;PDF</button>
             <%if in_query_builder_action?%>
               <button class="btn btn-default btn-danger" onclick="QueryBuilder.convert.configured.initiate_download()"><span class="glyphicon glyphicon-glass"></span>&nbsp;Generic</button>
             <%end%>
+        </div>
+        <div class="row" id="div_json_download" style="display:none;">
+          <p>
+            <button class="btn btn-danger btn-xs" type="button" onclick="QueryBuilder.convert.json.hide_download('fast')"><span class="glyphicon glyphicon-chevron-left"></span>&nbsp;back</button>
+          </p>
+          <p>
+            <h4>JSON Download</h4>
+          </p>
+          <p>
+            We have three kinds of JSON output available for you
+          </p>
+          <p>
+            <span class="btn btn-danger" onclick="SPARQL.download.json.sesame()"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Sesame</span>&nbsp; This output format is provided my Sesame datastores. 
+          </p>
+          <p>
+            <span class="btn btn-success" onclick="SPARQL.download.json.virtuoso()"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Virtuoso</span>&nbsp; This output format is provided my Virtuoso datastores. 
+          </p>
+          <%if in_query_builder_action?%>
+            <p>
+              <span class="btn btn-primary" onclick="SPARQL.download.json.for_class()"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Experimental</span>&nbsp; This output format is a suggested experimental format which is useful to explore data output when you have queried data which are objects of some class(es). 
+            </p>
+          <%end%>
         </div>
         <%if in_query_builder_action?%>
           <div class="div-configured-download row"  style="display:none;">

@@ -75,6 +75,7 @@
     if SPARQL.textbox.is_valid()
         $("#sparql_download_modal").modal("show")
         QueryBuilder.convert.configured.hide_download()
+        QueryBuilder.convert.json.hide_download()
 
 @get_uri_element_val =(uri)->
     break_index = null
