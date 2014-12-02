@@ -57,7 +57,7 @@ QueryBuilder = {
         var properties_map = null;
         query += SPARQL.prefix.rdf;
         query += SPARQL.prefix.rdfs;
-        query += "SELECT ?concept ?label ";
+        query += "SELECT DISTINCT ?concept ?label ";
         if(QueryBuilder.properties.will_show_properties_in_preview()){
             properties_map = QueryBuilder.properties.get_checked_properties_map();
             $.each(properties_map, function(k,v){
