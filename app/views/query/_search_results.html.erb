@@ -57,11 +57,12 @@
               We have three kinds of JSON output available for you
             </p>
             <p>
-              <span class="btn btn-danger" onclick="SPARQL.download.json.sesame()"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Sesame</span>&nbsp; This output format is provided my Sesame datastores. 
+              <span class="btn btn-success" onclick="SPARQL.download.json.virtuoso()"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Standard W3C recommended</span>&nbsp; This output format is specified in the official W3C recommendation for displaying SPARQL query set results.  
             </p>
             <p>
-              <span class="btn btn-success" onclick="SPARQL.download.json.virtuoso()"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Virtuoso</span>&nbsp; This output format is provided my Virtuoso datastores. 
+              <span class="btn btn-danger" onclick="SPARQL.download.json.sesame()"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Sesame</span>&nbsp; This output format is provided by Sesame datastores. It basically converts the XML format to an equivalent JSON format, which is not a good format in terms of machine readability. 
             </p>
+
             <%if in_query_builder_action?%>
               <p>
                 <span class="btn btn-primary" onclick="SPARQL.download.json.for_class()"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;Experimental</span>&nbsp; This output format is a suggested experimental format which is useful to explore data output when you have queried data which are objects of some class(es). 
