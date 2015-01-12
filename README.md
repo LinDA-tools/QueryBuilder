@@ -42,3 +42,4 @@ rvm use 2.0.0@qbuilder
 rails s
 ```
 
+You can now go to http://localhost:3000/ to access the Query Builder.

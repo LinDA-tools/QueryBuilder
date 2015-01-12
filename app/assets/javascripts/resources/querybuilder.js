@@ -88,6 +88,11 @@ QueryBuilder = {
                     result += "\n&& (?o_filter"+k.toString()+" != <"+v.value[i].uri+">)";
                 }
             }
+            else if(v.type == "object" && v.filter_type == "equals"){
+                for(i=0;i<v.value.length;i++){
+                    result += "\n&& (?o_filter"+k.toString()+" = <"+v.value[i].uri+">)";
+                }
+            }
         });
         result += ")}\n";
         return result;
@@ -357,8 +362,12 @@ QueryBuilder = {
                         for(j=0;j<v.value.length;j++){
                             if(j>0)
                                 result += " UNION ";
-                            result += "{ ?concept <"+v.property_uri+"> <"+v.value[j]["uri"]+"> }";
+                            result += "{ ?concept <"+v.property_uri+"> ?o_filter"+k.toString()+ "}";//<"+v.value[j]["uri"]+"> }";
                         }
+												
+												
+												
+												
                     }
                     result += ".\n"
                 }
@@ -998,6 +1007,7 @@ $(window).load(function(){
 		//&filters=http://dbpedia.org/ontology/birthPlace;birthPlace;sp:ne;London;http://dbpedia.org/resource/London;Paris;http://dbpedia.org/resource/Paris*http://dbpedia.org/ontology/wikiPageRevisionID;WikiPageRevisionID;sp:le;100;100
 		var filters = getUrlParameter('filters'); 
 		var sFilters = filters.split('$');
+		
 		for (var i =0; i < sFilters.length; i++){
 			var _filter = sFilters[i];
 			var _sFilter = _filter.split(';');
