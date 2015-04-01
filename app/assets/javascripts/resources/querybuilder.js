@@ -35,7 +35,8 @@ QueryBuilder = {
         $("#qb_class_search_loading").show();
         var search_string = $("#hdn_searched_class_value").val();
         var dataset = $("#hdn_qb_dataset").val();
-        $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset});
+	var force_uri_search = $('#force_uri_search').prop('checked');
+        $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset, force_uri_search:force_uri_search});
     },
     reset_searched_class : function(){
         $(".clear-search-class").show("fast");
@@ -103,13 +104,15 @@ QueryBuilder = {
         $("#sparql_results_container").hide("fast");
     },
     search_classes_change : function(){
-        var search = $("#txt_search_classes").val();
+        var search = $("#txt_search_classes").val();       
         if(search != undefined){
             search = search.trim();
             if(search.length >= 3){
                  var searched_index = search.substring(0,3);
-                 if(searched_index != $("#hdn_searched_class_value").val()){
+                 var force_uri_search = $('#force_uri_search').prop('checked');
+                 if(force_uri_search != $("#hdn_force_uri_search_value").val() || searched_index != $("#hdn_searched_class_value").val()){
                     $("#hdn_searched_class_value").val(searched_index);
+                    $("#hdn_force_uri_search_value").val(force_uri_search);
                     QueryBuilder.search_classes();
                  }else if($("#hdn_done_searching_class").val() == "true"){
                     QueryBuilder.classes.validate();
@@ -124,7 +127,6 @@ QueryBuilder = {
             }
         }
     },
-
     //The methods related to classes
     classes : {
         validate : function(){
@@ -173,11 +175,11 @@ QueryBuilder = {
         },
         //this method returns a url to retrieve  examples of a class
         get_examples_action_url : function(class_uri){
-            return "/query/class_examples?class="+class_uri+"&dataset="+QueryBuilder.datasets.get_selected();
+            return "/query/class_examples?dataset="+QueryBuilder.datasets.get_selected()+ "&class="+encodeURIComponent(class_uri);
         },
         //this method returns a url to subclasses  examples of a class
         get_subclasses_action_url : function(class_uri){
-            return "/query/class_subclasses?class="+class_uri+"&dataset="+QueryBuilder.datasets.get_selected();
+            return "/query/class_subclasses?dataset="+QueryBuilder.datasets.get_selected() + "&class="+encodeURIComponent(class_uri);
         },
         select : function(class_uri, class_name){
             $("#btn_show_checked_properties_no").click();
@@ -294,7 +296,7 @@ QueryBuilder = {
         },
         get_subclasses : function(class_uri){
             $("#qb_properties_sub_classes_loading").show();
-            $.get("/query/subclasses.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+class_uri);
+            $.get("/query/subclasses.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+encodeURIComponent(class_uri));
         },
         get_subclasses_for_selected_class : function(){
             QueryBuilder.properties.get_subclasses(QueryBuilder.classes.get_selected_class());
@@ -307,7 +309,7 @@ QueryBuilder = {
                 $("#btn_properties_properties_"+type+"_more").hide("fast");
             else
                 $("#btn_properties_properties_"+type+"_more").show("fast");*/
-            $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class());
+            $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+encodeURIComponent(QueryBuilder.classes.get_selected_class()));
             $(".cb-property-range-all").each(function(index){
                 $(this).prop("checked",true);
             });
@@ -315,7 +317,7 @@ QueryBuilder = {
         get_schema_properties_for_selected_class : function(){
             $("#property_main_schema_properties_group").html("");
             $("#qb_properties_schema_properties_loading").show();
-            $.get("/query/class_schema_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+QueryBuilder.classes.get_selected_class());
+            $.get("/query/class_schema_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+encodeURIComponent(QueryBuilder.classes.get_selected_class()));
 
         },
         get_subclasses_triples : function(){
@@ -451,7 +453,7 @@ QueryBuilder = {
         // type is "object" or "datatype"
         property_click : function(uri, name, type, range_uri, range_name, count){
             show_loading();
-            $.get("/query/property_ranges.js?property_uri="+uri+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name+"&range_uri="+range_uri+"&range_name="+range_name+"&count="+count);
+            $.get("/query/property_ranges.js?property_uri="+encodeURIComponent(uri)+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name+"&range_uri="+encodeURIComponent(range_uri)+"&range_name="+range_name+"&count="+count);
         },
         //this method returns a comma separated string of selected properties
         // returns "ALL" if all of them are checked

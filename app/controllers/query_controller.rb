@@ -33,7 +33,7 @@ class QueryController < ApplicationController
   end
 
   def builder_classes
-    @searched_classes = search_classes(params[:dataset],params[:search])
+    @searched_classes = search_classes(params[:dataset],params[:search], params[:force_uri_search])
     respond_to do |format|
       format.js
     end

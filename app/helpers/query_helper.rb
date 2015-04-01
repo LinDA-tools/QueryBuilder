@@ -21,14 +21,18 @@ module QueryHelper
 
 	#This method searches for classes in a dataset matching the search string
 	#return <Hashmap>
-	def search_classes(dataset,search_str)
+	def search_classes(dataset,search_str, force_uri_search)
 		classes = []
-		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/classes?search="+search_str.downcase+"&dataset="+dataset)
+		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/classes?search="+search_str.downcase+"&dataset="+dataset+"&force_uri_search="+force_uri_search)
    		response = HTTParty.get(uri)
    		unless response["searched_items"].blank?
    			searched_items = response["searched_items"].sort_by{|item| item["sequence"]}
    			searched_items.each do |result|
-   				classes << {:uri=>result["uri"], :name=>result["labels"]["en"].capitalize} unless result["labels"]["en"].blank?
+   				if force_uri_search == "true"
+	   				classes << {:uri=>result["uri"], :name=>result["uri"]} 
+	   			else
+	   				classes << {:uri=>result["uri"], :name=>result["labels"]["en"].capitalize} unless result["labels"]["en"].blank?
+	   			end
    			end
    		end
 		classes
