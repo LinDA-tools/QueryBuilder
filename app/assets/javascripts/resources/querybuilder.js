@@ -20,6 +20,7 @@ QueryBuilder = {
             $("#hdn_qb_dataset").attr("value",dataset);
             //Utils.flash.notice("Selected dataset : "+dataset);
             /////////////////////////////////////////////////////////////////////////////////////////
+            $("#div_all_classes").show("fast");
             $("#btn_show_all_classes").attr("onclick","QueryBuilder.show_all_classes('"+dataset+"')");
             /////////////////////////////////////////////////////////////////////////////////////////
         },
@@ -35,10 +36,21 @@ QueryBuilder = {
     },
     /////////////////////////////////////////////////////////////////////////////////////////
     //This method calls the ajax method to show all classes in dataset
-    show_all_classes: function(dataset){
-	
+    show_all_classes: function(dataset){	
+       $("#loading").show();
+	var dataset = $("#hdn_qb_dataset").val();	
+	$.get("/query/show_all_classes.js",{ dataset:dataset});
+    },
+    done_showing_classes : function(){
+    	$("#all_classes_list_modal").modal("hide");
+    },
+    select_class_from_list: function(uri, name){
+    	 $("#div_all_classes").hide("fast");
+    	QueryBuilder.done_showing_classes();    	
+    	QueryBuilder.classes.select(uri, name);
     },
     //////////////////////////////////////////////////////////////////////////////////////////
+    
     //This method calls the ajax method to search for the classes
     search_classes : function(){    	
         $("#qb_class_search_loading").show();
@@ -49,6 +61,7 @@ QueryBuilder = {
     },
     reset_searched_class : function(){
         $(".clear-search-class").show("fast");
+        $("#div_all_classes").show("fast");
         $("#tbl_classes_search_result").html("");
         $("#tbl_classes_search_result").show();
         $(".done-search-class").hide("fast");
@@ -119,6 +132,7 @@ QueryBuilder = {
             search = search.trim();
             if(search.length >= 3){
                  var searched_index = search.substring(0,3);
+                 $("#div_all_classes").hide("fast");
                  var force_uri_search = $('#force_uri_search').prop('checked');
                  if(force_uri_search != $("#hdn_force_uri_search_value").val() || searched_index != $("#hdn_searched_class_value").val()){
                     $("#hdn_searched_class_value").val(searched_index);
@@ -133,6 +147,7 @@ QueryBuilder = {
                 $("#tbl_classes_search_result").hide("fast");
                 $("#hdn_done_searching_class").val("false");
                 $("#qb_class_search_error").hide("fast");
+                $("#div_all_classes").show("fast");
             }
         }
     },

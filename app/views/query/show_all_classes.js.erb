@@ -1,0 +1,22 @@
+
+var selector_modal = $("#all_classes_list_modal");
+
+selector_modal.find(".modal-title").first().html("All Classes " );
+
+var result_table = $("#all_classes_table");
+var result_table_header = "<tr><th>#</th><th>Class</th><th>Label</th></tr>";
+
+result_table.find("thead").first().html(result_table_header);
+var row_counter = 0;
+
+<%@all_classes.each do |c|%>
+        row_counter++;
+        console.log(row_counter);
+        var result_rable_rows = "<tr style=\"cursor: pointer; cursor: hand;\" onclick=\"QueryBuilder.select_class_from_list('<%=c[:uri]%>','<%=c[:name]%>')\"> <td>"+row_counter.toString()+"</td>";
+        result_rable_rows += "<td class='result-col-uri'><%=c[:uri]%></td>" ;
+        result_rable_rows += "<td class='result-col-uri' style=\"word-wrap: break;\"><%=c[:name]%></td>" ;
+        result_rable_rows += "</tr>" ;
+        result_table.find("tbody").first().append(result_rable_rows);                      	
+<%end%>
+hide_loading();
+selector_modal.modal("show");

@@ -18,7 +18,25 @@ module QueryHelper
 		datasets["DBPedia"] = "http://dbpedia.org/sparql"
 		datasets
 	end
-
+	#this method returns all classes in the given dataset
+	#return <Hashmap>
+	def get_all_classes(dataset)
+		allclasses = []
+		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/classes/all?dataset="+dataset)
+   		response = HTTParty.get(uri)	
+   		unless response["searched_items"].blank?
+   			searched_items = response["searched_items"].sort_by{|item| item["sequence"]}
+   			searched_items.each do |result|
+   				if result["labels"]["en"].blank?   					
+		   			allclasses << {:uri=>result["uri"], :name=>result["uri"]} 
+		   		else
+		   			allclasses << {:uri=>result["uri"], :name=>result["labels"]["en"].capitalize}
+		   		end	   			
+   			end
+   		end
+		allclasses
+	end
+	
 	#This method searches for classes in a dataset matching the search string
 	#return <Hashmap>
 	def search_classes(dataset,search_str, force_uri_search)

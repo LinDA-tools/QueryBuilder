@@ -7,7 +7,7 @@ $(".span-property-range").each(function(index){
 		range_span += " style=\"" + $(this).attr("style") +"\" >"+$(this).html()+"</span>";
 	}
 });
-console.log(range_span);
+
 <%if @property_ranges[:type] == "object"%>
 	selector_modal.find(".modal-body").first().html("<%=escape_javascript render :partial=>'query/properties_selector_body', :locals=>{:mode=>'object'}%>");
 	$("#hdn_objects_of_class").val("<%=@property_ranges[:data].collect{|c| c[:value]}.join(',')%>");

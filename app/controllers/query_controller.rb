@@ -38,7 +38,14 @@ class QueryController < ApplicationController
       format.js
     end
   end
-
+  
+  def show_all_classes
+    @all_classes = get_all_classes(params[:dataset])
+    respond_to do |format|
+      format.js
+    end
+  end
+  
   def builder_objects
     @searched_objects = search_objects(params[:dataset],params[:search],params[:classes],params[:for_class], params[:for_property])
     respond_to do |format|

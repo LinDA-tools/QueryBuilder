@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   post 'query/execute_sparql'
 
   get 'query/builder_classes'
+  get 'query/show_all_classes'
   get 'query/builder_objects'
   get 'query/subclasses'
   get 'query/class_properties'
