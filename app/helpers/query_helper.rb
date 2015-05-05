@@ -29,7 +29,11 @@ module QueryHelper
    			searched_items = response["searched_items"].sort_by{|item| item["sequence"]}
    			searched_items.each do |result|
    				if force_uri_search == "true"
-	   				classes << {:uri=>result["uri"], :name=>result["uri"]} 
+   					if result["labels"]["en"].blank?
+		   				classes << {:uri=>result["uri"], :name=>result["uri"]} 
+		   			else
+		   				classes << {:uri=>result["uri"], :name=>result["labels"]["en"].capitalize}
+		   			end
 	   			else
 	   				classes << {:uri=>result["uri"], :name=>result["labels"]["en"].capitalize} unless result["labels"]["en"].blank?
 	   			end

@@ -19,6 +19,9 @@ QueryBuilder = {
             QueryBuilder.select_body($("#div_select_dataset"),dataset);
             $("#hdn_qb_dataset").attr("value",dataset);
             //Utils.flash.notice("Selected dataset : "+dataset);
+            /////////////////////////////////////////////////////////////////////////////////////////
+            $("#btn_show_all_classes").attr("onclick","QueryBuilder.show_all_classes('"+dataset+"')");
+            /////////////////////////////////////////////////////////////////////////////////////////
         },
         //this method returns the selected dataset
         //return String
@@ -30,8 +33,14 @@ QueryBuilder = {
         element.find(".select-body").first().html(body);
         element.show("fast");
     },
+    /////////////////////////////////////////////////////////////////////////////////////////
+    //This method calls the ajax method to show all classes in dataset
+    show_all_classes: function(dataset){
+	
+    },
+    //////////////////////////////////////////////////////////////////////////////////////////
     //This method calls the ajax method to search for the classes
-    search_classes : function(){
+    search_classes : function(){    	
         $("#qb_class_search_loading").show();
         var search_string = $("#hdn_searched_class_value").val();
         var dataset = $("#hdn_qb_dataset").val();
@@ -104,7 +113,8 @@ QueryBuilder = {
         $("#sparql_results_container").hide("fast");
     },
     search_classes_change : function(){
-        var search = $("#txt_search_classes").val();       
+        var search = $("#txt_search_classes").val();  
+             
         if(search != undefined){
             search = search.trim();
             if(search.length >= 3){
@@ -116,8 +126,7 @@ QueryBuilder = {
                     QueryBuilder.search_classes();
                  }else if($("#hdn_done_searching_class").val() == "true"){
                     QueryBuilder.classes.validate();
-                 }
-                
+                 }                
             }
             else{
                 $("#hdn_searched_class_value").val("");
@@ -144,11 +153,11 @@ QueryBuilder = {
                         var start_index = a_value.indexOf(search_strings[i]);
                         var end_index = start_index + search_strings[i].length ;
                         a_value = a_value.splice(end_index, 0,'$');
-                        a_value = a_value.splice(start_index, 0,  '#');
+                        a_value = a_value.splice(start_index, 0,  '~');
                     }
                 }
                 if(is_present){
-                    $(this).html(a_value.replace(/\#/g,'<strong>').replace(/\$/g,'</strong>'));
+                    $(this).html(a_value.replace(/\~/g,'<strong>').replace(/\$/g,'</strong>'));
                     $(this).show();
                 }
                 else
