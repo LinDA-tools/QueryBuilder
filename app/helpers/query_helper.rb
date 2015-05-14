@@ -15,6 +15,7 @@ module QueryHelper
 	#return <Hashmap> 
 	def get_datasets
 		datasets = {}
+		datasets["DBPedia Live"] = "http://live.dbpedia.org/sparql"
 		datasets["DBPedia"] = "http://dbpedia.org/sparql"
 		datasets
 	end
