@@ -9,6 +9,7 @@ var result_table_header = "<tr><th>#</th><th>Class</th><th>Label</th></tr>";
 result_table.find("thead").first().html(result_table_header);
 var row_counter = 0;
 
+$("#all_classes_table_body").empty();
 <%@all_classes.each do |c|%>
         row_counter++;
         console.log(row_counter);
