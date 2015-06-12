@@ -12,24 +12,34 @@
 		end
 	end
 %>
-<nav class="collapse navbar-collapse bs-navbar-collapse " role="navigation" id="top_navbar">
-  <ul class="nav navbar-nav">
-    <li>
-      <a href="#">Getting started</a>
-    </li>
-    <li>
-      <a class="<%="active" if active == "sparql"%>" href="<%=query_sparql_path%>">SPARQL</a>
-    </li>
-    <li >
-      <a class="<%="active" if active == "builder"%>" href="<%=query_builder_path%>">Query Builder</a>
-    </li>
-    <li>
-      <a class="<%="active" if active == "developer"%>" href="<%=developer_docs_path%>">Developer</a>
-    </li>
-  </ul>
-  <ul class="nav navbar-nav navbar-right">
-    <li><a href="#">About</a></li>
-    <li><a href="#">Contact</a></li>
-  </ul>
-</nav>
+
+
+  <nav id="top_navbar" class="navbar navbar-inverse navbar-static-top" role="navigation">
+	  <div class="container">
+		  <div class="navbar-header"><span class="navbar-brand">ExConQuer</a></div>
+		  
+		  <div class="navbar-collapse collapse">
+			  <ul class="nav navbar-nav">
+			    <li>
+			      <a href="http://purl.org/net/exconquer">PAM Tool</a>
+			    </li>
+			    <li >
+			      <a class="<%="active" if active == "builder"%>" href="<%=query_builder_path%>">Query Builder</a>
+			    </li>
+                <li>
+                    <a href="http://purl.org/eis/vocab/cqo">Conquer Ontology</a>
+                </li>
+			    <!-- <li>
+			      <a class="<%="active" if active == "sparql"%>" href="<%=query_sparql_path%>">SPARQL Interface</a>
+			    </li> -->
+			   <!-- <li>
+			      <a class="<%="active" if active == "developer"%>" href="<%=developer_docs_path%>">Developer</a>
+			    </li> -->
+			  </ul>
+			  <ul class="nav navbar-nav navbar-right">
+			    <li><a href="http://eis.iai.uni-bonn.de/Projects/Exconquer">About</a></li>
+			  </ul>
+		  </div>
+	  </div>
+  </nav>
 
