@@ -84,7 +84,11 @@ QueryBuilder = {
         if(QueryBuilder.properties.will_show_properties_in_preview()){
             properties_map = QueryBuilder.properties.get_checked_properties_map();
             $.each(properties_map, function(k,v){
-                query+= "?" +k +" ";
+				if (search(v, selected_filter_values) == false){
+                	query+= "?" +k +" ";
+				} else {
+					query += getOptionalVariable(v, selected_filter_values)+" ";
+				}
             });
         }
         query += "WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">.\n ?concept rdfs:label ?label.\n";
@@ -92,7 +96,9 @@ QueryBuilder = {
         query += QueryBuilder.properties.get_properties_triples();
         if(QueryBuilder.properties.will_show_properties_in_preview()){
             $.each(properties_map, function(k,v){
-                query+= "OPTIONAL{?concept <"+v+"> ?"+k+"}.\n";
+				if (search(v, selected_filter_values) == false){
+					query+= "OPTIONAL{?concept <"+v+"> ?"+k+"}.\n";
+				}
             });
         }
         query += QueryBuilder.get_equivalent_sparql_filter_values();
@@ -738,7 +744,6 @@ QueryBuilder = {
                 }
             }
             else{
-							alert($("#txt_filter_datatype").val());
                 QueryBuilder.properties.filter.add_data_filter($("#hdn_selector_property_uri").val(),$("#hdn_selector_property_name").val(),$("#txt_filter_datatype").val());
             }
             $("#class_selector_modal").modal('hide');
@@ -1002,6 +1007,31 @@ $(document).ready(function(){
 	
 	//http://localhost:3000/query/builder?dataset=http://dbpedia.org/sparql&classURI=http://dbpedia.org/ontology/Actor&classLabel=Actor&optionals=http://dbpedia.org/ontology/birthPlace;http://dbpedia.org/ontology/occupation&filters=http://dbpedia.org/ontology/birthPlace;birthPlace;sp:ne;London;http://dbpedia.org/resource/London;Paris;http://dbpedia.org/resource/Paris$http://dbpedia.org/ontology/wikiPageRevisionID;WikiPageRevisionID;sp:le;100;100
 })
+
+
+function search(nameKey, myArray){
+	flag = false;
+	 $.each(myArray,function(k,v){
+         if (v.property_uri.toString() === nameKey.toString()) {
+			 flag = true;
+         }
+	 });
+	return flag;
+}
+
+function getOptionalVariable(nameKey, myArray){
+	variable = "";
+	 $.each(myArray,function(k,v){
+         if (v.property_uri.toString() === nameKey.toString()) {			 
+             if(v.type == "data"){
+                 variable = "?d_filter"+k.toString();
+             } else {
+             	variable = "?o_filter"+k.toString();
+             }
+         }
+	 });
+	return variable;
+}
 
 $(window).load(function(){
 	//filters and optionals
