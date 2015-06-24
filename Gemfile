@@ -36,7 +36,8 @@ gem 'spring',        group: :development
 # gem 'capistrano-rails', group: :development
 
 # Use debugger
-gem 'debugger', group: [:development, :test]
+#gem 'debugger', group: [:development, :test]
+gem 'byebug', '~> 5.0.0'
 
 #codemirror is used for syntax highlighting
 gem 'codemirror-rails'
