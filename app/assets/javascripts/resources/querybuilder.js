@@ -2,6 +2,12 @@ if (typeof QueryBuilder == 'undefined') {
     QueryBuilder = {};
 }
 
+var _tmp = null; //a testing variable
+
+var triples = [];
+var filters = [];
+var lastSelector = null; // temporary stores the element of the last data or object property chosen
+
 QueryBuilder = {
     //The methods related to datasets
     datasets : {
@@ -59,7 +65,7 @@ QueryBuilder = {
 	var force_uri_search = $('#force_uri_search').prop('checked');
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset, force_uri_search:force_uri_search});
     },
-    reset_searched_class : function(){
+    reset_searched_class : function(concept){
         $(".clear-search-class").show("fast");
         $("#div_all_classes").show("fast");
         $("#tbl_classes_search_result").html("");
@@ -74,57 +80,86 @@ QueryBuilder = {
         QueryBuilder.hide_searched_query_results();
         QueryBuilder.properties.reset();
         selected_filter_values = {};
+		
+		var id = $("div#div_selected_class > div.row > div.select-body").attr('triple-id')
+		QueryBuilder.removeTriplesAndFilters(id);
+		
+		//Regenerate maybe there are other classes chosen (multiple classes)
+        QueryBuilder.properties.generate();
+		QueryBuilder.generate_equivalent_sparql_query();
+    },
+    add_another_class : function(){
+        $(".clear-search-class").show("fast");
+        $("#div_all_classes").show("fast");
+        $("#tbl_classes_search_result").html("");
+        $("#tbl_classes_search_result").show();
+        $(".done-search-class").hide("fast");
+        $("#txt_search_classes").val("");
+        $("#hdn_qb_class").val("");
+        $(".span-more-subclasses").remove();
+        $("#div_classes_search_more").hide("fast");
+        $(".select-class-subclass-row").remove();
+        // QueryBuilder.hide_equivalent_sparql_query();
+        // QueryBuilder.hide_searched_query_results();
+        // QueryBuilder.properties.reset();
+        selected_filter_values = {};
     },
     generate_equivalent_sparql_query : function(){
         var query = "";
         var properties_map = null;
         query += SPARQL.prefix.rdf;
         query += SPARQL.prefix.rdfs;
-        query += "SELECT DISTINCT ?concept ?label ";
-        if(QueryBuilder.properties.will_show_properties_in_preview()){
-            properties_map = QueryBuilder.properties.get_checked_properties_map();
-            $.each(properties_map, function(k,v){
-				if (search(v, selected_filter_values) == false){
-                	query+= "?" +k +" ";
-				} else {
-					query += getOptionalVariable(v, selected_filter_values)+" ";
+		
+        query += "SELECT DISTINCT * {\n";
+		noClasses = triples.length;
+		$.each(triples,function(index,element){
+			if (noClasses > 1) query += "{\n";
+			_triples = element['triples'];
+			$.each(_triples,function(t_index,t_element){
+				if (t_element['optional']) query += "OPTIONAL { \n";
+				if (t_element['minus']) query += "MINUS { \n";
+				query += t_element['s'] + " " + t_element['p'] + " " + t_element['o'] + " . \n" 
+				if (t_element['minus']) query += "}\n";
+				if (t_element['optional']) query += "}\n";
+			
+				if (t_element['filterId'] != null){
+					var filterId = t_element['filterId'];
+					_filters = QueryBuilder.get_filter(filterId);
+					
+					if (_filters != null){
+						query += "FILTER ("
+						$.each(_filters,function(f_index,f_element){
+							if (f_element['junction'] != null) {
+								if (f_element['junction'] == 'and') query += " && ";
+								if (f_element['junction'] == 'or') query += " || ";
+							}
+							if (_filters.length > 1) query += "(";
+							query += f_element['var'] + " " + f_element['op'] + " " + f_element['val'] 
+							if (_filters.length > 1) query += ")";
+						})
+						query += ")\n"
+					}
 				}
-            });
-        }
-        query += "WHERE \n{ ?concept rdf:type <"+$("#hdn_qb_class").val()+">.\n ?concept rdfs:label ?label.\n";
-        query += QueryBuilder.properties.get_subclasses_triples();
-        query += QueryBuilder.properties.get_properties_triples();
-        if(QueryBuilder.properties.will_show_properties_in_preview()){
-            $.each(properties_map, function(k,v){
-				if (search(v, selected_filter_values) == false){
-					query+= "OPTIONAL{?concept <"+v+"> ?"+k+"}.\n";
-				}
-            });
-        }
-        query += QueryBuilder.get_equivalent_sparql_filter_values();
+			})
+			
+			if (noClasses > 1) query += "}\n";
+			
+			if (index <= (noClasses - 2)) query += "UNION\n"; // we might have multiple classes
+		});
+		
+		
+		query += "}"
         query += "LIMIT "+$("#txt_sparql_query_limit").val();
         $("#txt_sparql_query").val(query);
-    }
-    ,
-    get_equivalent_sparql_filter_values : function(){
-        var result = "FILTER(langMatches(lang(?label), \"EN\")";
-        $.each(selected_filter_values,function(k,v){
-            if(v.type == "data"){
-                result += "\n&& (?d_filter"+k.toString()+" "+v.value+")";
-            }
-            else if(v.type == "object" && v.filter_type == "not_equals"){
-                for(i=0;i<v.value.length;i++){
-                    result += "\n&& (?o_filter"+k.toString()+" != <"+v.value[i].uri+">)";
-                }
-            }
-            else if(v.type == "object" && v.filter_type == "equals"){
-                for(i=0;i<v.value.length;i++){
-                    result += "\n&& (?o_filter"+k.toString()+" = <"+v.value[i].uri+">)";
-                }
-            }
-        });
-        result += ")}\n";
-        return result;
+    },
+    get_filter : function(filterId){
+	   toRet = null
+       $.each(filters,function(index,element){
+		   if(element['id'] == filterId){
+		   		toRet =  element['filters']
+		   }
+       });
+	   return toRet;
     },
     show_equivalent_sparql_query : function(){
         QueryBuilder.generate_equivalent_sparql_query();
@@ -137,7 +172,7 @@ QueryBuilder = {
         $("#sparql_results_container").hide("fast");
     },
     search_classes_change : function(){
-        var search = $("#txt_search_classes").val();  
+        var search = $("#txt_search_classes").val();
              
         if(search != undefined){
             search = search.trim();
@@ -162,6 +197,217 @@ QueryBuilder = {
             }
         }
     },
+	addTriple: function(subject,predicate,object,optional_id, optional_value, optional_filterId){
+		//	triples
+		var trp = {};
+		trp['s'] = subject
+		trp['p'] = predicate
+		trp['o'] = object
+		
+		id = "";
+		if (optional_id == null){
+			id = QueryBuilder.generateUUID();
+		} else {
+			id = optional_id
+		}
+		
+		filterId = optional_filterId;
+		if (optional_value){
+			if (optional_filterId == null) {
+				filterId = QueryBuilder.generateUUID();
+			}
+			
+			trp['filterId'] = filterId
+			trp['optional'] = true
+		} else {
+			trp['optional'] = false
+		}
+		
+		_triples = [];
+		found = false;
+		toRemove = -1;
+		$.each(triples, function(index,value){
+			if(value['id'] == id){
+				_triples = value['triples'];
+				found = true;
+				toRemove = index
+			}
+		})
+		_triples.push(trp);
+		
+		
+		toAdd = {}
+		if (!found){
+			toAdd['id'] = id;
+		} else {
+			toAdd['id'] = id;
+			triples.splice(toRemove, 1);
+		}
+		
+
+		
+		toAdd['triples'] = _triples;
+		
+		
+		triples.push(toAdd);
+		
+		if (optional_value){
+			return filterId;	
+		} else {
+			return id;	
+		}
+	},
+	addFilter: function(variable,op,value,optional_logOp,fid){
+		var trp = {};
+		trp['var'] = variable
+		trp['op'] = op
+		trp['val'] = value
+		trp['junction'] = optional_logOp
+		
+		id = fid
+		if (id == null){
+			id = QueryBuilder.generateUUID();
+		} 
+		
+		
+		_filters = [];
+		found = false;
+		toRemove = -1;
+		$.each(filters, function(index,value){
+			if(value['id'] == id){
+				_filters = value['filters'];
+				found = true;
+				toRemove = index
+			}
+		})
+		_filters.push(trp);
+		
+		
+		toAdd = {}
+		if (!found){
+			toAdd['id'] = id;
+		} else {
+			toAdd['id'] = id;
+			filters.splice(toRemove, 1);
+		}
+		
+
+		
+		toAdd['filters'] = _filters;
+		
+		
+		filters.push(toAdd);
+		
+		return id;	
+	},
+	addObjectFilter: function(filterUri, op, filterId, multiValue){
+		item = -1;
+		accessItem = -1;
+		$.each(triples, function(index,value){
+			_trips = value['triples'];
+			$.each(_trips,function(i,v){
+				if (v['filterId'] == filterId){
+					accessItem = i
+					item = index
+				}
+			})
+		});
+
+		
+		theItem = triples[item]['triples'][accessItem]
+	    if (!multiValue)
+			triples[item]['triples'].splice(accessItem, 1);
+		else
+			theItem = JSON.parse(JSON.stringify(triples[item]['triples'][accessItem]));
+		
+		theItem['o'] = filterUri;
+		
+		if (op == "!="){
+			theItem['minus'] = true;
+		}
+		
+		(triples[item]['triples']).push(theItem);
+
+	},
+	toggleOptional: function(filterId, optional){
+		$.each(triples, function(index,value){
+			$.each(value['triples'], function(i,v){
+				if (v['filterId'] == filterId){
+					triples[index]['triples'][i]['optional'] = optional;
+				}
+			})
+		})
+	},
+	toVariable: function(varName){
+		var str = "?"+varName.toLowerCase().replace(/\W+/g, "_")
+		return str;	
+	},
+	generateUUID: function() {
+	    var d = new Date().getTime();
+	    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	        var r = (d + Math.random()*16)%16 | 0;
+	        d = Math.floor(d/16);
+	        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+	    });
+	    return uuid;
+	},
+	removeTriplesAndFilters: function(idToRemove){
+		
+		toRemoveT = -1;
+		$.each(triples, function(index,value){
+			if(value['id'] == idToRemove){
+				toRemoveT = index;
+			}
+		})
+		
+		if (toRemoveT > -1) {
+		    triples.splice(toRemoveT, 1);
+		}
+		
+		// TO FIX
+		toRemoveF = -1;
+		$.each(filters, function(index,value){
+			if(value['id'] == idToRemove){
+				toRemoveF = index;
+			}
+		})
+		
+		if (toRemoveF > -1) {
+		    filters.splice(toRemoveF, 1);
+		}
+	},
+	removeCheckedFilter: function(filterId){
+		
+		toRemoveT = -1
+		toRemoveTset = -1;
+		$.each(triples, function(index,value){
+			_t = value['triples'];
+
+			$.each(_t, function(i,v){
+				if(v['filterId'] == filterId){
+					toRemoveTset = i;
+					toRemoveT = index
+				}
+			})
+		})
+		
+		if (toRemoveT > -1) {
+		    triples[toRemoveT]['triples'].splice(toRemoveTset, 1);
+		}
+		
+		toRemoveF = -1;
+		$.each(filters, function(index,value){
+			_f = value;
+			if(value['id'] == filterId){
+				toRemoveF = index;
+			}
+		})
+		
+		if (toRemoveF > -1) {
+		    filters.splice(toRemoveF, 1);
+		}
+	},
+	
     //The methods related to classes
     classes : {
         validate : function(){
@@ -229,10 +475,21 @@ QueryBuilder = {
             $("#property_main_subclasses").hide();
             //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
             $("#txt_sparql_query_limit").val(default_sparql_result_limit);
+			
             QueryBuilder.classes.add_class_details($("#div_selected_class").find('.select-body').first(),class_uri,0);
-            QueryBuilder.show_equivalent_sparql_query();
-            QueryBuilder.properties.generate();
-
+            
+			var label = $("div#div_selected_class > div.row > div.col-md-10 > strong").html();
+			var variable = QueryBuilder.toVariable(label);
+			var id = QueryBuilder.addTriple(variable,"a","<"+$("#hdn_qb_class").val()+">")
+			
+			var selClass = $("div#div_selected_class > div.row > div.col-md-10");
+			$(selClass).attr('triple-id',id);
+			$(selClass).attr('variable',variable);
+			
+						
+			QueryBuilder.show_equivalent_sparql_query();
+            
+			QueryBuilder.properties.generate();
         },
         add_class_details : function(element,class_uri,tab_level){
             element.attr('class-uri',class_uri);
@@ -263,7 +520,8 @@ QueryBuilder = {
                 if(data.subclasses.length > 0){
                     if(tab_level == 0)
                         $("#property_main_subclasses").show();
-                    right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" class-uri=\""+class_uri+"\" onclick=\"QueryBuilder.classes.expand_selected_class('"+class_uri+"',"+tab_level.toString()+")\"></span>");
+                    right_element.prepend("<span class=\"glyphicon glyphicon-flash clickable span-more-subclasses\" class-uri=\""+class_uri+"\" onclick=\"QueryBuilder.classes.expand_selected_class('"+class_uri+"',"+tab_level.toString()+")\"></span>");
+										
                     var after_html = "";
                     for(i=data.subclasses.length-1;i>=0;i--){
                         after_html = "<div class='row select-class-subclass-row' parent-class-uri=\""+class_uri+"\" style='display:none;' class-uri=\""+data.subclasses[i]['uri']+"\">";
@@ -277,6 +535,8 @@ QueryBuilder = {
                 }
                 else if(tab_level == 0)
                     $("#property_main_subclasses").hide();
+			
+				right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" onclick=\"QueryBuilder.classes.multipleClass('"+class_uri+"')\" style=\"padding-right:20px\"></span>")
             });
         },
         expand_selected_class : function(class_uri,tab_level){
@@ -295,8 +555,33 @@ QueryBuilder = {
         select_again : function(class_uri,class_name){
             QueryBuilder.reset_searched_class();
             QueryBuilder.classes.select(class_uri,class_name);
-        }
-    
+        },
+		multipleClass : function(class_uri){
+			var currentSelectBox =  $("div#div_selected_class > div.row > div.col-md-10")[0]
+			var clonedSelectedBox = $(currentSelectBox).clone();
+			QueryBuilder.add_another_class();
+			
+			$(clonedSelectedBox).addClass('multipleClass')
+			var newRow = $(document.createElement('div'))
+			$(newRow).css({"padding": "15px", "margin-bottom": "20px", "border": "1px solid transparent", "border-radius": "4px", "background-color": "#99f000", "display": "block"})
+			
+			
+			$(newRow).append($(clonedSelectedBox))
+			$(newRow).append("<div class='col-md-2 select-right-actions' onclick='QueryBuilder.classes.removeMultipleClass($(this))'><span class=\"glyphicon glyphicon-remove clickable pull-right\"></span></div><br clear='all' />")
+			
+			var attachToElement = $("span#attach-multi-class-labels");
+			attachToElement.prepend($(newRow))
+		},
+		removeMultipleClass: function(element){
+			var id = $(element).parent().children(':first-child').attr('triple-id')
+			QueryBuilder.removeTriplesAndFilters(id);
+			
+			$(element).parent().remove();
+            QueryBuilder.properties.generate();
+			QueryBuilder.generate_equivalent_sparql_query();
+			
+			//reload or remove data properties
+		}
     },
 
     //the methods related to properties
@@ -339,17 +624,25 @@ QueryBuilder = {
         get_properties_for_selected_class : function(){
             $("#qb_properties_properties_object_loading").show();
             $("#qb_properties_properties_datatype_loading").show();
-            /*
-            if(all)
-                $("#btn_properties_properties_"+type+"_more").hide("fast");
-            else
-                $("#btn_properties_properties_"+type+"_more").show("fast");*/
 
-            $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+encodeURIComponent(QueryBuilder.classes.get_selected_class()));
-            $(".cb-property-range-all").each(function(index){
-                $(this).prop("checked",true);
+			multClasses = $("div.multipleClass").length
+			uriParams = "";
+			
+			if (multClasses > 0){
+				$("div.multipleClass").each(function(index,element){
+					uriParams = uriParams + "&class_uri[]="+element.getAttribute('class-uri');
+				})
+			
+				uriParams = uriParams + "&class_uri[]="+encodeURIComponent(QueryBuilder.classes.get_selected_class());
+				$.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+uriParams);
 
-            });
+			} else {
+				$.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+encodeURIComponent(QueryBuilder.classes.get_selected_class()));
+			}
+				
+            // $(".cb-property-range-all").each(function(index){
+ //                $(this).prop("checked",true);
+ //            });
         },
         get_schema_properties_for_selected_class : function(){
             $("#property_main_schema_properties_group").html("");
@@ -397,11 +690,7 @@ QueryBuilder = {
                             if(j>0)
                                 result += " UNION ";
                             result += "{ ?concept <"+v.property_uri+"> ?o_filter"+k.toString()+ "}";//<"+v.value[j]["uri"]+"> }";
-                        }
-												
-												
-												
-												
+                        }			
                     }
                     result += ".\n"
                 }
@@ -492,9 +781,13 @@ QueryBuilder = {
         },
         //This function is called when a property is clicked 
         // type is "object" or "datatype"
-        property_click : function(uri, name, type, range_uri, range_name, count){
+        property_click : function(uri, name, type, range_uri, range_name, count, element){
             show_loading();
-            $.get("/query/property_ranges.js?property_uri="+encodeURIComponent(uri)+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name+"&range_uri="+encodeURIComponent(range_uri)+"&range_name="+range_name+"&count="+count);
+			
+			lastSelector = element;
+			
+			$.get("/query/property_ranges.js?property_uri="+encodeURIComponent(uri)+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name+"&range_uri="+encodeURIComponent(range_uri)+"&range_name="+range_name+"&count="+count);
+			
         },
         //this method returns a comma separated string of selected properties
         // returns "ALL" if all of them are checked
@@ -513,86 +806,163 @@ QueryBuilder = {
 
         },
         click_check_all : function(type){
-            var item = $("#cb_property_range_all_"+type);
-            var to_check = false;
-            if(item.prop('checked'))
-                to_check = true;
-            $(".cb-property-range").each(function(index){
-                if($(this).attr("range-type") == type){
-                    $(this).prop('checked',to_check);
-                }
-            });
-            QueryBuilder.properties.checkbox_click();
+			var to_check = false;
+			if (!($(this).is(':checked'))){
+				to_check = true;
+			}
+			
+            // var item = $("#cb_property_range_all_"+type);
+//
+//             if(item.prop('checked'))
+//                 to_check = true;
+			if (to_check){
+    			$(".cb-property-range").each(function(index){
+        			if($(this).attr("range-type") == type){
+						$(this).attr('checked','checked');
+						QueryBuilder.properties.checkbox_click($(this));
+        			}
+    			});	
+			} else {
+    			$(".cb-property-range").each(function(index){
+        			if($(this).attr("range-type") == type){
+						$(this).removeAttr('checked');
+						QueryBuilder.properties.checkbox_click($(this));
+        			}
+    			});
+			}
+
+           
         },
         get_clicked_filter_property : function(){
             return $("#hdn_selector_property_uri").val();
         },
-        checkbox_click : function(){
-            if(QueryBuilder.properties.will_show_properties_in_preview() == true){
-                QueryBuilder.show_equivalent_sparql_query();
-            }
+        checkbox_click : function(chkedBox){
+			
+			addPropTrip = false;
+			// if ($(chkedBox).attr('id') == "cb_property_range_all_object"){
+			// 	if ($("cb_property_range_all_object:checked").length > 0){
+			// 		addPropTrip = true;
+			// 	}
+			// }
+			if ($(chkedBox).is(":checked")){
+				addPropTrip = true;
+			}
+			
+			if ($(chkedBox).attr('filter-id')){
+				addPropTrip = false; //because we are toggeling an optional
+			}
+			
+			var filVar = QueryBuilder.toVariable($(chkedBox).parent().parent().parent().attr('display-name'))
+			
+			if (addPropTrip){
+				multClasses = $("div.multipleClass").length
+				uriParams = "";
+				
+				var filterId = null;
+				if (multClasses > 0){
+					$("div.multipleClass").each(function(index,element){
+						var id = element.getAttribute('triple-id');
+						var variable = element.getAttribute('variable');
+						//subject,predicate,object,optional_id
+						filterId = QueryBuilder.addTriple(variable,"<"+$(chkedBox).val()+">",filVar,id,true,filterId);
+					})
+				}			
+				var selClass = $("div#div_selected_class > div.row > div.col-md-10");
+				var id = $(selClass).attr('triple-id');
+				var variable = $(selClass).attr('variable');
+				filterId = QueryBuilder.addTriple(variable,"<"+$(chkedBox).val()+">",filVar,id,true,filterId);
+				
+				$(chkedBox).attr('filter-id',filterId)
+	            // if(QueryBuilder.properties.will_show_properties_in_preview() == true){
+	            //     QueryBuilder.show_equivalent_sparql_query();
+	            // }
+			} else {
+				var filterId = $(chkedBox).attr('filter-id')
+				QueryBuilder.toggleOptional(filterId,$(chkedBox).is(":checked"))
+			}
+			
+			 QueryBuilder.show_equivalent_sparql_query();
         },
         filter : {
-            add_objects : function(property_uri, property_name,  data){
-                var identifier = QueryBuilder.properties.filter.get_new_list_identifier();
+            add_objects : function(property_uri, property_name,  data, filterId){
+				
                 $("#qb_properties_properties_selected_filters_header").show();
                 $("#qb_properties_properties_selected_filters_list").show();
-                var uris = "";
-                var names = "";
-                for(var i=0;i<data.length;i++){
-                    if(i>0){
-                        uris += ",";
-                        names += ", ";
-                    }
-                    uris += data[i].uri;
-                    names += "'"+data[i].name+"'";	
-                }
-                var div_html = "<div id='qb_properties_properties_selected_filters_list_item_"+identifier+"' class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\" filter-value=\""+uris+"\" identifier=\""+identifier+"\" filter-type='object'>";
+				
+				var div_html = "<div class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\"  filter-id=\""+filterId+"\" filter-type='data'>";
                 div_html += "<div class='row'><div class='col-md-10'>";
-                div_html += "<strong>"+property_name+"</strong> ";
-                if($("#hdn_object_selector_filter_type").val() == "not_equals")
-                    div_html+="&nbsp;NOT IN&nbsp;";
-                else
-                    div_html += "&nbsp;IN&nbsp;";
-                div_html += names+"</div>";
-                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
-                div_html += "</div></div>";
+                div_html += "<strong>"+property_name+"</strong> : "
+				$.each(data,function(index,element){
+					var uri = $(element).attr('uri');
+					var objname = $(element).attr('object-name');
+					var op = "="
+					if ($("#hdn_object_selector_filter_type").val() == "not_equals"){
+						op = "!="
+					}
+					
+					
+					div_html +=  " <strong><i>"+op+"</i></strong> <a href="+uri+">"+ objname + "</a> ";
+					QueryBuilder.addObjectFilter("<"+uri+">", op, filterId, ((data.length > 1) && (index > 0)));
+				})
+                div_html += "</div>"; //col-md-10
+				div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+filterId+"',$(this))\"></span></div>" //col-md-2
+				
+				div_html += "</div>" //row
+				div_html += "</div>" //alert
+				
+
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
-                selected_filter_values[identifier] = {type:"object", property_uri : property_uri, value: data, filter_type:$("#hdn_object_selector_filter_type").val()};
+				
+				
                 QueryBuilder.generate_equivalent_sparql_query();
-                Utils.flash.success("Added objects "+names+" to filter for "+property_name);
+                Utils.flash.success("Added object filter for "+property_name);
 
             },
-            add_data_filter : function(property_uri, property_name, data_filter){
-                var identifier = QueryBuilder.properties.filter.get_new_list_identifier();
-                $("#qb_properties_properties_selected_filters_header").show();
+            add_data_filter : function(property_uri, property_name, data_filters,filterId){				
+				$("#qb_properties_properties_selected_filters_header").show();
                 $("#qb_properties_properties_selected_filters_list").show();
-                var div_html = "<div id='qb_properties_properties_selected_filters_list_item_"+identifier+"' class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\"  identifier=\""+identifier+"\" filter-type='data'>";
+				
+				
+				// add triples to filters array - triples to main array are done in the previous call (i.e. done_click)
+                
+				var div_html = "<div class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\"  filter-id=\""+filterId+"\" filter-type='data'>";
                 div_html += "<div class='row'><div class='col-md-10'>";
-                div_html += "<strong>"+property_name+"</strong> "+data_filter;
-                div_html += "</div>";
-                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+identifier+"')\"></span></div>"
-                div_html += "</div></div>";
+                div_html += "<strong>"+property_name+"</strong> : "
+				$.each(data_filters,function(index,element){
+					var fil_value = $(element).attr('value');
+					var fil_val_op = $(element).attr('value-operator');
+					var op = $(element).attr('operator');
+					div_html +=  " <strong><i>"+op+"</i></strong> " + fil_val_op + " " + fil_value;
+					QueryBuilder.addFilter(QueryBuilder.toVariable(property_name), fil_val_op, fil_value, op, filterId);
+				})
+                div_html += "</div>"; //col-md-10
+				div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+filterId+"',$(this))\"></span></div>" //col-md-2
+				
+				div_html += "</div>" //row
+				div_html += "</div>" //alert
+				
+
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
-                selected_filter_values[identifier] = {type:"data", property_uri : property_uri, value: data_filter};
-                QueryBuilder.generate_equivalent_sparql_query();
-                Utils.flash.success("Added data filter "+data_filter+" to filter for "+property_name);
+                
+				
+				
+		        QueryBuilder.generate_equivalent_sparql_query();
+                Utils.flash.success("Added data filter for "+property_name);
 
             },
             //removes the filter
-            remove : function(identifier){
-                var list_item = $("#qb_properties_properties_selected_filters_list_item_"+identifier);
-                list_item.hide("fast");
-                delete selected_filter_values[parseInt(identifier)];
-                setTimeout(function(){
-                    list_item.remove();
-                    if($("#qb_properties_properties_selected_filters_list").find(".list-item").length <= 0){
-                        $("#qb_properties_properties_selected_filters_header").hide("fast");
-                        $("#qb_properties_properties_selected_filters_list").hide("fast");
-                    }
-                    QueryBuilder.generate_equivalent_sparql_query();
-                }, 500);
-
+            remove : function(filterId,element){
+				QueryBuilder.removeCheckedFilter(filterId)
+				
+				var allCkbxs = $(".cb-property-range");
+				$.each(allCkbxs, function(index,element){
+					if($(element).attr('filter-id') == filterId){
+						$(element).removeAttr('filter-id');
+						$(element).removeAttr('checked');
+					}
+				});
+				
+				$(element).parent().parent().parent().hide();
             },
             get_new_list_identifier : function(){
                 var max_id=0;
@@ -737,18 +1107,74 @@ QueryBuilder = {
             return result;
         },
         done_click : function(){
+			
             if($("#hdn_selector_type").val()=="object"){
-                var selected_objects = QueryBuilder.objects.get_selected_objects();
-                if(selected_objects.length > 0){
-                    QueryBuilder.properties.filter.add_objects($("#hdn_selector_property_uri").val(),$("#hdn_selector_property_name").val(),selected_objects);
-                }
-            }
-            else{
-                QueryBuilder.properties.filter.add_data_filter($("#hdn_selector_property_uri").val(),$("#hdn_selector_property_name").val(),$("#txt_filter_datatype").val());
+				var allFilters = $("#p_selected_objects > span");
+				var propertyURI = $("#hdn_selector_property_uri").val();
+				var propertyName = $("#hdn_selector_property_name").val();
+				
+				
+				var checkBox = $(lastSelector).parent().children(':last-child').children('input')
+				var filterId = $(checkBox).attr('filter-id');
+				
+				if (filterId == null){
+					$(checkBox).attr('checked','checked');
+					QueryBuilder.properties.checkbox_click($(checkBox));
+					filterId = $(checkBox).attr('filter-id');
+					//added this hack to get filterid
+				    $(checkBox).prop("checked", false )
+					QueryBuilder.properties.checkbox_click($(checkBox));
+				}
+				
+				QueryBuilder.properties.filter.add_objects(propertyURI,propertyName,allFilters,filterId);				
+            } else {
+				val = $("#txt_filter_datatype").val()
+				
+				if (val != ""){
+					val_op = $("#hdn_val_operator").val()
+				
+					if (val_op == ""){
+						val_op = "and"
+					}
+				
+					op = $("#hdn_operator").val()
+					$("#p_selected_objects").append("<span value=\""+val+"\" operator='"+op+"' value-operator='"+val_op+"' class='label label-warning selected-objects' >"+op+" "+ val_op+ " "+val+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span>&nbsp;")
+				}
+				
+				var allFilters = $("#p_selected_objects > span");
+				var propertyURI = $("#hdn_selector_property_uri").val();
+				var propertyName = $("#hdn_selector_property_name").val();
+				
+				
+				var checkBox = $(lastSelector).parent().children(':last-child').children('input')
+				var filterId = $(checkBox).attr('filter-id');
+				
+				if (filterId == null){
+					$(checkBox).attr('checked','checked');
+					QueryBuilder.properties.checkbox_click($(checkBox));
+					filterId = $(checkBox).attr('filter-id');
+					//added this hack to get filterid
+				    $(checkBox).prop("checked", false )
+					QueryBuilder.properties.checkbox_click($(checkBox));
+				}
+				
+				QueryBuilder.properties.filter.add_data_filter(propertyURI,propertyName,allFilters,filterId);
             }
             $("#class_selector_modal").modal('hide');
-        }
-
+        },
+		add_value: function(){
+			val_op = $("#hdn_val_operator").val()
+			val = $("#txt_filter_datatype").val()
+			op = $("#hdn_operator").val()
+			
+			$('#sel_text').html('Operator')
+			$("#p_selected_objects").append("<span value=\""+val+"\" operator='"+op+"' value-operator='"+val_op+"' class='label label-warning selected-objects' >"+op+" "+ val_op+ " "+val+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span>&nbsp;")
+			
+			$("#hdn_operator").val("");
+			$("#txt_filter_datatype").val("");
+			$("#choose_operator_dd").removeAttr("disabled");
+			$("#choose_operator_dd").dropdown();
+		}
     },
     convert : {
         configured : {
@@ -1036,79 +1462,82 @@ function getOptionalVariable(nameKey, myArray){
 $(window).load(function(){
 	//filters and optionals
 	if (hasAllParameters()){
-		//uncheck all properties
-	 	QueryBuilder.properties.click_check_all('object');
-		QueryBuilder.properties.click_check_all('data');
-		
-		//show optionals in SPARQL query
-		QueryBuilder.equivalent_query.handle_checked_properties('yes');
 		
 		//check optionals
-		var optionals = getUrlParameter('optionals'); //&optionals=http://dbpedia.org/ontology/birthPlace;http://dbpedia.org/ontology/occupation
-		var sOptionals = optionals.split(';');
-		var val = null;
-		var item;
-    for (var i = 0; i < sOptionals.length; i++)
-    {
-			$(".list-group-item").each(function(){
-				var uri = $(this).attr('uri');
-				if (uri == sOptionals[i]){
-					item = $(this).find("div > div > input");
-					$(item).prop('checked',true);
-					
-					QueryBuilder.properties.checkbox_click();
-				}
-			})
+		var optionals = getUrlParameter('optionals'); 
+		if (optionals != "")	
+		{
+			QueryBuilder.equivalent_query.handle_checked_properties('yes');
+			
+	 		//&optionals=http://dbpedia.org/ontology/birthPlace;http://dbpedia.org/ontology/occupation
+			var sOptionals = optionals.split(';');
+			var val = null;
+			var item;
+	    	for (var i = 0; i < sOptionals.length; i++)
+	    	{
+				$(".list-group-item").each(function(){
+					var uri = $(this).attr('uri');
+					if (uri == sOptionals[i]){
+						 var item = $(this).find('input');
+						 $(item).prop("checked", true )
+						
+						QueryBuilder.properties.checkbox_click($(item));
+					}
+				})
+			}
 		}
+
 
 		//add filters
 		//&filters=<appliedOn>;<label>;<type eg. ne>;labelV1;val1;labelV2;val2;val2*<appliedOn2>...
 		//&filters=http://dbpedia.org/ontology/birthPlace;birthPlace;sp:ne;London;http://dbpedia.org/resource/London;Paris;http://dbpedia.org/resource/Paris*http://dbpedia.org/ontology/wikiPageRevisionID;WikiPageRevisionID;sp:le;100;100
 		var filters = getUrlParameter('filters'); 
-		var sFilters = filters.split('$');
+		if (filters != ""){
+			var sFilters = filters.split('$');
 		
-		for (var i =0; i < sFilters.length; i++){
-			var _filter = sFilters[i];
-			var _sFilter = _filter.split(';');
+			for (var i =0; i < sFilters.length; i++){
+				var _filter = sFilters[i];
+				var _sFilter = _filter.split(';');
 			
-			var val_uri = _sFilter[0];
-			var val_label = _sFilter[1];
+				var val_uri = _sFilter[0];
+				var val_label = _sFilter[1];
 			
-			var op = _sFilter[2];
+				var op = _sFilter[2];
 
 			
 
-			if (_sFilter[4].indexOf("://") > 0){
-				//then probably we have a resource
-				if (op.indexOf("ne") > 0)	{
-					var $hiddenInput = $('<input/>',{type:'hidden',id:'hdn_object_selector_filter_type',value:'not_equals'});
-					$hiddenInput.appendTo('body');
-				}
-				else {
-					var $hiddenInput = $('<input/>',{type:'hidden',id:'hdn_object_selector_filter_type',value:'equals'});
-					$hiddenInput.appendTo('body');
-				}
+				if (_sFilter[4].indexOf("://") > 0){
+					//then probably we have a resource
+					if (op.indexOf("ne") > 0)	{
+						var $hiddenInput = $('<input/>',{type:'hidden',id:'hdn_object_selector_filter_type',value:'not_equals'});
+						$hiddenInput.appendTo('body');
+					}
+					else {
+						var $hiddenInput = $('<input/>',{type:'hidden',id:'hdn_object_selector_filter_type',value:'equals'});
+						$hiddenInput.appendTo('body');
+					}
 				
-				var data = [];
-				for (var j = 3; j < _sFilter.length; j+=2) {
-					data.push({name : _sFilter[j], uri : _sFilter[j+1] });
-				}
-				QueryBuilder.properties.filter.add_objects(val_uri,val_label,data);
-			} else {
-				//it is a data object
-				dataFilter = "";
+					var data = [];
+					for (var j = 3; j < _sFilter.length; j+=2) {
+						data.push({name : _sFilter[j], uri : _sFilter[j+1] });
+					}
+					QueryBuilder.properties.filter.add_objects(val_uri,val_label,data);
+				} else {
+					//it is a data object
+					dataFilter = "";
 				
-				if (op.indexOf("ne") > 0)	dataFilter = "!= ";
-				if (op.indexOf("eq") > 0)	dataFilter = "= ";
-				if (op.indexOf("gt") > 0)	dataFilter = "> ";
-				if (op.indexOf("lt") > 0)	dataFilter = "< ";
-				if (op.indexOf("le") > 0)	dataFilter = "<= ";
-				if (op.indexOf("ge") > 0)	dataFilter = ">= ";
+					if (op.indexOf("ne") > 0)	dataFilter = "!= ";
+					if (op.indexOf("eq") > 0)	dataFilter = "= ";
+					if (op.indexOf("gt") > 0)	dataFilter = "> ";
+					if (op.indexOf("lt") > 0)	dataFilter = "< ";
+					if (op.indexOf("le") > 0)	dataFilter = "<= ";
+					if (op.indexOf("ge") > 0)	dataFilter = ">= ";
 				
-				dataFilter = dataFilter.concat(_sFilter[4]);
+					dataFilter = dataFilter.concat(_sFilter[4]);
 				
-				QueryBuilder.properties.filter.add_data_filter(val_uri,val_label,dataFilter);
-			}			
+					QueryBuilder.properties.filter.add_data_filter(val_uri,val_label,dataFilter);
+				}			
+			}
 		}
 	}
 }); 

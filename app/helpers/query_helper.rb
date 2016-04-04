@@ -117,22 +117,54 @@ module QueryHelper
 
 	#This method returns the class properties
 	def get_properties_of_class(dataset, class_uri)
-		uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/properties?dataset="+dataset+"&class="+class_uri)
-		properties = {:data_type=>[], :object_type=>[]}
-		properties_json = HTTParty.get(uri)
-		unless properties_json["rdfClass"].blank?
-			unless properties_json["rdfClass"]["properties"].blank?
-				properties_json["rdfClass"]["properties"].each do |p|
-					if p["count"] > 0 && !p["range"]["label"].blank?
-						if p["type"] == "data"
-							properties[:data_type] << p
-						elsif p["type"] == "object"
-							properties[:object_type] << p
-						end	
-					end
-				end
-			end
-		end
+    uri = ""
+    if class_uri.kind_of?(Array)
+      strClass = ""
+      class_uri.each { |x| strClass += "&class="+x }
+      uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/properties?dataset="+dataset+strClass)
+    else
+      uri = get_uri("http://localhost:#{get_rdf2any_server_port}/rdf2any/v1.0/builder/properties?dataset="+dataset+"&class="+class_uri)
+    end
+    properties = {:data_type=>[], :object_type=>[], :status=>[]}
+    
+    begin
+  		properties_json = HTTParty.get(uri, :timeout => 180 )    
+    rescue Net::ReadTimeout
+      properties[:status] << "Requests timed out"
+    end
+    
+    
+    # if properties_json["rdfClass"]["status"].include? "Error"
+    #   properties[:status] << properties_json["rdfClass"]["status"]
+    # end
+    
+    if class_uri.kind_of?(Array)
+    	unless properties_json["multiRdfClass"].blank?
+    		unless properties_json["multiRdfClass"]["rdfProperties"].blank?
+    			properties_json["multiRdfClass"]["rdfProperties"].each do |p|
+    					if p["type"] == "data"
+    						properties[:data_type] << p
+    					elsif p["type"] == "object"
+    						properties[:object_type] << p
+    					end	
+    			end
+    		end
+    	end
+    else    
+    	unless properties_json["rdfClass"].blank?
+    		unless properties_json["rdfClass"]["properties"].blank?
+    			properties_json["rdfClass"]["properties"].each do |p|
+    				#if p["count"] > 0 && !p["range"]["label"].blank?
+    					if p["type"] == "data"
+    						properties[:data_type] << p
+    					elsif p["type"] == "object"
+    						properties[:object_type] << p
+    					end	
+            #end
+    			end
+    		end
+    	end
+    end
 		properties[:data_type] = properties[:data_type].sort_by{|a|a['count']}.reverse unless properties[:data_type].blank?
 		properties[:object_type] = properties[:object_type].sort_by{|a|a['count']}.reverse unless properties[:object_type].blank?
 		properties
