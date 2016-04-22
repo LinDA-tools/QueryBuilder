@@ -8,6 +8,17 @@ var triples = [];
 var filters = [];
 var lastSelector = null; // temporary stores the element of the last data or object property chosen
 
+var currTripId = null;
+var currVar = null;
+
+var propSetting = {};
+
+var propLoaded = false;
+
+var noSelectedItem = false;
+
+var rangeUri = null;
+
 QueryBuilder = {
     //The methods related to datasets
     datasets : {
@@ -42,9 +53,9 @@ QueryBuilder = {
     },
     /////////////////////////////////////////////////////////////////////////////////////////
     //This method calls the ajax method to show all classes in dataset
-    show_all_classes: function(dataset){	
+    show_all_classes: function(dataset){
        $("#loading").show();
-	var dataset = $("#hdn_qb_dataset").val();	
+	var dataset = $("#hdn_qb_dataset").val();
 	$.get("/query/show_all_classes.js",{ dataset:dataset});
     },
     done_showing_classes : function(){
@@ -52,17 +63,17 @@ QueryBuilder = {
     },
     select_class_from_list: function(uri, name){
     	 $("#div_all_classes").hide("fast");
-    	QueryBuilder.done_showing_classes();    	
+    	QueryBuilder.done_showing_classes();
     	QueryBuilder.classes.select(uri, name);
     },
     //////////////////////////////////////////////////////////////////////////////////////////
-    
+
     //This method calls the ajax method to search for the classes
-    search_classes : function(){    	
+    search_classes : function(){
         $("#qb_class_search_loading").show();
         var search_string = $("#hdn_searched_class_value").val();
         var dataset = $("#hdn_qb_dataset").val();
-	var force_uri_search = $('#force_uri_search').prop('checked');
+	      var force_uri_search = $('#force_uri_search').prop('checked');
         $.get("/query/builder_classes.js",{ search: search_string, dataset:dataset, force_uri_search:force_uri_search});
     },
     reset_searched_class : function(concept){
@@ -76,17 +87,50 @@ QueryBuilder = {
         $(".span-more-subclasses").remove();
         $("#div_classes_search_more").hide("fast");
         $(".select-class-subclass-row").remove();
-        QueryBuilder.hide_equivalent_sparql_query();
-        QueryBuilder.hide_searched_query_results();
-        QueryBuilder.properties.reset();
-        selected_filter_values = {};
-		
-		var id = $("div#div_selected_class > div.row > div.select-body").attr('triple-id')
-		QueryBuilder.removeTriplesAndFilters(id);
-		
-		//Regenerate maybe there are other classes chosen (multiple classes)
-        QueryBuilder.properties.generate();
-		QueryBuilder.generate_equivalent_sparql_query();
+
+
+		    var id = $("div#div_selected_class > div.row > div.select-body").attr('triple-id')
+        var variable = $("div#div_selected_class > div.row > div.select-body").attr('variable')
+		    QueryBuilder.removeTriplesAndFilters(id);
+        QueryBuilder.removeConnectingTriples(variable);
+
+        //$("#div_classes_search_result > div.col-md-12 > div#div_selected_class").html("");
+        noSelectedItem = true;
+
+        //if no classes.. close everything
+        if ($("div.multipleClass").length == 0){
+          $('.div_qb_select_class').hide();
+          $('.div_qb_properties').hide();
+          $('#qb-equivalent-query-main').hide();
+          QueryBuilder.hide_equivalent_sparql_query();
+          QueryBuilder.hide_searched_query_results();
+          QueryBuilder.properties.reset();
+          selected_filter_values = {};
+        } else {
+          theItem = $($("div.multipleClass")[$("div.multipleClass").length-1]).parent();
+          uri = $(theItem).find('div.multipleClass').attr('class-uri');
+
+          $("#propertyHistogram").empty();
+          $("#propertyHistogram").append(propSetting[uri]);
+          $("#propertyHistogram").show();
+
+          $("span#attach-multi-class-labels").find('div.alert').each(function(){
+            $(this).addClass('alert alert-info');
+            $(this).removeClass('alert alert-warning');
+            $(this).css('border',"");
+          });
+
+          currVar = $(theItem).find("div.concept").attr('variable');
+          currTripId = $(theItem).find("div.concept").attr('triple-id');
+
+          $('#hdn_qb_class').val(uri);
+          $(theItem).removeClass('alert alert-info');
+          $(theItem).addClass('alert alert-warning');
+          $(theItem).css('border',"solid 2px black");
+
+          //QueryBuilder.properties.generate();
+          QueryBuilder.generate_equivalent_sparql_query();
+        }
     },
     add_another_class : function(){
         $(".clear-search-class").show("fast");
@@ -109,46 +153,50 @@ QueryBuilder = {
         var properties_map = null;
         query += SPARQL.prefix.rdf;
         query += SPARQL.prefix.rdfs;
-		
+
         query += "SELECT DISTINCT * {\n";
 		noClasses = triples.length;
 		$.each(triples,function(index,element){
-			if (noClasses > 1) query += "{\n";
+			// if (noClasses > 1) query += "{\n";
 			_triples = element['triples'];
 			$.each(_triples,function(t_index,t_element){
+        if (t_element['show'] == false) return true;
 				if (t_element['optional']) query += "OPTIONAL { \n";
 				if (t_element['minus']) query += "MINUS { \n";
-				query += t_element['s'] + " " + t_element['p'] + " " + t_element['o'] + " . \n" 
+				query += t_element['s'] + " " + t_element['p'] + " " + t_element['o'] + " . \n"
 				if (t_element['minus']) query += "}\n";
 				if (t_element['optional']) query += "}\n";
-			
+
 				if (t_element['filterId'] != null){
 					var filterId = t_element['filterId'];
 					_filters = QueryBuilder.get_filter(filterId);
-					
+
 					if (_filters != null){
 						query += "FILTER ("
 						$.each(_filters,function(f_index,f_element){
 							if (f_element['junction'] != null) {
-								if (f_element['junction'] == 'and') query += " && ";
-								if (f_element['junction'] == 'or') query += " || ";
+								if ((f_element['junction'] == 'and') || (f_element['junction'] == '&&')) query += " && ";
+								if ((f_element['junction'] == 'or') || (f_element['junction'] == '||')) query += " || ";
 							}
 							if (_filters.length > 1) query += "(";
-							query += f_element['var'] + " " + f_element['op'] + " " + f_element['val'] 
+							query += f_element['var'] + " " + f_element['op'] + " \"" + f_element['val'] + "\""
+							if(f_element['rangeUri'] != null){
+								query += "^^<"+f_element['rangeUri']+">";
+							}
 							if (_filters.length > 1) query += ")";
 						})
 						query += ")\n"
 					}
 				}
 			})
-			
-			if (noClasses > 1) query += "}\n";
-			
-			if (index <= (noClasses - 2)) query += "UNION\n"; // we might have multiple classes
+
+			// if (noClasses > 1) query += "}\n";
+
+			// if (index <= (noClasses - 2)) query += "UNION\n"; // we might have multiple classes
 		});
-		
-		
-		query += "}"
+
+
+		 query += "}"
         query += "LIMIT "+$("#txt_sparql_query_limit").val();
         $("#txt_sparql_query").val(query);
     },
@@ -173,7 +221,7 @@ QueryBuilder = {
     },
     search_classes_change : function(){
         var search = $("#txt_search_classes").val();
-             
+
         if(search != undefined){
             search = search.trim();
             if(search.length >= 3){
@@ -186,7 +234,7 @@ QueryBuilder = {
                     QueryBuilder.search_classes();
                  }else if($("#hdn_done_searching_class").val() == "true"){
                     QueryBuilder.classes.validate();
-                 }                
+                 }
             }
             else{
                 $("#hdn_searched_class_value").val("");
@@ -203,26 +251,26 @@ QueryBuilder = {
 		trp['s'] = subject
 		trp['p'] = predicate
 		trp['o'] = object
-		
+
 		id = "";
 		if (optional_id == null){
 			id = QueryBuilder.generateUUID();
 		} else {
 			id = optional_id
 		}
-		
+
 		filterId = optional_filterId;
 		if (optional_value){
 			if (optional_filterId == null) {
 				filterId = QueryBuilder.generateUUID();
 			}
-			
+
 			trp['filterId'] = filterId
 			trp['optional'] = true
 		} else {
 			trp['optional'] = false
 		}
-		
+
 		_triples = [];
 		found = false;
 		toRemove = -1;
@@ -234,8 +282,8 @@ QueryBuilder = {
 			}
 		})
 		_triples.push(trp);
-		
-		
+
+
 		toAdd = {}
 		if (!found){
 			toAdd['id'] = id;
@@ -243,18 +291,14 @@ QueryBuilder = {
 			toAdd['id'] = id;
 			triples.splice(toRemove, 1);
 		}
-		
-
-		
 		toAdd['triples'] = _triples;
-		
-		
+
 		triples.push(toAdd);
-		
+
 		if (optional_value){
-			return filterId;	
+			return filterId;
 		} else {
-			return id;	
+			return id;
 		}
 	},
 	addFilter: function(variable,op,value,optional_logOp,fid){
@@ -263,13 +307,13 @@ QueryBuilder = {
 		trp['op'] = op
 		trp['val'] = value
 		trp['junction'] = optional_logOp
-		
+		trp['rangeUri'] = rangeUri
 		id = fid
 		if (id == null){
 			id = QueryBuilder.generateUUID();
-		} 
-		
-		
+		}
+
+
 		_filters = [];
 		found = false;
 		toRemove = -1;
@@ -281,8 +325,8 @@ QueryBuilder = {
 			}
 		})
 		_filters.push(trp);
-		
-		
+
+
 		toAdd = {}
 		if (!found){
 			toAdd['id'] = id;
@@ -290,15 +334,9 @@ QueryBuilder = {
 			toAdd['id'] = id;
 			filters.splice(toRemove, 1);
 		}
-		
-
-		
 		toAdd['filters'] = _filters;
-		
-		
 		filters.push(toAdd);
-		
-		return id;	
+		return id;
 	},
 	addObjectFilter: function(filterUri, op, filterId, multiValue){
 		item = -1;
@@ -313,20 +351,25 @@ QueryBuilder = {
 			})
 		});
 
-		
+
 		theItem = triples[item]['triples'][accessItem]
-	    if (!multiValue)
+	  if (!multiValue)
 			triples[item]['triples'].splice(accessItem, 1);
 		else
 			theItem = JSON.parse(JSON.stringify(triples[item]['triples'][accessItem]));
-		
+
+    var clone = $.extend(true, {}, theItem);
+
+    clone['show'] = false;
+
 		theItem['o'] = filterUri;
-		
+
 		if (op == "!="){
 			theItem['minus'] = true;
 		}
-		
+
 		(triples[item]['triples']).push(theItem);
+    (triples[item]['triples']).push(clone);
 
 	},
 	toggleOptional: function(filterId, optional){
@@ -340,7 +383,7 @@ QueryBuilder = {
 	},
 	toVariable: function(varName){
 		var str = "?"+varName.toLowerCase().replace(/\W+/g, "_")
-		return str;	
+		return str;
 	},
 	generateUUID: function() {
 	    var d = new Date().getTime();
@@ -352,18 +395,18 @@ QueryBuilder = {
 	    return uuid;
 	},
 	removeTriplesAndFilters: function(idToRemove){
-		
+
 		toRemoveT = -1;
 		$.each(triples, function(index,value){
 			if(value['id'] == idToRemove){
 				toRemoveT = index;
 			}
 		})
-		
+
 		if (toRemoveT > -1) {
 		    triples.splice(toRemoveT, 1);
 		}
-		
+
 		// TO FIX
 		toRemoveF = -1;
 		$.each(filters, function(index,value){
@@ -371,30 +414,44 @@ QueryBuilder = {
 				toRemoveF = index;
 			}
 		})
-		
+
 		if (toRemoveF > -1) {
 		    filters.splice(toRemoveF, 1);
 		}
 	},
 	removeCheckedFilter: function(filterId){
-		
-		toRemoveT = -1
-		toRemoveTset = -1;
+
+		toRemoveT = [];
+		toRemoveTset = [];
 		$.each(triples, function(index,value){
 			_t = value['triples'];
 
+      _mainT = {};
+      _mainT['outer'] = index;
+      _mainT['inner'] = [];
 			$.each(_t, function(i,v){
 				if(v['filterId'] == filterId){
-					toRemoveTset = i;
-					toRemoveT = index
+          _mainT['inner'].push(i)
+					// toRemoveTset = i;
+					// toRemoveT = index
 				}
 			})
+      toRemoveT.push(_mainT);
 		})
-		
-		if (toRemoveT > -1) {
-		    triples[toRemoveT]['triples'].splice(toRemoveTset, 1);
-		}
-		
+
+    $.each(toRemoveT,function(index){
+      if (toRemoveT[index]['inner'].length > 0){
+        $.each(toRemoveT[index]['inner'].reverse(), function(idx){
+          triples[toRemoveT[index]['outer']]['triples'].splice(toRemoveT[index]['inner'][idx], 1);
+        })
+      }
+    })
+
+
+		// if (toRemoveT > -1) {
+		//     triples[toRemoveT]['triples'].splice(toRemoveTset, 1);
+		// }
+
 		toRemoveF = -1;
 		$.each(filters, function(index,value){
 			_f = value;
@@ -402,12 +459,53 @@ QueryBuilder = {
 				toRemoveF = index;
 			}
 		})
-		
+
 		if (toRemoveF > -1) {
 		    filters.splice(toRemoveF, 1);
 		}
 	},
-	
+  removeConnectingTriples: function(variable){
+    toRemoveT = -1
+    toRemoveTset = -1;
+    $.each(triples, function(index,value){
+      _t = value['triples'];
+
+      $.each(_t, function(i,v){
+        if(v['o'] == variable){
+          toRemoveTset = i;
+          toRemoveT = index
+        }
+      })
+    })
+
+
+    if ((toRemoveT > -1) && (toRemoveTset > -1)){
+        triples[toRemoveT]['triples'].splice(toRemoveTset, 1);
+    }
+  },
+  showhide: function(filterId, element){
+    $.each(triples, function(index,value){
+      _t = value['triples'];
+
+      $.each(_t, function(i,v){
+        if(v['filterId'] == filterId){
+          if (v['show'] != null){
+            v['show'] = !(v['show'])
+
+            if (v['show']){
+              $(element).removeClass('glyphicon-eye-close');
+              $(element).addClass('glyphicon-eye-open');
+            } else {
+              $(element).removeClass('glyphicon-eye-open');
+              $(element).addClass('glyphicon-eye-close');
+            }
+          }
+        }
+      })
+    })
+    QueryBuilder.generate_equivalent_sparql_query();
+  },
+
     //The methods related to classes
     classes : {
         validate : function(){
@@ -436,7 +534,7 @@ QueryBuilder = {
                     $(this).hide();
             });
             QueryBuilder.classes.check_empty_error();
-            
+
         },
         check_empty_error : function(){
             if($("#tbl_classes_search_result").find("a:visible").length <= 0){
@@ -462,12 +560,14 @@ QueryBuilder = {
         get_subclasses_action_url : function(class_uri){
             return "/query/class_subclasses?dataset="+QueryBuilder.datasets.get_selected() + "&class="+encodeURIComponent(class_uri);
         },
-        select : function(class_uri, class_name){
+        select : function(class_uri, class_name, varn){
             $("#btn_show_checked_properties_no").click();
             $("#hdn_qb_class").val(class_uri);
             $("#tbl_classes_search_result").hide("fast");
             $(".clear-search-class").hide("fast");
+
             QueryBuilder.select_body($("#div_selected_class"),"<strong>"+class_name+"</strong>");
+            $("#div_selected_class").css('border',"solid 2px black")
             $("#div_classes_search_more").show("fast");
             $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
             $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
@@ -475,21 +575,51 @@ QueryBuilder = {
             $("#property_main_subclasses").hide();
             //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
             $("#txt_sparql_query_limit").val(default_sparql_result_limit);
-			
+
             QueryBuilder.classes.add_class_details($("#div_selected_class").find('.select-body').first(),class_uri,0);
-            
-			var label = $("div#div_selected_class > div.row > div.col-md-10 > strong").html();
-			var variable = QueryBuilder.toVariable(label);
-			var id = QueryBuilder.addTriple(variable,"a","<"+$("#hdn_qb_class").val()+">")
-			
-			var selClass = $("div#div_selected_class > div.row > div.col-md-10");
-			$(selClass).attr('triple-id',id);
-			$(selClass).attr('variable',variable);
-			
-						
-			QueryBuilder.show_equivalent_sparql_query();
-            
-			QueryBuilder.properties.generate();
+
+      			var label = $("div#div_selected_class > div.row > div.col-md-10 > strong").html();
+            var variable = "";
+            if (varn == null)
+              variable = QueryBuilder.toVariable(label);
+            else {
+              variable = QueryBuilder.toVariable(varn);
+            }
+      			var id = QueryBuilder.addTriple(variable,"a","<"+$("#hdn_qb_class").val()+">")
+
+      			var selClass = $("div#div_selected_class > div.row > div.col-md-10");
+      			$(selClass).attr('triple-id',id);
+      			$(selClass).attr('variable',variable);
+            $(selClass).addClass('concept');
+
+            $("#propertyHistogram").html("");
+            $("#propertyHistogram").append(propSetting['default']);
+
+            var theSelectedClass = $("#div_selected_class")
+            $(theSelectedClass).removeClass("alert-danger")
+
+            var theXButton = $("#div_selected_class > div.row > div.select-right-actions > span.glyphicon-remove");
+
+            $(theXButton).click(function(event){
+              event.stopPropagation();
+              QueryBuilder.reset_searched_class($(theSelectedClass));
+            });
+            $(theSelectedClass).click(function(event){
+              QueryBuilder.classes.reload_property(class_uri,$(theSelectedClass));
+            });
+
+
+            //class_uri
+            // var theDivs = $("#property_main_properties_object_group > div");
+            // $.each(theDivs, function(index){
+            //   if ($(this).attr('range') == $("#hdn_qb_class").val()){
+            //     $($(this).find('div.row > div.col-md-1 > span')[0]).hide();
+            //   }
+            // });
+
+      			QueryBuilder.show_equivalent_sparql_query();
+
+      			QueryBuilder.properties.generate();
         },
         add_class_details : function(element,class_uri,tab_level){
             element.attr('class-uri',class_uri);
@@ -503,7 +633,7 @@ QueryBuilder = {
                             element_append_html += ",&nbsp;"
                         element_append_html += "<a onclick=\"Utils.show_uri_viewer('"+data.sample_objects[i]["uri"]+"')\" href=\"javascript:void(0);\">"+data.sample_objects[i]["label"]+"</a>"
                     }
-                    element_append_html += "&nbsp;)</small>";   
+                    element_append_html += "&nbsp;)</small>";
                 }
                 //element.find(".loading-image").first().remove();
                 element.find("strong").after(element_append_html);
@@ -520,8 +650,8 @@ QueryBuilder = {
                 if(data.subclasses.length > 0){
                     if(tab_level == 0)
                         $("#property_main_subclasses").show();
-                    right_element.prepend("<span class=\"glyphicon glyphicon-flash clickable span-more-subclasses\" class-uri=\""+class_uri+"\" onclick=\"QueryBuilder.classes.expand_selected_class('"+class_uri+"',"+tab_level.toString()+")\"></span>");
-										
+                    right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" class-uri=\""+class_uri+"\" onclick=\"QueryBuilder.classes.expand_selected_class('"+class_uri+"',"+tab_level.toString()+")\"></span>");
+
                     var after_html = "";
                     for(i=data.subclasses.length-1;i>=0;i--){
                         after_html = "<div class='row select-class-subclass-row' parent-class-uri=\""+class_uri+"\" style='display:none;' class-uri=\""+data.subclasses[i]['uri']+"\">";
@@ -535,8 +665,8 @@ QueryBuilder = {
                 }
                 else if(tab_level == 0)
                     $("#property_main_subclasses").hide();
-			
-				right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" onclick=\"QueryBuilder.classes.multipleClass('"+class_uri+"')\" style=\"padding-right:20px\"></span>")
+
+				// right_element.prepend("<span class=\"glyphicon glyphicon-plus clickable span-more-subclasses\" onclick=\"QueryBuilder.classes.multipleClass('"+class_uri+"')\" style=\"padding-right:20px\"></span>")
             });
         },
         expand_selected_class : function(class_uri,tab_level){
@@ -556,33 +686,228 @@ QueryBuilder = {
             QueryBuilder.reset_searched_class();
             QueryBuilder.classes.select(class_uri,class_name);
         },
-		multipleClass : function(class_uri){
+		multipleClass : function(class_uri, variable){
 			var currentSelectBox =  $("div#div_selected_class > div.row > div.col-md-10")[0]
 			var clonedSelectedBox = $(currentSelectBox).clone();
 			QueryBuilder.add_another_class();
-			
+
 			$(clonedSelectedBox).addClass('multipleClass')
 			var newRow = $(document.createElement('div'))
-			$(newRow).css({"padding": "15px", "margin-bottom": "20px", "border": "1px solid transparent", "border-radius": "4px", "background-color": "#99f000", "display": "block"})
-			
-			
+			$(newRow).css({"padding": "15px", "margin-bottom": "20px", "border": "1px solid transparent", "border-radius": "4px", "display": "block"});
+      $(newRow).addClass('alert alert-info')
+      $(newRow).attr('variable',variable);
+
+      var currClass = $('#hdn_qb_class').val();
+      propSetting[currClass] = $("#propertyHistogram").clone();
 			$(newRow).append($(clonedSelectedBox))
-			$(newRow).append("<div class='col-md-2 select-right-actions' onclick='QueryBuilder.classes.removeMultipleClass($(this))'><span class=\"glyphicon glyphicon-remove clickable pull-right\"></span></div><br clear='all' />")
-			
+
+      var theXDiv = $(document.createElement('div'));
+      $(theXDiv).addClass("col-md-2 select-right-actions remove")
+
+      var theXSpan = $(document.createElement('span'));
+      $(theXSpan).addClass("glyphicon glyphicon-remove clickable pull-right remove")
+      $(theXDiv).append(theXSpan);
+      $(newRow).append(theXDiv);
+      $(newRow).append("<br clear='all' />");
+
+
+      $(theXSpan).click(function(event){
+        event.stopPropagation();
+        QueryBuilder.classes.removeMultipleClass($(theXDiv));
+      });
+      $(newRow).click(function(event){
+        QueryBuilder.classes.reload_property(class_uri,$(newRow));
+      });
+
 			var attachToElement = $("span#attach-multi-class-labels");
-			attachToElement.prepend($(newRow))
+			attachToElement.append($(newRow))
 		},
 		removeMultipleClass: function(element){
 			var id = $(element).parent().children(':first-child').attr('triple-id')
 			QueryBuilder.removeTriplesAndFilters(id);
-			
+      var variable = $(element).parent().children(':first-child').attr('variable')
+      QueryBuilder.removeConnectingTriples(variable);
+
 			$(element).parent().remove();
-            QueryBuilder.properties.generate();
-			QueryBuilder.generate_equivalent_sparql_query();
-			
-			//reload or remove data properties
-		}
+
+      if (($("div.multipleClass").length == 0) &&
+    ($("div#div_selected_class").length == 0)){
+        $('.div_qb_select_class').hide();
+        $('.div_qb_properties').hide();
+        $('#qb-equivalent-query-main').hide();
+        QueryBuilder.hide_equivalent_sparql_query();
+        QueryBuilder.hide_searched_query_results();
+        QueryBuilder.properties.reset();
+        selected_filter_values = {};
+      } else if ($("div#div_selected_class").length == 1){
+        uri = $("div#div_selected_class > div > div").attr('class-uri')
+        $("#propertyHistogram").html(propSetting[uri]);
+        $('#hdn_qb_class').val(uri);
+        QueryBuilder.generate_equivalent_sparql_query();
+      } else {
+        uri = $("div.multipleClass").attr('class-uri');
+        $("#propertyHistogram").append(propSetting[uri]);
+        $('#hdn_qb_class').val(uri);
+        QueryBuilder.generate_equivalent_sparql_query();
+      }
+		},
+    refine_search: function(class_uri,class_name,varn,property){
+          var filVar = QueryBuilder.toVariable(varn);
+
+          var selClass = null;//$("div#div_selected_class > div.row > div.col-md-10");
+          if (noSelectedItem){
+            selClass = $($("div.multipleClass")[$("div.multipleClass").length-1]);
+          } else {
+            selClass = $("div#div_selected_class > div.row > div.col-md-10");
+          }
+
+          var id = $(selClass).attr('triple-id');
+          var variable = $(selClass).attr('variable');
+          filterId = QueryBuilder.addTriple(variable,"<"+property+">",filVar,id,false,filterId);
+
+          var currClass = $('#hdn_qb_class').val();
+          propSetting[currClass] = $("#propertyHistogram").clone();
+
+          if (!noSelectedItem){
+            QueryBuilder.classes.multipleClass($('#hdn_qb_class').val(), varn);
+          } else {
+            $("span#attach-multi-class-labels").find('div.alert').each(function(){
+              $(this).addClass('alert alert-info');
+              $(this).removeClass('alert alert-warning');
+              $(this).css('border',"");
+            });
+          }
+
+          $('#btn_show_all_classes').hide();
+
+          QueryBuilder.classes.select(class_uri, class_name, varn);
     },
+    reload_property: function(uri, theItem){
+        $("span#attach-multi-class-labels").find('div.alert').each(function(){
+          $(this).addClass('alert alert-info');
+          $(this).removeClass('alert alert-warning');
+          $(this).css('border',"");
+        });
+
+        $("#div_selected_class").removeClass('alert alert-warning');
+        $("#div_selected_class").addClass('alert alert-info');
+        $("#div_selected_class").css('border',"");
+
+        currClass = $('#hdn_qb_class').val();
+        propSetting[currClass] = $("#propertyHistogram").clone();
+
+        currVar = $(theItem).find("div.concept").attr('variable');
+        currTripId = $(theItem).find("div.concept").attr('triple-id');
+
+        $("#propertyHistogram").html("");
+        $("#propertyHistogram").replaceWith(propSetting[uri]);
+
+        $('#hdn_qb_class').val(uri);
+        $(theItem).removeClass('alert alert-info');
+        $(theItem).addClass('alert alert-warning');
+        $(theItem).css('border',"solid 2px black");
+      }
+  },
+
+  asyncClasses:{
+    refine_search: function(class_uri,class_name,varn,property, callback){
+          var filVar = QueryBuilder.toVariable(varn);
+
+          var selClass = null;//$("div#div_selected_class > div.row > div.col-md-10");
+          if (noSelectedItem){
+            selClass = $($("div.multipleClass")[$("div.multipleClass").length-1]);
+          } else {
+            selClass = $("div#div_selected_class > div.row > div.col-md-10");
+          }
+
+          var id = $(selClass).attr('triple-id');
+          var variable = $(selClass).attr('variable');
+          filterId = QueryBuilder.addTriple(variable,"<"+property+">",filVar,id,false,filterId);
+
+          var currClass = $('#hdn_qb_class').val();
+          propSetting[currClass] = $("#propertyHistogram").clone();
+
+          if (!noSelectedItem){
+            QueryBuilder.classes.multipleClass($('#hdn_qb_class').val(), varn);
+          } else {
+            $("span#attach-multi-class-labels").find('div.alert').each(function(){
+              $(this).addClass('alert alert-info');
+              $(this).removeClass('alert alert-warning');
+              $(this).css('border',"");
+            });
+          }
+
+          $('#btn_show_all_classes').hide();
+
+          QueryBuilder.asyncClasses.select(class_uri, class_name, varn, function(flag){
+            callback(flag);
+          });
+    },
+    select : function(class_uri, class_name, varn, callback){
+        $("#btn_show_checked_properties_no").click();
+        $("#hdn_qb_class").val(class_uri);
+        $("#tbl_classes_search_result").hide("fast");
+        $(".clear-search-class").hide("fast");
+
+        QueryBuilder.select_body($("#div_selected_class"),"<strong>"+class_name+"</strong>");
+        $("#div_selected_class").css('border',"solid 2px black")
+        $("#div_classes_search_more").show("fast");
+        $("#btn_classes_search_more").html("More details on "+truncate(class_name,25,'...') );
+        $("#btn_classes_search_more").attr("onclick","Utils.show_uri_viewer('"+class_uri+"')");
+        $("#property_main_subclass_header").attr("uri",class_uri);
+        $("#property_main_subclasses").hide();
+        //Utils.flash.notice("Selected class : "+class_name + " &lt;"+class_uri+"&gt;");
+        $("#txt_sparql_query_limit").val(default_sparql_result_limit);
+
+        QueryBuilder.classes.add_class_details($("#div_selected_class").find('.select-body').first(),class_uri,0);
+
+        var label = $("div#div_selected_class > div.row > div.col-md-10 > strong").html();
+        var variable = "";
+        if (varn == null)
+          variable = QueryBuilder.toVariable(label);
+        else {
+          variable = QueryBuilder.toVariable(varn);
+        }
+        var id = QueryBuilder.addTriple(variable,"a","<"+$("#hdn_qb_class").val()+">")
+
+        var selClass = $("div#div_selected_class > div.row > div.col-md-10");
+        $(selClass).attr('triple-id',id);
+        $(selClass).attr('variable',variable);
+        $(selClass).addClass('concept');
+
+        $("#propertyHistogram").html("");
+        $("#propertyHistogram").append(propSetting['default']);
+
+        var theSelectedClass = $("#div_selected_class")
+        $(theSelectedClass).removeClass("alert-danger")
+
+        var theXButton = $("#div_selected_class > div.row > div.select-right-actions > span.glyphicon-remove");
+
+        $(theXButton).click(function(event){
+          event.stopPropagation();
+          QueryBuilder.reset_searched_class($(theSelectedClass));
+        });
+        $(theSelectedClass).click(function(event){
+          QueryBuilder.classes.reload_property(class_uri,$(theSelectedClass));
+        });
+
+
+        QueryBuilder.asyncClasses.generateProperties(function(flag){
+          callback(flag);
+        });
+    },
+    generateProperties : function(callback){
+        $("#property_main_properties_datatype_group").hide();
+        $("#property_main_properties_object_group").hide();
+        $("#qb_properties_properties_object_loading").show();
+        $("#qb_properties_properties_datatype_loading").show();
+
+        $.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+encodeURIComponent(QueryBuilder.classes.get_selected_class())).done(function(){
+          callback(true);
+        })
+        $("#div_qb_properties").show("fast");
+    },
+  },
 
     //the methods related to properties
     properties : {
@@ -599,7 +924,7 @@ QueryBuilder = {
             $("#div_qb_properties").show("fast");
         },
         hide : function(){
-           $("#div_qb_properties").hide("fast"); 
+           $("#div_qb_properties").hide("fast");
         },
         reset : function(){
             $("#qb_properties_properties_selected_filters_header").hide();
@@ -625,21 +950,21 @@ QueryBuilder = {
             $("#qb_properties_properties_object_loading").show();
             $("#qb_properties_properties_datatype_loading").show();
 
-			multClasses = $("div.multipleClass").length
-			uriParams = "";
-			
-			if (multClasses > 0){
-				$("div.multipleClass").each(function(index,element){
-					uriParams = uriParams + "&class_uri[]="+element.getAttribute('class-uri');
-				})
-			
-				uriParams = uriParams + "&class_uri[]="+encodeURIComponent(QueryBuilder.classes.get_selected_class());
-				$.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+uriParams);
+      			// multClasses = $("div.multipleClass").length
+      			// uriParams = "";
+            //
+      			// if (multClasses > 0){
+      			// 	$("div.multipleClass").each(function(index,element){
+      			// 		uriParams = uriParams + "&class_uri[]="+element.getAttribute('class-uri');
+      			// 	})
+            //
+      			// 	uriParams = uriParams + "&class_uri[]="+encodeURIComponent(QueryBuilder.classes.get_selected_class());
+      			// 	$.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+uriParams);
+            //
+      			// } else {
+      				$.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+encodeURIComponent(QueryBuilder.classes.get_selected_class()));
+      			//}
 
-			} else {
-				$.get("/query/class_properties.js?dataset="+QueryBuilder.datasets.get_selected()+"&class_uri="+encodeURIComponent(QueryBuilder.classes.get_selected_class()));
-			}
-				
             // $(".cb-property-range-all").each(function(index){
  //                $(this).prop("checked",true);
  //            });
@@ -663,7 +988,7 @@ QueryBuilder = {
                     if($(this).attr("clicked") == "true"){
                         subclasses.push("<"+$(this).attr("uri")+">");
                     }
-                        
+
                 });
                 if(subclasses.length > 0){
                     for(var i=0;i < subclasses.length ; i++){
@@ -690,7 +1015,7 @@ QueryBuilder = {
                             if(j>0)
                                 result += " UNION ";
                             result += "{ ?concept <"+v.property_uri+"> ?o_filter"+k.toString()+ "}";//<"+v.value[j]["uri"]+"> }";
-                        }			
+                        }
                     }
                     result += ".\n"
                 }
@@ -700,7 +1025,7 @@ QueryBuilder = {
                 }
             });
             /*
-            
+
             This is now an old method. Getting the values from variable instead of the div
 
             $("#qb_properties_properties_selected_filters_list").find(".list-item").each(function(index){
@@ -745,7 +1070,7 @@ QueryBuilder = {
                     html += $(this).attr("display-name");
                     if(uri == "all")
                         html += "</strong>";
-                    $(this).html(html);       
+                    $(this).html(html);
                 }
             });
             QueryBuilder.generate_equivalent_sparql_query();
@@ -772,22 +1097,23 @@ QueryBuilder = {
                         colors.splice(color_index,1);
                         if(colors.length <= 0){
                             for(var k = 0 ; k<original_colors.length ; k++)
-                                colors.push(original_colors[k]); 
+                                colors.push(original_colors[k]);
                         }
                     }
                     $(this).attr("style","background-color:"+range_color_lookup[range_name]+";");
                 });
             }
         },
-        //This function is called when a property is clicked 
+        //This function is called when a property is clicked
         // type is "object" or "datatype"
         property_click : function(uri, name, type, range_uri, range_name, count, element){
+					rangeUri = range_uri;
             show_loading();
-			
+
 			lastSelector = element;
-			
+
 			$.get("/query/property_ranges.js?property_uri="+encodeURIComponent(uri)+"&type="+type+"&dataset="+QueryBuilder.datasets.get_selected()+"&property_name="+name+"&range_uri="+encodeURIComponent(range_uri)+"&range_name="+range_name+"&count="+count);
-			
+
         },
         //this method returns a comma separated string of selected properties
         // returns "ALL" if all of them are checked
@@ -806,163 +1132,197 @@ QueryBuilder = {
 
         },
         click_check_all : function(type){
-			var to_check = false;
-			if (!($(this).is(':checked'))){
-				to_check = true;
-			}
-			
-            // var item = $("#cb_property_range_all_"+type);
-//
-//             if(item.prop('checked'))
-//                 to_check = true;
-			if (to_check){
-    			$(".cb-property-range").each(function(index){
-        			if($(this).attr("range-type") == type){
-						$(this).attr('checked','checked');
-						QueryBuilder.properties.checkbox_click($(this));
-        			}
-    			});	
-			} else {
-    			$(".cb-property-range").each(function(index){
-        			if($(this).attr("range-type") == type){
-						$(this).removeAttr('checked');
-						QueryBuilder.properties.checkbox_click($(this));
-        			}
-    			});
-			}
+        			var to_check = $("#cb_property_range_all_"+type).is(':checked');
 
-           
+                  // var item = $("#cb_property_range_all_"+type);
+      //
+      //             if(item.prop('checked'))
+      //                 to_check = true;
+      			if (to_check){
+              //remove any filters first
+              $(".cb-property-range").each(function(index){
+                  if($(this).attr("range-type") == type){
+                    if ($(this).is(":checked")){
+                      $(this).removeAttr("checked")
+                      QueryBuilder.properties.checkbox_click($(this));
+                    }
+                  }
+              });
+
+          			$(".cb-property-range").each(function(index){
+              			if($(this).attr("range-type") == type){
+                        $(this).prop("checked", true )
+            						QueryBuilder.properties.checkbox_click($(this));
+              			}
+          			});
+      			} else {
+          			$(".cb-property-range").each(function(index){
+              			if($(this).attr("range-type") == type){
+                      $(this).removeAttr("checked")
+          						QueryBuilder.properties.checkbox_click($(this));
+              			}
+          			});
+      			}
         },
         get_clicked_filter_property : function(){
             return $("#hdn_selector_property_uri").val();
         },
         checkbox_click : function(chkedBox){
-			
-			addPropTrip = false;
-			// if ($(chkedBox).attr('id') == "cb_property_range_all_object"){
-			// 	if ($("cb_property_range_all_object:checked").length > 0){
-			// 		addPropTrip = true;
-			// 	}
-			// }
-			if ($(chkedBox).is(":checked")){
-				addPropTrip = true;
-			}
-			
-			if ($(chkedBox).attr('filter-id')){
-				addPropTrip = false; //because we are toggeling an optional
-			}
-			
-			var filVar = QueryBuilder.toVariable($(chkedBox).parent().parent().parent().attr('display-name'))
-			
-			if (addPropTrip){
-				multClasses = $("div.multipleClass").length
-				uriParams = "";
-				
-				var filterId = null;
-				if (multClasses > 0){
-					$("div.multipleClass").each(function(index,element){
-						var id = element.getAttribute('triple-id');
-						var variable = element.getAttribute('variable');
-						//subject,predicate,object,optional_id
-						filterId = QueryBuilder.addTriple(variable,"<"+$(chkedBox).val()+">",filVar,id,true,filterId);
-					})
-				}			
-				var selClass = $("div#div_selected_class > div.row > div.col-md-10");
-				var id = $(selClass).attr('triple-id');
-				var variable = $(selClass).attr('variable');
-				filterId = QueryBuilder.addTriple(variable,"<"+$(chkedBox).val()+">",filVar,id,true,filterId);
-				
-				$(chkedBox).attr('filter-id',filterId)
-	            // if(QueryBuilder.properties.will_show_properties_in_preview() == true){
-	            //     QueryBuilder.show_equivalent_sparql_query();
-	            // }
-			} else {
-				var filterId = $(chkedBox).attr('filter-id')
-				QueryBuilder.toggleOptional(filterId,$(chkedBox).is(":checked"))
-			}
-			
-			 QueryBuilder.show_equivalent_sparql_query();
+        			addPropTrip = false;
+        			// if ($(chkedBox).attr('id') == "cb_property_range_all_object"){
+        			// 	if ($("cb_property_range_all_object:checked").length > 0){
+        			// 		addPropTrip = true;
+        			// 	}
+        			// }
+
+        			if ($(chkedBox).is(":checked")){
+        				addPropTrip = true;
+        			}
+
+        			if ($(chkedBox).attr('filter-id')){
+        				addPropTrip = false; //because we are toggeling an optional
+        			}
+
+        			var filVar = QueryBuilder.toVariable($(chkedBox).parent().parent().parent().attr('display-name'))
+
+        			if (addPropTrip){
+        				multClasses = $("div.multipleClass").length
+        				uriParams = "";
+
+        				var filterId = null;
+        				// if (multClasses > 0){
+        				// 	$("div.multipleClass").each(function(index,element){
+        				// 		var id = element.getAttribute('triple-id');
+        				// 		var variable = element.getAttribute('variable');
+        				// 		//subject,predicate,object,optional_id
+        				// 		filterId = QueryBuilder.addTriple(variable,"<"+$(chkedBox).val()+">",filVar,id,true,filterId);
+        				// 	})
+        				// }
+                var selClass;
+                var id;
+                var variable;
+
+                if (currTripId == null){
+                  selClass = $("div#div_selected_class > div.row > div.col-md-10");
+                  id = $(selClass).attr('triple-id');
+                  variable = $(selClass).attr('variable');
+                } else {
+                  id = currTripId;
+                  variable = currVar;
+                }
+
+        				filterId = QueryBuilder.addTriple(variable,"<"+$(chkedBox).val()+">",filVar,id,true,filterId);
+        				$(chkedBox).attr('filter-id',filterId)
+        	            // if(QueryBuilder.properties.will_show_properties_in_preview() == true){
+        	            //     QueryBuilder.show_equivalent_sparql_query();
+        	            // }
+                if ($($(chkedBox).parent().prev().children()[0]).hasClass('glyphicon-filter')){
+                  $($(chkedBox).parent().prev().children()[0]).hide()
+                }
+        			} else {
+        				var filterId = $(chkedBox).attr('filter-id')
+                $(chkedBox).removeAttr('filter-id');
+                QueryBuilder.removeCheckedFilter(filterId);
+        				QueryBuilder.toggleOptional(filterId,$(chkedBox).is(":checked"))
+
+                if ($($(chkedBox).parent().prev().children()[0]).hasClass('glyphicon-filter')){
+                  $($(chkedBox).parent().prev().children()[0]).show()
+                }
+        			}
+
+        			 QueryBuilder.show_equivalent_sparql_query();
         },
         filter : {
             add_objects : function(property_uri, property_name,  data, filterId){
-				
+
                 $("#qb_properties_properties_selected_filters_header").show();
                 $("#qb_properties_properties_selected_filters_list").show();
-				
-				var div_html = "<div class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\"  filter-id=\""+filterId+"\" filter-type='data'>";
-                div_html += "<div class='row'><div class='col-md-10'>";
-                div_html += "<strong>"+property_name+"</strong> : "
-				$.each(data,function(index,element){
-					var uri = $(element).attr('uri');
-					var objname = $(element).attr('object-name');
-					var op = "="
-					if ($("#hdn_object_selector_filter_type").val() == "not_equals"){
-						op = "!="
-					}
-					
-					
-					div_html +=  " <strong><i>"+op+"</i></strong> <a href="+uri+">"+ objname + "</a> ";
-					QueryBuilder.addObjectFilter("<"+uri+">", op, filterId, ((data.length > 1) && (index > 0)));
-				})
-                div_html += "</div>"; //col-md-10
-				div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+filterId+"',$(this))\"></span></div>" //col-md-2
-				
-				div_html += "</div>" //row
-				div_html += "</div>" //alert
-				
+
+        				var div_html = "<div class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\"  filter-id=\""+filterId+"\" filter-type='data'>";
+                        div_html += "<div class='row'><div class='col-md-8'>";
+                        div_html += "<strong>"+property_name+"</strong> : "
+        				$.each(data,function(index,element){
+        					var uri = $(element).attr('uri');
+        					var objname = $(element).attr('object-name');
+        					var op = "="
+        					if ($("#hdn_object_selector_filter_type").val() == "not_equals"){
+        						op = "!="
+        					}
+
+
+        					div_html +=  " <strong><i>"+op+"</i></strong> <a href="+uri+">"+ objname + "</a> ";
+        					QueryBuilder.addObjectFilter("<"+uri+">", op, filterId, ((data.length > 1) && (index > 0)));
+        				})
+                div_html += "</div>"; //col-md-8
+
+                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-eye-close clickable pull-right\"  onclick=\"QueryBuilder.showhide('"+filterId+"',$(this))\"></span></div>" //col-md-2
+
+                div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+filterId+"',$(this))\"></span></div>" //col-md-2
+
+        				div_html += "</div>" //row
+        				div_html += "</div>" //alert
+
 
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
-				
-				
+
+
                 QueryBuilder.generate_equivalent_sparql_query();
                 Utils.flash.success("Added object filter for "+property_name);
 
             },
-            add_data_filter : function(property_uri, property_name, data_filters,filterId){				
-				$("#qb_properties_properties_selected_filters_header").show();
-                $("#qb_properties_properties_selected_filters_list").show();
-				
-				
-				// add triples to filters array - triples to main array are done in the previous call (i.e. done_click)
-                
-				var div_html = "<div class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\"  filter-id=\""+filterId+"\" filter-type='data'>";
-                div_html += "<div class='row'><div class='col-md-10'>";
-                div_html += "<strong>"+property_name+"</strong> : "
-				$.each(data_filters,function(index,element){
-					var fil_value = $(element).attr('value');
-					var fil_val_op = $(element).attr('value-operator');
-					var op = $(element).attr('operator');
-					div_html +=  " <strong><i>"+op+"</i></strong> " + fil_val_op + " " + fil_value;
-					QueryBuilder.addFilter(QueryBuilder.toVariable(property_name), fil_val_op, fil_value, op, filterId);
-				})
-                div_html += "</div>"; //col-md-10
-				div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+filterId+"',$(this))\"></span></div>" //col-md-2
-				
-				div_html += "</div>" //row
-				div_html += "</div>" //alert
-				
+            add_data_filter : function(property_uri, property_name, data_filters,filterId){
+				          $("#qb_properties_properties_selected_filters_header").show();
+                  $("#qb_properties_properties_selected_filters_list").show();
+
+
+          				// add triples to filters array - triples to main array are done in the previous call (i.e. done_click)
+
+          				var div_html = "<div class=\"alert alert-warning list-item\" property-uri=\""+property_uri+"\"  filter-id=\""+filterId+"\" filter-type='data'>";
+                          div_html += "<div class='row'><div class='col-md-10'>";
+                          div_html += "<strong>"+property_name+"</strong> : "
+
+            				$.each(data_filters,function(index,element){
+            					var fil_value = $(element).attr('value');
+            					var fil_val_op = $(element).attr('value-operator');
+            					var op = $(element).attr('operator');
+            					div_html +=  " <strong><i>"+op+"</i></strong> " + fil_val_op + " " + fil_value;
+
+											console.log("operator: " + op);
+											
+            					QueryBuilder.addFilter(QueryBuilder.toVariable(property_name), fil_val_op, fil_value, op, filterId);
+            				})
+                          div_html += "</div>"; //col-md-10
+          				div_html += "<div class='col-md-2'><span class=\"glyphicon glyphicon-remove clickable pull-right\" onclick=\"QueryBuilder.properties.filter.remove('"+filterId+"',$(this))\"></span></div>" //col-md-2
+
+          				div_html += "</div>" //row
+          				div_html += "</div>" //alert
 
                 $("#qb_properties_properties_selected_filters_list").append(div_html);
-                
-				
-				
-		        QueryBuilder.generate_equivalent_sparql_query();
+
+		            QueryBuilder.generate_equivalent_sparql_query();
                 Utils.flash.success("Added data filter for "+property_name);
 
             },
             //removes the filter
             remove : function(filterId,element){
-				QueryBuilder.removeCheckedFilter(filterId)
-				
-				var allCkbxs = $(".cb-property-range");
-				$.each(allCkbxs, function(index,element){
-					if($(element).attr('filter-id') == filterId){
-						$(element).removeAttr('filter-id');
-						$(element).removeAttr('checked');
-					}
-				});
-				
-				$(element).parent().parent().parent().hide();
+        				// QueryBuilder.removeCheckedFilter(filterId)
+
+        				var allCkbxs = $(".cb-property-range");
+        				$.each(allCkbxs, function(index,element){
+        					if($(element).attr('filter-id') == filterId){
+                    QueryBuilder.properties.checkbox_click($(element));
+                    $(element).show();
+        						// $(element).removeAttr('filter-id');
+        						// $(element).removeAttr('checked');
+        					}
+        				});
+
+                $("#p_selected_objects > span").remove();
+                $("#hdn_selector_property_uri").val("");
+                $("#hdn_selector_property_name").val("");
+
+        				$(element).parent().parent().parent().hide();
+                QueryBuilder.show_equivalent_sparql_query();
             },
             get_new_list_identifier : function(){
                 var max_id=0;
@@ -1015,7 +1375,7 @@ QueryBuilder = {
                     $(this).hide();
             });
             QueryBuilder.objects.check_empty_error();
-            
+
         },
         check_empty_error : function(){
             if($("#tbl_objects_search_result").find("a:visible").length <= 0){
@@ -1042,7 +1402,7 @@ QueryBuilder = {
                      }else if($("#hdn_done_searching_object").val() == "true"){
                         QueryBuilder.objects.validate();
                      }
-                    
+
                 }
                 else{
                     $("#hdn_searched_oject_value").val("");
@@ -1059,7 +1419,7 @@ QueryBuilder = {
             var dataset = $("#hdn_qb_dataset").val();
             var for_class = QueryBuilder.classes.get_selected_class();
             var for_property = QueryBuilder.properties.get_clicked_filter_property();
-            $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes, for_class: for_class, for_property : for_property}); 
+            $.get("/query/builder_objects.js",{ search: search_string, dataset:dataset, classes : classes, for_class: for_class, for_property : for_property});
         },
         select : function(object_uri, object_name){
             if(!QueryBuilder.objects.is_object_added(object_uri)){
@@ -1090,8 +1450,9 @@ QueryBuilder = {
             $("#p_selected_objects").find(".selected-objects").each(function(index){
                 if($(this).attr("uri") == object_uri){
                     $(this).hide("fast");
+                    $(this).remove();
                 }
-            }); 
+            });
             $("#tbl_objects_search_result").find(".list-group-item").each(function(index){
                 if($(this).attr("uri") == object_uri){
                     $(this).removeClass("selected");
@@ -1103,73 +1464,74 @@ QueryBuilder = {
             result = [];
             $("#p_selected_objects").find(".selected-objects").each(function(index){
                 result.push({name : $(this).attr("object-name"), uri : $(this).attr("uri")})
-            }); 
+            });
             return result;
         },
         done_click : function(){
-			
+
             if($("#hdn_selector_type").val()=="object"){
-				var allFilters = $("#p_selected_objects > span");
-				var propertyURI = $("#hdn_selector_property_uri").val();
-				var propertyName = $("#hdn_selector_property_name").val();
-				
-				
-				var checkBox = $(lastSelector).parent().children(':last-child').children('input')
-				var filterId = $(checkBox).attr('filter-id');
-				
-				if (filterId == null){
-					$(checkBox).attr('checked','checked');
-					QueryBuilder.properties.checkbox_click($(checkBox));
-					filterId = $(checkBox).attr('filter-id');
-					//added this hack to get filterid
-				    $(checkBox).prop("checked", false )
-					QueryBuilder.properties.checkbox_click($(checkBox));
-				}
-				
-				QueryBuilder.properties.filter.add_objects(propertyURI,propertyName,allFilters,filterId);				
+        				var allFilters = $("#p_selected_objects > span");
+        				var propertyURI = $("#hdn_selector_property_uri").val();
+        				var propertyName = $("#hdn_selector_property_name").val();
+
+        				var checkBox = $(lastSelector).parent().children(':last-child').children('input')
+        				var filterId = $(checkBox).attr('filter-id');
+
+        				if (filterId == null){
+        					$(checkBox).prop('checked', true);
+        					QueryBuilder.properties.checkbox_click($(checkBox));
+        					filterId = $(checkBox).attr('filter-id');
+                }
+                $(checkBox).prop("checked", false )
+                QueryBuilder.toggleOptional(filterId,$(checkBox).is(":checked"))
+
+      				QueryBuilder.properties.filter.add_objects(propertyURI,propertyName,allFilters,filterId);
+              $(checkBox).hide();
             } else {
-				val = $("#txt_filter_datatype").val()
-				
-				if (val != ""){
-					val_op = $("#hdn_val_operator").val()
-				
-					if (val_op == ""){
-						val_op = "and"
-					}
-				
-					op = $("#hdn_operator").val()
-					$("#p_selected_objects").append("<span value=\""+val+"\" operator='"+op+"' value-operator='"+val_op+"' class='label label-warning selected-objects' >"+op+" "+ val_op+ " "+val+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span>&nbsp;")
-				}
-				
-				var allFilters = $("#p_selected_objects > span");
-				var propertyURI = $("#hdn_selector_property_uri").val();
-				var propertyName = $("#hdn_selector_property_name").val();
-				
-				
-				var checkBox = $(lastSelector).parent().children(':last-child').children('input')
-				var filterId = $(checkBox).attr('filter-id');
-				
-				if (filterId == null){
-					$(checkBox).attr('checked','checked');
-					QueryBuilder.properties.checkbox_click($(checkBox));
-					filterId = $(checkBox).attr('filter-id');
-					//added this hack to get filterid
-				    $(checkBox).prop("checked", false )
-					QueryBuilder.properties.checkbox_click($(checkBox));
-				}
-				
-				QueryBuilder.properties.filter.add_data_filter(propertyURI,propertyName,allFilters,filterId);
+      				val = $("#txt_filter_datatype").val()
+
+      				if (val != ""){
+      					val_op = $("#hdn_val_operator").val()
+
+      					if (val_op == ""){
+      						val_op = "and"
+      					}
+
+      					op = $("#hdn_operator").val()
+      					$("#p_selected_objects").append("<span value=\""+val+"\" operator='"+op+"' value-operator='"+val_op+"' class='label label-warning selected-objects' >"+op+" "+ val_op+ " "+val+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span>&nbsp;")
+      				}
+
+      				var allFilters = $("#p_selected_objects > span");
+      				var propertyURI = $("#hdn_selector_property_uri").val();
+      				var propertyName = $("#hdn_selector_property_name").val();
+
+
+      				var checkBox = $(lastSelector).parent().children(':last-child').children('input')
+      				var filterId = $(checkBox).attr('filter-id');
+
+      				if (filterId == null){
+      					$(checkBox).prop('checked',true);
+      					QueryBuilder.properties.checkbox_click($(checkBox));
+      					filterId = $(checkBox).attr('filter-id');
+      					//added this hack to get filterid
+      				  $(checkBox).prop("checked", false )
+                QueryBuilder.toggleOptional(filterId,$(checkBox).is(":checked"))
+      				}
+
+      				QueryBuilder.properties.filter.add_data_filter(propertyURI,propertyName,allFilters,filterId);
+              $(checkBox).hide();
             }
+            QueryBuilder.show_equivalent_sparql_query();
             $("#class_selector_modal").modal('hide');
-        },
+    },
 		add_value: function(){
 			val_op = $("#hdn_val_operator").val()
 			val = $("#txt_filter_datatype").val()
 			op = $("#hdn_operator").val()
-			
+
 			$('#sel_text').html('Operator')
 			$("#p_selected_objects").append("<span value=\""+val+"\" operator='"+op+"' value-operator='"+val_op+"' class='label label-warning selected-objects' >"+op+" "+ val_op+ " "+val+"&nbsp;<span class=\"glyphicon glyphicon-remove clickable\"></span></span>&nbsp;")
-			
+
 			$("#hdn_operator").val("");
 			$("#txt_filter_datatype").val("");
 			$("#choose_operator_dd").removeAttr("disabled");
@@ -1187,7 +1549,7 @@ QueryBuilder = {
                     if(result.valid == false){
                         result.description = "These seems to be some problem with the <strong>"+block_types[i]+"</strong> section of your template. Please correct it and upload again.";
                         break;
-                    }    
+                    }
                 }
                 return result;
             },
@@ -1198,7 +1560,7 @@ QueryBuilder = {
                 var break_loop = false;
                 for(i=0;i<blocks.length;i++){
                     if(blocks[i].charAt(0) == '{' && blocks[i].charAt(1) == '{' && blocks[i].charAt(blocks[i].length-1) == '}' && blocks[i].charAt(blocks[i].length-2) == '}')
-                    {    
+                    {
                         if(blocks[i].indexOf("start") > -1 && inside == false){
                             if(blocks[i].indexOf(block_type) > -1){
                                 inside = true;
@@ -1228,7 +1590,7 @@ QueryBuilder = {
                 else{
                     $("#configured_download_error_message").html(error_description);
                     $(".configured-download-file-error").show("fast");
-                } 
+                }
             },
             handle_file_upload : function(evt) {
                 $(".configured-download-file-ok").hide();
@@ -1270,22 +1632,22 @@ QueryBuilder = {
                     };
                     reader.readAsText(f);
                 }
-              
+
 
               //document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-  
+
 
             },
 
 
-        
+
             get_block_string_from_blocks : function(blocks, block_type){
                 var result = "";
                 var inside = false;
                 var break_loop = false;
                 for(i=0;i<blocks.length;i++){
                     if(blocks[i].charAt(0) == '{' && blocks[i].charAt(1) == '{' && blocks[i].charAt(blocks[i].length-1) == '}' && blocks[i].charAt(blocks[i].length-2) == '}')
-                    {    
+                    {
                         if(blocks[i].indexOf("start") > -1){
                             if(blocks[i].indexOf(block_type) > -1){
                                 inside = true;
@@ -1353,7 +1715,7 @@ QueryBuilder = {
                     }
                     else{
                         $(".div-configured-download").hide();
-                        $("#btn_group_download").show(); 
+                        $("#btn_group_download").show();
                     }
                 }
         }, // end QueryBuilder.convert.configured
@@ -1361,7 +1723,7 @@ QueryBuilder = {
                 initiate_download : function(){
                     $("#btn_group_download").hide("fast");
                     $("#div_json_download").show("fast");
-                
+
                 },
                 hide_download : function(motion){
                     if(motion != undefined && motion != ""){
@@ -1371,8 +1733,8 @@ QueryBuilder = {
                     else{
                         $("#div_json_download").hide();
                         $("#btn_group_download").show();
-                    } 
-                }  
+                    }
+                }
 
         }//end QueryBuilder.convert.json
     }, // end QueryBuilder.convert
@@ -1406,33 +1768,234 @@ function getUrlParameter(sParam)
          }
      }
  }
- 
-function hasAllParameters(){	
-	if (getUrlParameter('dataset') == null) return false; 
-	if (getUrlParameter('classURI') == null) return false; 
-	if (getUrlParameter('classLabel') == null) return false; 
+
+// function hasAllParameters(){
+// 	if (getUrlParameter('dataset') == null) return false;
+// 	if (getUrlParameter('classURI') == null) return false;
+// 	if (getUrlParameter('classLabel') == null) return false;
+// 	return true
+// }
+function hasAllParameters(){
+	if (getUrlParameter('dataset') == null) return false;
+	if (getUrlParameter('query') == null) return false;
 	return true
 }
 
+function defaultPropSetting(){
+  return "<div class=\"panel-heading\"><div class=\"row\"><div class=\"col-md-9\">Properties Histogram</div></div></div><div class=\"panel-body\"><div class=\"row\"><div class=\"col-md-12\"><small> Filter some specific properties of the selected concept by clicking on the coloured labels. You can add a new concept to your query by clicking on the <span class=\"glyphicon glyphicon-filter\"></span> button.</small></div></div></div><div class=\"panel-heading alert\" style=\"display:none;\" id=\"qb_properties_properties_selected_filters_header\">Selected filters</div><div class=\"list-group\" id=\"qb_properties_properties_selected_filters_list\" style=\"display:none;\"></div><div class=\"panel-heading alert\"><div class=\"row\"><div class=\"col-md-8\">Object Properties</div><div class=\"col-md-4\" style=\"float:right\"><label>Show Property as Optional:&nbsp;<input type='checkbox' id='cb_property_range_all_object'  class='cb-property-range-all'   onclick=\"QueryBuilder.properties.click_check_all('object');\"/></label></div></div></div><div class=\"list-group properties-list-group\" id=\"property_main_properties_object_group\" ></div><div class=\"row\" id=\"qb_properties_properties_object_loading\"><div class=\"col-md-12\"><center></center></div></div><div class=\"panel-heading alert\"><div class=\"row\"><div class=\"col-md-8\">Data type Properties</div><div class=\"col-md-4\" style=\"float:right\"><label>Show Property as Optional:&nbsp;<input type='checkbox' id='cb_property_range_all_data'  class='cb-property-range-all'  onclick=\"QueryBuilder.properties.click_check_all('data')\"/></label></div></div></div><div class=\"list-group properties-list-group\" id=\"property_main_properties_datatype_group\" ></div><div class=\"row\" id=\"qb_properties_properties_datatype_loading\"><div class=\"col-md-12\"><center></center></div></div></div>";
+}
+
 $(document).ready(function(){
-	if (hasAllParameters()){
- 		var dataset = getUrlParameter('dataset');
- 		var classURIParameter = getUrlParameter('classURI');
-		var classLabelParameter = getUrlParameter('classLabel')
-	
-		QueryBuilder.datasets.select(dataset);
-		QueryBuilder.classes.select(classURIParameter,classLabelParameter);
-		
-		//filters and optionals
-		$("input:checkbox").prop('checked', false); //uncheck the range checkbox
+  propSetting['default'] = defaultPropSetting();
+  if (hasAllParameters()){
+    var dataset = getUrlParameter('dataset');
+    var query = getUrlParameter('query');
 
+    QueryBuilder.datasets.select(dataset);
 
-				
-	}	
-	//http://localhost:3000/query/builder?dataset=http://dbpedia.org/sparql&classURI=http://dbpedia.org/ontology/Actor&classLabel=Actor&optionals=http://dbpedia.org/ontology/birthPlace;http://dbpedia.org/ontology/occupation&filters=http://dbpedia.org/ontology/birthPlace;birthPlace;sp:ne;London;http://dbpedia.org/resource/London;Paris;http://dbpedia.org/resource/Paris
-	
-	//http://localhost:3000/query/builder?dataset=http://dbpedia.org/sparql&classURI=http://dbpedia.org/ontology/Actor&classLabel=Actor&optionals=http://dbpedia.org/ontology/birthPlace;http://dbpedia.org/ontology/occupation&filters=http://dbpedia.org/ontology/birthPlace;birthPlace;sp:ne;London;http://dbpedia.org/resource/London;Paris;http://dbpedia.org/resource/Paris$http://dbpedia.org/ontology/wikiPageRevisionID;WikiPageRevisionID;sp:le;100;100
+    var jsonQuery = JSON.parse(decodeURIComponent(query));
+
+    var classes = jsonQuery['classes'];
+
+    if (classes.length == 1){
+      var theClass = classes[0];
+      QueryBuilder.asyncClasses.select(theClass['o'],theClass['name'],theClass['s'], function(flag){
+        onlyOnce(jsonQuery, theClass)
+      });
+    } else {
+      //first try to find which class has no linking property
+      $.each(classes, function(index){
+        var theClass = $(this)[0];
+        if (getLinkingProperty(jsonQuery, theClass['s']) == null){
+          QueryBuilder.asyncClasses.select(theClass['o'],theClass['name'],theClass['s'], function(flag){
+            onlyOnce(jsonQuery, theClass)
+          });
+        }
+      });
+      setTimeout(function(){
+          $.each(classes, function(index){
+            var theClass = $(this)[0];
+            if (getLinkingProperty(jsonQuery, theClass['s']) != null){
+                QueryBuilder.asyncClasses.refine_search(theClass['o'],theClass['name'],theClass['s'].replace("?",""),getLinkingProperty(jsonQuery, theClass['s']),function(flag){
+                  onlyOnce(jsonQuery, theClass)
+                });
+
+            }
+          })
+      },3000);
+    }
+  }
+  $("#btn_show_all_classes").hide()
 })
+
+var onlyOnce = function(jsonQuery, theClass){
+  loadOtherProps(jsonQuery, theClass['s']);
+  loadOptionals(jsonQuery)
+  loadFilters(jsonQuery);
+  finalRecheckOtherProperties(jsonQuery)
+}
+
+function getLinkingProperty (jsonQuery, variable){
+  var otherProp = jsonQuery['otherProps'];
+  var theVal = null
+  $.each(otherProp, function(index){
+    if (($(this)[0]['o']) == variable){
+      theVal = $(this)[0]['p'];
+    }
+  });
+  return theVal;
+}
+
+function isVariable(str){
+  if (str == null) return false;
+  return str.startsWith("?");
+}
+
+function loadFilters(jsonQuery){
+  var filters = jsonQuery['filters'];
+
+  var pl = getUrlParameter('propertylabels');
+  var propertyNames = JSON.parse(decodeURIComponent(pl));
+
+  for (var i = 0; i < filters.length; i++){
+    var args = filters[i]['args'];
+    if (args.length > 1){
+      var v = args[1]['lhs'];
+      var uri = getPropertyURI(jsonQuery,v)
+      var name = propertyNames[uri];
+      $(".list-group-item").each(function(idx){
+        if ($($(".list-group-item")[idx]).attr('uri') == uri){
+          var checkBox = $($(".list-group-item")[idx]).find('input');
+          $(checkBox).prop('checked', true);
+          QueryBuilder.properties.checkbox_click($(checkBox));
+          var filterId = $(checkBox).attr('filter-id');
+          $(checkBox).prop("checked", false )
+          QueryBuilder.toggleOptional(filterId,$(checkBox).is(":checked"))
+          $(checkBox).hide();
+
+          //QueryBuilder.addObjectFilter("<"+theObject['o']+">", "=", filterId, false);
+          data = []
+          for (var a = 1; a < args.length; a++){
+            if (a == 1) data.push({'value': args[a]['rhs'].substring(1, args[a]['rhs'].indexOf("\"",1)), 'value-operator' : args[a]['op'] , 'operator':''});
+            else data.push({'value': args[a]['rhs'].substring(1, args[a]['rhs'].indexOf("\"",1)), 'value-operator' : args[a]['op'] , 'operator': args[0] });
+          }
+
+					rangeUri = args[1]['rhs'].substring((args[1]['rhs'].indexOf("^") +2), (args[1]['rhs'].length));
+					console.log("rangeuri :" + rangeUri);
+
+					console.log("filter: " + JSON.stringify(data));
+          QueryBuilder.properties.filter.add_data_filter(uri,name,data,filterId);
+        }
+      })
+    } else {
+      var v = args[0]['lhs'];
+      var uri = getPropertyURI(jsonQuery,v)			
+      var name = propertyNames[uri];
+      $(".list-group-item").each(function(idx){
+				console.log("here: " + uri);
+	
+        if ($($(".list-group-item")[idx]).attr('uri') == uri){
+          var checkBox = $($(".list-group-item")[idx]).find('input');
+          $(checkBox).prop('checked', true);
+          QueryBuilder.properties.checkbox_click($(checkBox));
+          var filterId = $(checkBox).attr('filter-id');
+          $(checkBox).prop("checked", false )
+          QueryBuilder.toggleOptional(filterId,$(checkBox).is(":checked"))
+          $(checkBox).hide();
+
+          data = []
+          data.push({'value': args[0]['rhs'].substring(1, args[0]['rhs'].indexOf("\"",1)), 'value-operator' : args[0]['op'] , 'operator':''});
+					
+					rangeUri = args[0]['rhs'].substring((args[0]['rhs'].indexOf("^") +2), (args[0]['rhs'].length));
+					console.log("rangeuri :" + rangeUri);
+					
+          QueryBuilder.properties.filter.add_data_filter(uri,name,data,filterId);
+        }
+      })
+    }
+  }
+}
+
+function getPropertyURI(jsonQuery,variable){
+  var otherProps = jsonQuery['otherProps'];
+  var theProp = "";	
+  for (var idx in otherProps){		
+    if (otherProps[idx]['o']  == variable){
+      theProp = otherProps[idx]['p'];
+      break;
+    }
+  }
+  return theProp;
+}
+
+function loadOptionals (jsonQuery){
+  var optionals = jsonQuery['optionals']
+  for (var i = 0; i < optionals.length; i++){
+    $(".list-group-item").each(function(idx){
+      var uri = $($(".list-group-item")[idx]).attr('uri');
+      if (uri == optionals[i]){
+         var item = $($(".list-group-item")[idx]).find('input');
+         $(item).prop("checked", true )
+
+        QueryBuilder.properties.checkbox_click($(item));
+      }
+    })
+  }
+}
+
+function loadOtherProps (jsonQuery, variableLink){
+  var pl = getUrlParameter('propertylabels');
+  var plJson = JSON.parse(decodeURIComponent(pl));
+
+  var otherProp = jsonQuery['otherProps'];
+  $.each(otherProp, function(index){
+    var theObject = $(this)[0];
+    if (theObject['s'] == variableLink){
+      if (isVariable(theObject['o'])) {
+        //do nothing
+      } else {
+        $(".list-group-item").each(function(i){
+					var uri = $($(".list-group-item")[i]).attr('uri');
+          if (uri == theObject['p']){
+            var checkBox = $($(".list-group-item")[i]).find('input');
+            $(checkBox).prop('checked', true);
+            QueryBuilder.properties.checkbox_click($(checkBox));
+            var filterId = $(checkBox).attr('filter-id');
+            $(checkBox).prop("checked", false )
+            QueryBuilder.toggleOptional(filterId,$(checkBox).is(":checked"))
+
+            //QueryBuilder.addObjectFilter("<"+theObject['o']+">", "=", filterId, false);
+            data = []
+            data.push({'object-name': theObject['o'], uri : theObject['o'] });
+
+            QueryBuilder.properties.filter.add_objects(theObject['p'],plJson[theObject['p']],data,filterId);
+            $(checkBox).hide();
+          }
+        });
+      }
+    }
+  })
+}
+
+function finalRecheckOtherProperties (jsonQuery){
+  theFilterList = $("#qb_properties_properties_selected_filters_list");
+  var otherProp = jsonQuery['otherProps'];
+  $.each(otherProp, function(index){
+    var theObject = otherProp[index];
+    var thePredicate = theObject['p'];
+    var theOtriple= theObject['o'];
+    if (!(isVariable(theOtriple))){
+    } else {
+      $.each($("#qb_properties_properties_selected_filters_list").children(), function(idx){
+        if (thePredicate == $($("#qb_properties_properties_selected_filters_list").children()[idx]).attr('property-uri')){
+          $($(this).find("div.row > div.col-md-2")[0]).find('span.glyphicon-eye-close').click();
+          // someAction = true;
+        }
+      });
+    }
+  });
+}
+
 
 
 function search(nameKey, myArray){
@@ -1445,99 +2008,12 @@ function search(nameKey, myArray){
 	return flag;
 }
 
-function getOptionalVariable(nameKey, myArray){
-	variable = "";
-	 $.each(myArray,function(k,v){
-         if (v.property_uri.toString() === nameKey.toString()) {			 
-             if(v.type == "data"){
-                 variable = "?d_filter"+k.toString();
-             } else {
-             	variable = "?o_filter"+k.toString();
-             }
-         }
-	 });
-	return variable;
-}
 
 $(window).load(function(){
-	//filters and optionals
-	if (hasAllParameters()){
-		
-		//check optionals
-		var optionals = getUrlParameter('optionals'); 
-		if (optionals != "")	
-		{
-			QueryBuilder.equivalent_query.handle_checked_properties('yes');
-			
-	 		//&optionals=http://dbpedia.org/ontology/birthPlace;http://dbpedia.org/ontology/occupation
-			var sOptionals = optionals.split(';');
-			var val = null;
-			var item;
-	    	for (var i = 0; i < sOptionals.length; i++)
-	    	{
-				$(".list-group-item").each(function(){
-					var uri = $(this).attr('uri');
-					if (uri == sOptionals[i]){
-						 var item = $(this).find('input');
-						 $(item).prop("checked", true )
-						
-						QueryBuilder.properties.checkbox_click($(item));
-					}
-				})
-			}
-		}
+  propSetting['default'] =  defaultPropSetting;
+});
 
 
-		//add filters
-		//&filters=<appliedOn>;<label>;<type eg. ne>;labelV1;val1;labelV2;val2;val2*<appliedOn2>...
-		//&filters=http://dbpedia.org/ontology/birthPlace;birthPlace;sp:ne;London;http://dbpedia.org/resource/London;Paris;http://dbpedia.org/resource/Paris*http://dbpedia.org/ontology/wikiPageRevisionID;WikiPageRevisionID;sp:le;100;100
-		var filters = getUrlParameter('filters'); 
-		if (filters != ""){
-			var sFilters = filters.split('$');
-		
-			for (var i =0; i < sFilters.length; i++){
-				var _filter = sFilters[i];
-				var _sFilter = _filter.split(';');
-			
-				var val_uri = _sFilter[0];
-				var val_label = _sFilter[1];
-			
-				var op = _sFilter[2];
-
-			
-
-				if (_sFilter[4].indexOf("://") > 0){
-					//then probably we have a resource
-					if (op.indexOf("ne") > 0)	{
-						var $hiddenInput = $('<input/>',{type:'hidden',id:'hdn_object_selector_filter_type',value:'not_equals'});
-						$hiddenInput.appendTo('body');
-					}
-					else {
-						var $hiddenInput = $('<input/>',{type:'hidden',id:'hdn_object_selector_filter_type',value:'equals'});
-						$hiddenInput.appendTo('body');
-					}
-				
-					var data = [];
-					for (var j = 3; j < _sFilter.length; j+=2) {
-						data.push({name : _sFilter[j], uri : _sFilter[j+1] });
-					}
-					QueryBuilder.properties.filter.add_objects(val_uri,val_label,data);
-				} else {
-					//it is a data object
-					dataFilter = "";
-				
-					if (op.indexOf("ne") > 0)	dataFilter = "!= ";
-					if (op.indexOf("eq") > 0)	dataFilter = "= ";
-					if (op.indexOf("gt") > 0)	dataFilter = "> ";
-					if (op.indexOf("lt") > 0)	dataFilter = "< ";
-					if (op.indexOf("le") > 0)	dataFilter = "<= ";
-					if (op.indexOf("ge") > 0)	dataFilter = ">= ";
-				
-					dataFilter = dataFilter.concat(_sFilter[4]);
-				
-					QueryBuilder.properties.filter.add_data_filter(val_uri,val_label,dataFilter);
-				}			
-			}
-		}
-	}
-}); 
+$(document).click(function(event) {
+   window.lastElementClicked = event.target;
+});

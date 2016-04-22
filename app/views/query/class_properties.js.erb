@@ -21,9 +21,16 @@ if ($("#property_main_properties_datatype_group > div").length==0) {
 $("#property_main_properties_datatype_group").show("fast");
 $("#qb_properties_properties_object_loading").hide("fast");
 $("#property_main_properties_object_group").html("");
+
 <%@properties[:object_type].each do |p|%>
-	var html = "<div href='javascript:void(0);' class='list-group-item clickable' uri='<%=p['uri']%>' display-name='<%=p['label']%>' clicked='false' ><div class='row'><div class='col-md-5' onclick=\"QueryBuilder.properties.property_click('<%=p['uri']%>','<%=p['label']%>','object','<%=p['range']['uri']%>','<%=p['range']['label']%>','<%=p['count']%>',$(this))\" ><%=p['label']%></div><div class='col-md-4 ' onclick=\"QueryBuilder.properties.property_click('<%=p['uri']%>','<%=p['label']%>','object','<%=p['range']['uri']%>','<%=p['range']['label']%>','<%=p['count']%>',$(this))\" ><span class='badge span-property-range span-property-range-object' property-uri=\"<%=p['uri']%>\"><%=p['range']['label'].capitalize%></span></div><div class='col-md-2'><span class='badge'>"+get_long_number_display(<%=p['count']%>)+"</span></div><div class='col-md-1'><input type=\"checkbox\" name=\"cb_property_range\" class='cb-property-range' range-type='object' value=\"<%=p['uri']%>\"  onclick=\"QueryBuilder.properties.checkbox_click($(this))\"/></div></div></div>";
+	var html = "<div href='javascript:void(0);' class='list-group-item clickable' uri='<%=p['uri']%>' display-name='<%=p['label']%>' clicked='false' range='<%=p['range']['uri']%>'><div class='row'><div class='col-md-4' onclick=\"QueryBuilder.properties.property_click('<%=p['uri']%>','<%=p['label']%>','object','<%=p['range']['uri']%>','<%=p['range']['label']%>','<%=p['count']%>',$(this))\" ><%=p['label']%></div><div class='col-md-4 ' onclick=\"QueryBuilder.properties.property_click('<%=p['uri']%>','<%=p['label']%>','object','<%=p['range']['uri']%>','<%=p['range']['label']%>','<%=p['count']%>',$(this))\" ><span class='badge span-property-range span-property-range-object' property-uri=\"<%=p['uri']%>\"><%=p['range']['label'].capitalize%></span></div><div class='col-md-2'><span class='badge'>"+get_long_number_display(<%=p['count']%>)+"</span></div><% if (p['range']['uri'] != '') %> <div class='col-md-1'><span class='glyphicon glyphicon-filter' onclick=\"QueryBuilder.classes.refine_search('<%=p['range']['uri']%>','<%=p['range']['label'].capitalize%>','<%=p['label']%>','<%=p['uri']%>')\"></span></div><% else %><div class='col-md-1'></div><% end %><div class='col-md-1'><input type=\"checkbox\" name=\"cb_property_range\" class='cb-property-range' range-type='object' value=\"<%=p['uri']%>\"  onclick=\"QueryBuilder.properties.checkbox_click($(this))\"/></div></div></div>";
 	$(list_group_object).append(html);
+	var theDivs = $("#property_main_properties_object_group > div");
+	$.each(theDivs, function(index){
+		if ($(this).attr('range') == $("#hdn_qb_class").val()){
+			$($(this).find('div.row > div.col-md-1 > span')[0]).hide();
+		}
+	});
 <%end%>
 
 if ($("#property_main_properties_object_group > div").length==0) {

@@ -3012,6 +3012,10 @@ input[type="button"].btn-block {
   content: "\e162";
 }
 
+.glyphicon-tree-structure:before {
+  content: "\e692";
+}
+
 .glyphicon-log-out:before {
   content: "\e163";
 }

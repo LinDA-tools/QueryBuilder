@@ -1,30 +1,27 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-8">
 				<h4 class=""><%if mode == "builder"%>Equivalent SPARQL Query<%else%>SPARQL Query editor<%end%></h4>
 			</div>
 			<%if mode == "builder"%>
-				<div class="col-md-6">
-					<input type="hidden" id="hdn_show_checked_properties" value="no">
-					&nbsp;&nbsp;&nbsp;
-					<span class="btn-group pull-right">
-						<button class="btn " id="btn_show_checked_properties_yes" onclick="QueryBuilder.equivalent_query.handle_checked_properties('yes')">Yes</button>
-						<button class="btn btn-success" id="btn_show_checked_properties_no" onclick="QueryBuilder.equivalent_query.handle_checked_properties('no')">No</button>
+				<div class="col-md-4">
+					<span class="pull-left" style="text-align:right; word-wrap:break-word; width:220px">
+						Edit SPARQL Query directly?<br><small>Please note that editing the Query directly will disable the builder's features</small>
 					</span>
-					&nbsp;&nbsp;&nbsp;
-					<span class="pull-right">
-						Show checked properties in equivalent query and preview? &nbsp;&nbsp;&nbsp;
-					</span>&nbsp;&nbsp;&nbsp;
+					<span class="btn-group pull-right">
+						<button class="btn" id="btn_edit_sparql_yes" onclick="$('#txt_sparql_query').removeAttr('readonly'); $('#btn_edit_sparql_yes').addClass('btn-success'); $('#btn_edit_sparql_no').removeClass('btn-success'); ">Yes</button>
+						<button class="btn btn-success" id="btn_edit_sparql_no" onclick="$('#txt_sparql_query').attr('readonly','readonly');$('#btn_edit_sparql_yes').removeClass('btn-success'); $('#btn_edit_sparql_no').addClass('btn-success');">No</button>
+					</span>
 				</div>
 			<%end%>
 
 		</div>
 	</div>
 	<div class="panel-body" >
-	    <div class="row " > 
+	    <div class="row " >
 	        <div class="col-md-12">
-	            <textarea rows="12" id="txt_sparql_query" style="width:100%;" placeholder="Type your SPARQL query here ..." class="form-control"></textarea>
+	            <textarea  readonly rows="12" id="txt_sparql_query" style="width:100%;" placeholder="Type your SPARQL query here ..." class="form-control"></textarea>
 	        </div>
 	    </div>
 	</div>

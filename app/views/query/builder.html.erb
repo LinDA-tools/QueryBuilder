@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default" >
-                    <div class="panel-heading"><strong>STEP 1 :</strong> Select Dataset</div>
+                    <div class="panel-heading"><strong>STEP 1 :</strong> Select Data Source</div>
                     <div class="panel-body">
                         <div class="row ">
                             <div class="col-md-12">
@@ -15,13 +15,14 @@
                                   </button>
                                   <ul class="dropdown-menu col-md-12" role="menu" aria-labelledby="dd_select_dataset">
                                     <%get_datasets.each do |k,v|%>
-                                       <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.datasets.select('<%=v%>');$('#user_input').hide()"><%=k%></a></li> 
+                                       <li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.datasets.select('<%=v%>');$('#user_input').hide()"><%=k%></a></li>
                                     <%end%>
 <!--	<li role="presentation"><a role="menuitem" tabindex="-1" onclick="QueryBuilder.datasets.select($('#usr_ep').val()); $('#hdn_qb_dataset').val($('#usr_ep').val())"><input type="text" id="usr_ep" class="form-control" placeholder="Add your own SPARQL Endpoint" aria-describedby="basic-addon1"></a></li> -->
-	<li role="presentation"><a role="menuitem" tabindex="-1" onclick="$('#user_input').show()">Add your own SPARQL Endpoint</a></li>
+<!--	<li role="presentation" class="disabled"><a role="menuitem" tabindex="-1" onclick="#">Add your own SPARQL Endpoint</a></li> -->
+  	 <li role="presentation"><a role="menuitem" tabindex="-1" onclick="$('#user_input').show()">Add your own SPARQL Endpoint</a></li> 
                                   </ul>
                                 </div>
-								
+
 								<div class="input-group" id="user_input" style="display: none">
 								      <input type="text" id="usr_ep" class="form-control" placeholder="Add your own SPARQL Endpoint">
 								      <span class="input-group-btn">
@@ -33,10 +34,10 @@
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
             <div class="col-md-8" id="div_qb_select_class" style="display:none;">
                 <div class="panel panel-default">
-                    <div class="panel-heading"><strong>STEP 2 :</strong> Select Class <div style="float:right"><label onclick="QueryBuilder.search_classes_change()"><input type="checkbox" id="force_uri_search" /> Extended Search (Including URIs) </label>  </div> </div> 
+                    <div class="panel-heading"><strong>STEP 2 :</strong> Select Concept <div style="float:right"><label onclick="QueryBuilder.search_classes_change()"><input type="checkbox" id="force_uri_search" /> Extended Search (Including URIs) </label>  </div> </div>
                     <div class="panel-body">
 						<div class="row multi-class-labels" style="margin-left=30px">
                             <div class="col-md-12">
@@ -65,19 +66,19 @@
                                 <div class="alert alert-danger" style="margin-top:20px;"></div>
                             </div>
                         </div>
-												
+
 												<!--  New Change Start Here    -->
 												<div class="row" id="div_all_classes" >
 												       <div class="col-md-12">
 																 <button class="btn btn-warning col-md-12" type="button" id="btn_show_all_classes">Show All Classes </button>
 															 </div>
-												</div>                        
+												</div>
 												<!-- New Change Ends Hee -->
-												
-												
+
+
                         <div class="row" id="div_classes_search_result">
                             <div class="col-md-12">
-                                <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_class", :div_classes=>"done-search-class", :div_id=>"div_selected_class", :remove_function=>"QueryBuilder.reset_searched_class($(this))", :hidden_value_value=>""}%>
+                                <%=render :partial=>"shared/selector", :locals=>{:hidden_value_id=>"hdn_qb_class", :div_classes=>"done-search-class", :div_id=>"div_selected_class", :remove_function=>"", :hidden_value_value=>""}%>
                             </div>
                         </div>
                         <div class="row" id="div_classes_search_more" style="display:none;">
@@ -89,31 +90,31 @@
                     <div class="list-group" id="tbl_classes_search_result"></div>
                 </div>
             </div>
-           
+
         </div>
         <div class="row" style="display:none;" id="div_qb_properties">
             <div class="col-md-12"  >
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <strong>STEP 3 :</strong> FILTER Properties
+                        <strong>STEP 3 :</strong> Refine your Query
                     </div>
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <p>
-                                    <small>You can filter properties from various options here</small>
+                                    <small>You can restrict your results by adding filters, or add new related concepts.</small>
                                 </p>
-                                <p>
+                                <!-- <p>
                                     <small>Please note that these properties won't be displayed in the preview mode, but will be displayed in the final serialization download option you choose. If you want to have the exact view of these properties in the preview also, then please check the option from below.</small>
-                                </p>
+                                </p> -->
 
                             </div>
                         </div>
                         <div class="row">
-                            
+
 
                             <div class="col-md-8">
-                                <div class="panel panel-default">
+                                <div class="panel panel-default" id="propertyHistogram">
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-md-9">
@@ -131,7 +132,7 @@
                                     <div class="panel-heading alert" style="display:none;" id="qb_properties_properties_selected_filters_header">
                                         Selected filters
                                     </div>
-                                    <div class="list-group" id="qb_properties_properties_selected_filters_list" style="display:none;"> 
+                                    <div class="list-group" id="qb_properties_properties_selected_filters_list" style="display:none;">
                                     </div>
                                     <div class="panel-heading alert">
                                         <div class="row">
@@ -139,11 +140,14 @@
                                                 Object Properties
                                             </div>
                                             <div class="col-md-1">
+                                              <label>
+                                              Show As Optional:
                                                 <input type='checkbox' id='cb_property_range_all_object'  class='cb-property-range-all'   onclick="QueryBuilder.properties.click_check_all('object');"/>
+                                              </label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="list-group properties-list-group" id="property_main_properties_object_group" > 
+                                    <div class="list-group properties-list-group" id="property_main_properties_object_group" >
 
                                     </div>
                                     <div class="row" id="qb_properties_properties_object_loading">
@@ -161,7 +165,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="list-group properties-list-group" id="property_main_properties_datatype_group" > 
+                                    <div class="list-group properties-list-group" id="property_main_properties_datatype_group" >
 
                                     </div>
                                     <div class="row" id="qb_properties_properties_datatype_loading">
@@ -173,31 +177,44 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="panel panel-default" id="property_main_subclasses">
-                                    <div class="panel-heading  property-subclass-header" uri="" id="property_main_subclass_header">
+                                <div class="panel panel-default" id="content-help">
+                                    <div class="panel-heading  content-help-header" uri="" id="content-help_header">
                                         <div class="row">
                                             <div class="col-md-9">
-                                                Sub-Classes
+                                                Query Hints
                                             </div>
                                             <div class="col-md-3">
-                                                <button type="button" class="btn btn-primary btn-xs pull-right" onclick="QueryBuilder.properties.get_subclasses_for_selected_class()"><span class="glyphicon glyphicon-plus"></span>&nbsp;more</button>
+                                                <!-- <button type="button" class="btn btn-primary btn-xs pull-right" onclick="QueryBuilder.properties.get_subclasses_for_selected_class()"> -->
+                                                  <!-- <span class="glyphicon glyphicon-plus"></span>&nbsp;more</button> -->
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="list-group" id="property_main_subclasses_group" subclasses="all"> 
-                                        <a class="list-group-item property-subclass-group" href="javascript:void(0)" onclick="QueryBuilder.properties.select_subclass('all')" uri="all" clicked='true' display-name="All"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;<strong>All</strong></a>
+                                    <div class="panel-body" id="content-help_group" ><!-- subclasses="all"> -->
+                                      <p><b>Object Properties</b> link instances of the concept being queried for, to other instances whose type is shown in the coloured label (eg. <span class="badge" style="background-color:#D1E231;">Person</span>). The number (<span class="badge">350K</span>) shows the number of links between two instances on the property.<br/><br/>
+                                      <b>Datatype properties</b> link instances to data values whose datatype is shown in the coloured label (eg. <span class="badge" style="background-color:#FA8072;">xsd:dateTime</span>).<br/><br/>
+                                      Refine your search by adding filters to object or data properties by clicking on the colored labels.
+                                      </p>
+                                      <hr>
+                                      <p>
+                                        Object Properties can be <b>further refined</b> by creating filters on the linked concept shown on the coloured label. Clicking on the <span class="glyphicon glyphicon-filter"></span> enables the concept shown in the coloured label to be added to the selected concepts. Filtering of object and/or datatype properties of the concept can be done by selecting the newly added concept in STEP 2. For example imagine the initial concept is <i>'Actor'</i> and we want to retreive those instances whose nationality is a <i>'Country'</i> that has a total area of 100km<sup>2</sup>. We click on the <span class="glyphicon glyphicon-filter"></span> of the nationality property, we then click on the newly added Country concept, then click on the “area” coloured label to add a filter on the size.
+                                      </p>
+                                      <hr>
+                                      <p>
+                                        <b>Show Property as Optional</b>: By default, a chosen concept will not show any properties in the final result. If any property is desired to be shown, then a checkbox next to the property has to be checked.
+                                      </p>
+                                        <!-- <a class="list-group-item property-subclass-group" href="javascript:void(0)" onclick="QueryBuilder.properties.select_subclass('all')" uri="all" clicked='true' display-name="All"><span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;<strong>All</strong></a> -->
                                     </div>
-                                    <div class="row" id="qb_properties_sub_classes_loading" style="display:none;">
+                                    <!-- <div class="row" id="qb_properties_sub_classes_loading" style="display:none;">
                                         <div class="col-md-12">
                                             <center><%=image_tag "jar-loading.gif" , :height=>"130px"%></center>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                </div>    
+                </div>
             </div>
         </div>
         <div class="row qb-equivalent-query-main" style="display:none;">
@@ -208,7 +225,7 @@
 
         <%=render :partial=>"query/search_results"%>
     </div>
-    
+
 </div>
 <div class="modal fade in" id="class_selector_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -218,7 +235,7 @@
                 <h4 class="modal-title" ></h4>
             </div>
             <div class="modal-body">
-               
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
